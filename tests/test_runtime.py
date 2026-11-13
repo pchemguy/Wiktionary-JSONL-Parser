@@ -29,7 +29,8 @@ def test_initialize_schema_from_any_working_directory(
 def test_preflight_rejects_missing_collation(tmp_path: Path) -> None:
     destination = tmp_path / "result.sqlite"
     with sqlite3.connect(":memory:") as db:
-        db.create_collation("UTF_CI", None)
+        if any(name == "UTF_CI" for _, name in db.execute("PRAGMA collation_list")):
+            pytest.skip("run with standard SQLite to exercise missing UTF_CI")
         with pytest.raises(importer.ImportFailure, match="SQLiteICUex.*UTF_CI"):
             importer.require_unicode_collation(db)
     assert not destination.exists()
