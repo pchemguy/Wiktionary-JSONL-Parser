@@ -12,12 +12,12 @@
             Scope covers the reader, root-entry mapper, and focused tests. Implement UTF-8 framing, batch sizing, source-line reporting, JSON decoding, entry IDs in source order, and all root-field mappings. Verify BOM, LF and CRLF, an unterminated final line, repeated property names, malformed and non-object records, bare nonfinite constants, duplicates, and explicit nulls and empty values.
         - [x] T-003 — Deliver the entry importer through the CLI
             Depends on T-001 and T-002. Scope covers CLI arguments, destination handling, and the batch transaction with its log row. Verify default and explicit output paths, batch-size defaults and validation, empty input, a short final batch, missing input or collation, existing output protection, CLI status and diagnostics, and atomicity after a decode or write failure. Complete the milestone code review and checks, fix blockers, and record the results in `reports/phases/1/1.1.md` and HANDOFF.
-    - [ ] Milestone 1.2 — Complete relational mapping
+    - [x] Milestone 1.2 — Complete relational mapping
         - [x] T-004 — Map linkage and flat child arrays
             Depends on T-003. Extend the mapper and batch writing to all linkage tables, forms, translations, and hyphenations. Verify one row per array element, exact source indices, copied linkage `sense_index`, duplicates, and missing and explicit values.
         - [x] T-005 — Map senses, examples, and sounds
             Depends on T-004. Complete the nested and transformed mappings. Verify sense and example keys, `form_of` compaction, preserved offset arrays, the fixed URL key order, and the handling of missing or invalid mapped values.
-        - [ ] T-006 — Verify the full mapping and batch failure boundary
+        - [x] T-006 — Verify the full mapping and batch failure boundary
             Depends on T-005. Use a fixture covering every data table and compare database values with the mapping contract. Verify one parameterized `executemany()` per populated table, parent ordering, zero foreign-key violations, and rollback after mapping, child insert, and log insert failures. Confirm the committed prefix remains queryable. Complete the milestone code review and checks, fix blockers, and record the results in `reports/phases/1/1.2.md` and HANDOFF.
     - [ ] Milestone 1.3 — Installable CLI
         - [ ] T-007 — Build and inspect the Python distributions
