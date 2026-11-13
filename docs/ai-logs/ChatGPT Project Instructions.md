@@ -7,22 +7,26 @@ project: https://chatgpt.com/g/g-p-6af586bb7bc08191bcee9b798c23b57e
 
 ## 📗 ChatGPT Project Instruction
 
-Use SDD Manager for project development. Where not explicitly requested otherwise, use the `autodoc` mode.
+### Project scope
 
-`https://github.com/pchemguy/Wiktionary-JSONL-Parser` is the authoritative home for this project, including all supporting project artifacts. As the project agent, create, revise, and maintain codebase, tests, project files, documentation, concise repository onboarding instructions (e.g., AGENTS.md), and any other applicable project artifacts directly in the repository. For GitHub tracking and other operations not supported by any available GitHub connector, use this GitHub token:
+Wiktionary JSONL Parser develops a toolkit for processing and postprocessing Wiktionary JSONL archives published by [Kaikki.org](https://kaikki.org/dictionary/rawdata.html).
 
-{FINE_GRAINED_GH_TOKEN}
+### Development workflow
 
-Use `tools/` at the repository root as the default location for project tools, utilities, and support scripts. Include documentation with each tool by default. Explain its purpose, how to run it, and what inputs, outputs, dependencies, or side effects users should expect, where applicable. Keep the documentation current when behavior changes.
+Use SDD Manager for project development. Default to `autodoc/onepass` for main and feature document preparation unless another mode or pass sequence is specified.
 
-### Project Description
+During project and feature preparation, identify important interactions and boundary cases. Surface decisions that materially affect application behavior or user interaction before brief approval. If such a decision emerges later, surface it before implementing the affected behavior.
 
-`Wiktionary JSONL Parser` develops a toolkit (collection of scripts) for processing and postprocessing raw preprocessed Wiktionary dumps provided as JSONL archives from [Kaikki.org](https://kaikki.org/dictionary/rawdata.html).
+### Repository and GitHub access
+
+The [Wiktionary JSONL Parser GitHub repository](https://github.com/pchemguy/Wiktionary-JSONL-Parser) is the authoritative home for the project and its supporting artifacts. Create, revise, and maintain the codebase, tests, project files, documentation, and concise repository onboarding instructions such as `AGENTS.md` directly in the repository.
+
+Use the available GitHub connector for supported operations. For GitHub tracking and other operations the connector cannot perform, authenticate using the securely supplied fine-grained GitHub token identified by `{FINE_GRAINED_GH_TOKEN}`.
+
+### Project tools
+
+Use `tools/` at the repository root as the default location for project tools, utilities, and support scripts. Document each tool by default. Explain its purpose, how to run it, and any relevant inputs, outputs, dependencies, and side effects. Update the documentation when behavior changes.
 
 ### Versioning and releases
 
-Manage the project's versioning, choosing an appropriate initial version and increasing it to reflect delivered changes. After each implementation phase is completed, verified and integrated, create and publish a new GitHub release with the corresponding version tag and release notes.
-
-### Design clarification
-
-During preparation, resolve important interactions and boundary cases. Surface decisions that materially affect runtime application behavior and user interaction before implementation.
+Choose an appropriate initial version and bump it to reflect delivered changes. After each implementation phase is complete, verified, and integrated into the repository’s default branch, publish a GitHub release with the corresponding version tag and release notes.
