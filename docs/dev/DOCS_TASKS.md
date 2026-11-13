@@ -15,7 +15,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Depends on DOCS-002.
     - Define major blocks, relationships, dependency direction and consequential structural decisions from the accepted brief, including necessary children.
     - Check consistency, obtain approval or apply scoped preapproval, and commit the accepted state, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
-- [ ] DOCS-004 — Prepare and accept DECOMPOSITION.
+- [x] DOCS-004 — Prepare and accept DECOMPOSITION.
     - Depends on DOCS-003.
     - Define component responsibilities, explicit external/internal API surfaces, types/signatures, collaboration and state ownership consistently with ARCHITECTURE. Include selected model/API-design artifacts in this task's proposal and acceptance.
     - Check consistency, obtain approval or apply scoped preapproval, and commit the accepted state, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
