@@ -13,10 +13,10 @@
 | Task | Evidence |
 | --- | --- |
 | DOCS-001 | Initialization result below. |
-| DOCS-002 | [PROJECT.md](PROJECT.md) is proposed at Git blob `d8a4bec734edea6bd9f2b133a183bcdfa077ff17`. Brief coverage and the legacy fixture/rollback probes were reviewed. Human acceptance is pending. |
+| DOCS-002 | [PROJECT.md](PROJECT.md) is proposed at Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. The proposal reflects the confirmed scope and runtime decisions below. Acceptance of the revised brief is pending. |
 | DOCS-003 through DOCS-009 | Pending. |
 
-The initial input is the local, extracted Kaikki Russian Wiktionary JSONL file. The converter uses the legacy relational schema and mapping, runs in one process, and processes configurable batches measured in source lines. The user identified `batch_log` as a candidate for adaptation. Resume behavior, the required collation runtime, and treatment of source fields outside the legacy mapping remain project-brief decisions.
+The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
 
 ## Initialization
 

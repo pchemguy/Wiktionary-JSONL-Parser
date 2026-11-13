@@ -48,4 +48,6 @@ Follow `sdd-manage`'s preparation and phase-activation workflows for required tr
 
 ## Project guidance
 
+Describe the toolkit as a standalone implementation. Keep the schema, data mapping, and implementation documentation self-contained within this repository.
+
 Maintain project-specific navigation and validated setup/check commands here as they become established. Do not invent commands, paths, requirements or completion claims.

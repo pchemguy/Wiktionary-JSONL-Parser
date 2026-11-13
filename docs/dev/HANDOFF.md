@@ -8,7 +8,7 @@ Outcome — The preparation milestone and nine issues were verified. The manual 
 
 - Main documentation preparation, interactive mode, one pass.
 - See the [proposed brief](PROJECT.md), [preparation record](DOCS_PREPARATION.md), and [documentation tasks](DOCS_TASKS.md).
-- The initial converter targets a local, extracted Kaikki Russian Wiktionary JSONL file and adopts the legacy SQL schema and mapping.
+- The initial converter imports local, extracted Kaikki Russian Wiktionary JSONL into SQLite in configurable source-line batches.
 
 ## Scope and human decisions
 
@@ -24,4 +24,4 @@ Outcome — The preparation milestone and nine issues were verified. The manual 
 
 ## Pending work and next action
 
-Await review of the PROJECT proposal and its proposed handling of interrupted imports, SQLite collation, and unmapped fields. Recover subsequent decisions from the preparation record and Git history.
+Await acceptance of the revised PROJECT proposal. Recover subsequent decisions from the preparation record and Git history.
