@@ -15,6 +15,10 @@ Use SDD Manager for project development. Where not explicitly requested otherwis
 
 Use `tools/` at the repository root as the default location for project tools, utilities, and support scripts. Include documentation with each tool by default. Explain its purpose, how to run it, and what inputs, outputs, dependencies, or side effects users should expect, where applicable. Keep the documentation current when behavior changes.
 
+### Project Description
+
+
+
 ### Versioning and releases
 
 Manage the project's versioning, choosing an appropriate initial version and increasing it to reflect delivered changes. After each implementation phase is completed, verified and integrated, create and publish a new GitHub release with the corresponding version tag and release notes.
