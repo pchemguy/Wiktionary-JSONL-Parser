@@ -1,0 +1,41 @@
+# Main documentation tasks
+
+Preparation tasks and completion checkboxes only. Control, decisions and evidence belong in `DOCS_PREPARATION.md`; product implementation tasks belong in `TASKS.md`.
+
+- [x] DOCS-001 — Initialize the repository for SDD Manager.
+    - Execute/reuse manual AI provenance setup by default without an opt-in question. Unless an explicit human/project opt-out or deferral applies, publish/read back the preliminary design-docs/ai-logs scaffold and its verified default-branch merge before fresh design-docs/main setup. Those checkpoints do not complete this task. Resolve/report enabled setup blockers; an unspecified choice cannot justify omission. Conversation recording remains manual and missing transcripts do not block initialization.
+    - Inspect all four root destinations: `AI_DISCLOSURE.md`, `SDD-MANAGER.md`, `AGENTS.md` and `SKILL_DISCOVERY_PROTOCOL.md`. Preserve existing files and copy only missing files unchanged from the running package.
+    - Establish/reconcile this task list, `DOCS_PREPARATION.md` and `HANDOFF.md` after the applicable pre-write tracking gate. Record original retained/copied filenames, preservation/copy checks, actual provenance default/override basis and setup state and the continuation decision in DOCS_PREPARATION; provenance assets and generated records are outside the four-root-file presence test.
+    - Commit initialization files, preparation evidence, HANDOFF and this task checked together; publish/read back before issue closure. Report initialization and stop before document work for mixed initial root-file presence unless explicit applicable preapproval covers continuation. None/all present adds no approval pause.
+- [ ] DOCS-002 — Prepare and accept PROJECT.
+    - Depends on DOCS-001 and resolution of any initialization continuation stop.
+    - Establish purpose, users, outcomes, intended scope, non-goals and consequential constraints; resolve material assumptions/decisions. Maintain truthful root README disclosure/usage links.
+    - Present the proposal for approval or apply scoped preapproval. Commit the accepted document state, DOCS_PREPARATION decision/evidence and this checked task together; publish/read back before issue closure or dependent work.
+- [ ] DOCS-003 — Prepare and accept ARCHITECTURE.
+    - Depends on DOCS-002.
+    - Define major blocks, relationships, dependency direction and consequential structural decisions from the accepted brief, including necessary children.
+    - Check consistency, obtain approval or apply scoped preapproval, and commit the accepted state, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
+- [ ] DOCS-004 — Prepare and accept DECOMPOSITION.
+    - Depends on DOCS-003.
+    - Define component responsibilities, explicit external/internal API surfaces, types/signatures, collaboration and state ownership consistently with ARCHITECTURE. Include selected model/API-design artifacts in this task's proposal and acceptance.
+    - Check consistency, obtain approval or apply scoped preapproval, and commit the accepted state, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
+- [ ] DOCS-005 — Prepare and accept SPEC.
+    - Depends on DOCS-004.
+    - Specify observable behavior, precise API/data/error contracts, required qualities and acceptance from the accepted design. Include selected contract artifacts and assess their referenced models/API design in this task's QC and acceptance.
+    - Pass required SPEC QC and approval/preapproval. Commit the accepted state, QC report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
+- [ ] DOCS-006 — Prepare and accept PLAN.
+    - Depends on DOCS-005 and required SPEC QC.
+    - Define bounded useful delivery phases, milestones, dependencies and exits against SPEC, starting with the simplest reasonable MVP. Include needed API/model/contract refinement, consumer integration and verification prerequisites.
+    - Pass PLAN strategy QC and approval/preapproval. Commit the accepted state, review report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or layout work.
+- [ ] DOCS-007 — Prepare and accept layout.
+    - Depends on DOCS-006 and PLAN strategy QC.
+    - Allocate public API headers/exports/entry points, internal source, schemas, tests, documentation and artifacts to physical owners consistently with design and PLAN; review PLAN/layout together and update the PLAN review report.
+    - Pass combined QC and approval/preapproval. Commit the accepted state, updated review report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
+- [ ] DOCS-008 — Prepare and accept TASKS.
+    - Depends on DOCS-007 and required SPEC/PLAN/layout QC.
+    - Derive executable tasks, dependencies and milestone/phase review units against selected API/model/contract owners, including consumer checks and documentation; check traceability and bounded increments.
+    - Pass task-list QC and approval/preapproval. Commit the accepted TASKS state, QC report, DOCS_PREPARATION evidence and this checked task together, including HANDOFF at an autodoc stop; publish/read back before issue closure and the selected stop/reset/advance boundary. Do not start implementation or activate implementation-phase objects.
+- [ ] DOCS-009 — Pass documentation package QC.
+    - Depends on DOCS-001–008 completion and verified issue closures when tracking is enabled; the selected mode/range must permit package QC.
+    - Review the complete document set, selected model/API-design/contract artifacts and QC reports, DOCS_TASKS, DOCS_PREPARATION and initialization/orientation/acceptance/publication evidence for consistency, traceability, readiness and blockers. Resolve/recheck blockers through their owners.
+    - Commit passing `DOCS-QC-REPORT.md`, DOCS_PREPARATION evidence, refreshed HANDOFF and this checked task together; publish/read back before final QC issue closure. Keep later integration/milestone effects pending until verified; task completion alone does not complete preparation.
