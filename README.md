@@ -9,10 +9,10 @@ Use Python 3.11 or later with [SQLiteICUex](https://github.com/pchemguy/SQLiteIC
 Download `wiktionary-jsonl-parser-python.zip` from the [latest release](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/latest) and extract its wheel and source distribution. Set `python_icu` to your SQLiteICUex-enabled Python executable. From the directory containing the extracted wheel, install it with pip:
 
 ```bash
-"$python_icu" -m pip install ./wiktionary_jsonl_parser-0.1.0-py3-none-any.whl
+"$python_icu" -m pip install ./wiktionary_jsonl_parser-0.2.0-py3-none-any.whl
 ```
 
-If your private interpreter has no pip, use `uv pip install --python "$python_icu" ./wiktionary_jsonl_parser-0.1.0-py3-none-any.whl`.
+If your private interpreter has no pip, use `uv pip install --python "$python_icu" ./wiktionary_jsonl_parser-0.2.0-py3-none-any.whl`.
 
 ## Convert
 
@@ -23,7 +23,7 @@ Supply an already extracted, local UTF-8 JSONL file. The first command writes `d
 "$python_icu" -m wiktionary_jsonl_parser.cli data/ru-extract.jsonl --output data/words.db --batch-size 5000
 ```
 
-The installed `wiktionary-jsonl-parser` command accepts the same arguments. The default batch size is 25,000 source lines. Supply `--output` when the input name lacks a final `.jsonl` suffix. The destination's parent directory must exist, and the destination must be new.
+The installed `wiktionary-jsonl-parser` command accepts the same arguments. The default batch size is 25,000 source lines. After each successful batch write, the CLI prints the cumulative input bytes read and processed and their percentage of the input file size on stderr. Use `--no-progress` to suppress updates while retaining error diagnostics. Supply `--output` when the input name lacks a final `.jsonl` suffix. The destination's parent directory must exist, and the destination must be new.
 
 Every input line must contain a mappable entry. In particular, a Kaikki redirect record containing `title` and `redirect` but lacking the required entry fields fails at its source line. Prepare an entry-only JSONL file before import if your dump includes those records.
 

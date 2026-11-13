@@ -30,3 +30,7 @@ An in-memory probe loaded the proposed schema, checked its 21 table names, and v
 Expanded the decoding guarantees in [SPEC.md](SPEC.md) and added the [mapping contract](spec/mapping.md). It covers all 20 data tables, source keys and indices, required fields, missing and explicit values, and normalized JSON representations. Acceptance covers input framing and mapping failure in addition to the existing batch scenarios.
 
 Checked the documented field sets against all 20 data tables using the SQLite schema, including the composite sense foreign key. A probe with a test collation checked initial BOM handling, repeated JSON member names, rejection of bare nonfinite constants, serialization examples, optional value storage, and ordered example offsets. These checks cover the specification and schema. Importer execution and SQLiteICUex comparison behavior remain implementation verification work.
+
+## Revision 1 — Import progress
+
+**Result — Ready.** Checked byte progress, the quiet CLI flag, and failure and empty-input reporting against the accepted design and tests. See the [archived package review](features/001_83e7d6a-import-progress/FEATURE-QC-REPORT.md).

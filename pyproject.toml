@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "wiktionary-jsonl-parser"
-version = "0.1.0"
+version = "0.2.0"
 description = "Convert extracted Russian Wiktionary JSONL to SQLite."
 readme = "README.md"
 requires-python = ">=3.11"

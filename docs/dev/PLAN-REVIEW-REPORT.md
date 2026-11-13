@@ -30,3 +30,7 @@ The review checked milestone identities and dependencies, coverage of the nine s
 Reviewed [layout.md](layout.md) at Git blob `dfba18b39239f550fda0ae480380b5c67c2167d4` against the accepted plan at Git blob `62360836fb102ea7f05cf497c2cdb415a1a8557c` and the governing files above. The CLI placement matches the existing Python entry point. Import and mapping ownership match DECOMPOSITION. The schema has a canonical contract and a separate runtime package location. Test and fixture locations support the entry import, full mapping, database failure cases, and installation checks. Release utilities are placed under `tools/`.
 
 Checked ownership coverage, Markdown links, and compatibility with the three delivery milestones and the phase review. No placement findings remain. Runtime files, packages, and tests are planned deliverables.
+
+## Revision 1 — Import progress
+
+**Result — Ready.** Checked the narrow Phase 2 delivery milestone and independent phase review against the accepted feature specification and existing layout. See the [archived package review](features/001_83e7d6a-import-progress/FEATURE-QC-REPORT.md).

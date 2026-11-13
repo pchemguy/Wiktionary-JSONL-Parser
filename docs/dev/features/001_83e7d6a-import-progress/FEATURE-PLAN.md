@@ -1,5 +1,7 @@
 # Import progress delivery plan
 
+> Historical feature record. The [main documents](README.md) own the current behavior and tasks.
+
 Phase 2 delivers byte-based CLI progress on top of the released SQLiteICUex converter.
 
 | Milestone | Scope | Exit evidence |

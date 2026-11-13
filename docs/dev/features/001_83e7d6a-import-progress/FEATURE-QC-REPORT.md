@@ -1,5 +1,7 @@
 # Import progress feature package review
 
+> Historical feature record. The [main documents](README.md) own the current behavior and tasks.
+
 **Result — Ready.** Byte counts, batch completion, quiet mode, and failure semantics agree across the brief, decomposition, and specification. The existing layout accommodates the callback, CLI formatter, and tests. One delivery milestone is sufficient for the single connected behavior, with a separate phase review. T-011 and T-012 are unique and cover implementation, regression, installed CLI and release verification. The user preapproved all checkpoints.
 
 Reviewed blobs:

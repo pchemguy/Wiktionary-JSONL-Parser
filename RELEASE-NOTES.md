@@ -1,11 +1,7 @@
-# Wiktionary JSONL Parser 0.1.0
+# Wiktionary JSONL Parser 0.2.0
 
-The initial release converts extracted Kaikki Russian Wiktionary JSONL entries into a SQLite database. It creates the database alongside the input by default. Use `--output` to choose another location and `--batch-size` to control the number of source lines per transaction.
+The CLI reports cumulative input bytes read and processed after each successful SQLite batch write. The percentage uses the opened file's size, so a preliminary line-counting pass is unnecessary. Progress is flushed to stderr. Use `--no-progress` for quiet runs.
 
-- Imports the complete entry, linkage, form, sense, example, translation, sound, and hyphenation mappings and preserves their order and duplicates.
-- Records every committed batch in `batch_log`. On a failed batch, its rows and log entry roll back together and earlier batches stay queryable.
-- Requires Python 3.11 or later with SQLiteICUex's `UTF_CI` collation available to `sqlite3`.
+Library callers may supply `on_progress(processed_bytes, total_bytes)` as a keyword argument. The callback runs after each successful batch write. A failed batch produces no progress update.
 
-Kaikki redirect-only records lack required entry fields and fail at the source line. Prepare an entry-only input for dumps that contain redirects.
-
-Download `wiktionary-jsonl-parser-python.zip` for the installable wheel and source distribution. Verify the ZIP using the accompanying `SHA256SUMS`. See the [README](README.md) for installation, runtime setup, and CLI commands.
+Download `wiktionary-jsonl-parser-python.zip` for the installable wheel and source distribution, and use `SHA256SUMS` to verify it. The [README](https://github.com/pchemguy/Wiktionary-JSONL-Parser/blob/v0.2.0/README.md) has installation and usage instructions. Python 3.11 or later and SQLiteICUex remain required.

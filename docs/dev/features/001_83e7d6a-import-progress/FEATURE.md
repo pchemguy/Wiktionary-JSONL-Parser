@@ -1,5 +1,7 @@
 # Import progress logging
 
+> Historical feature record. The [main documents](README.md) own the current behavior and tasks.
+
 The Wiktionary JSONL CLI reports progress for large local input files without a preliminary line-counting pass. After each successful batch write, it reports the cumulative input bytes read and processed and their percentage of the input file's size.
 
 ## Progress measure
@@ -16,4 +18,4 @@ The CLI emits one flushed line to stderr per batch by default. For example:
 
 Use `--no-progress` for scripts that need stderr to contain diagnostics only. Library calls remain silent by default.
 
-The [existing failure and batch guarantees](SPEC.md#batch-persistence-and-errors) govern the import. A progress line describes the current invocation. It adds no state to the output database.
+The [existing failure and batch guarantees](../../SPEC.md#batch-persistence-and-errors) govern the import. A progress line describes the current invocation. It adds no state to the output database.

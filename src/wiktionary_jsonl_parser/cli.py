@@ -20,6 +20,17 @@ def positive_batch_size(value: str) -> int:
     return size
 
 
+def report_progress(processed: int, total: int) -> None:
+    """Print a byte-based progress update to standard error."""
+
+    if total:
+        tenths = processed * 1000 // total
+        line = f"{processed}/{total} bytes read and processed ({tenths // 10}.{tenths % 10}%)"
+    else:
+        line = f"{processed} bytes read and processed"
+    print(line, file=sys.stderr, flush=True)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Convert an extracted JSONL file and return its CLI exit status."""
 
@@ -36,6 +47,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         metavar="N",
         help="maximum source lines per batch (default: 25000)",
     )
+    parser.add_argument(
+        "--no-progress", action="store_true", help="suppress batch progress on stderr"
+    )
     args = parser.parse_args(argv)
     source = args.input
     destination = args.output
@@ -44,7 +58,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             parser.error("--output is required when INPUT has no final .jsonl suffix")
         destination = source.with_suffix(".sqlite")
     try:
-        import_jsonl(source, destination, args.batch_size)
+        import_jsonl(
+            source,
+            destination,
+            args.batch_size,
+            on_progress=None if args.no_progress else report_progress,
+        )
     except ImportFailure as exc:
         print(f"{parser.prog}: {exc}", file=sys.stderr)
         return 1

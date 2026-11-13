@@ -1,5 +1,7 @@
 # Feature documentation tasks
 
+> Historical feature record. The [main documents](README.md) own the current behavior and tasks.
+
 Task definitions/checkoffs only. Control, decisions, applicability/reuse and evidence belong in FEATURE_PREPARATION.md. FDOCS IDs are qualified by the campaign for hosting; product T IDs and main DOCS tasks are separate.
 
 - [x] FDOCS-001 — Establish feature preparation context.

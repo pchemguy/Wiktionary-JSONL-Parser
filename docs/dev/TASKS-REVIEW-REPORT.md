@@ -27,3 +27,7 @@ PLAN defines the milestone boundaries. TASKS uses phase-qualified milestone numb
 The GitHub projection parser accepted Phase 1, the four milestone groups, and the ten unique and initially unchecked task IDs. Dependency checks confirmed that referenced task IDs exist and appear earlier in the list. The review traced accepted CLI, JSONL, mapping, transaction, runtime, and distribution outcomes to the relevant tasks and checked their assigned report paths.
 
 No unresolved task-list findings. Implementation quality and package behavior are checked during delivery.
+
+## Revision 1 — Import progress
+
+**Result — Ready.** Checked the transferred T-011 and T-012 entries against Phase 2, their dependency, milestone exits, and unique IDs. See the [archived package review](features/001_83e7d6a-import-progress/FEATURE-QC-REPORT.md).

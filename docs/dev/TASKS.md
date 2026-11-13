@@ -31,3 +31,15 @@
             Requires completion of milestones 1.1 through 1.3 and their hosted closures when tracking is active. Review the integrated implementation and rerun the acceptance, regression, and package checks. Run the CLI with SQLiteICUex on a representative local sample and record elapsed time, committed lines, and batch size. Fix blocking findings. Record phase evidence in `reports/phases/1/PHASE-REPORT.md`, aggregate remaining findings in `reports/IMPLEMENTATION-REPORT.md`, and update HANDOFF.
 
 After Phase 1 completes, verify integration into the default branch and publish the release from that revision. Rebuild and check the release inventory against the verified source, then verify the hosted download and checksum. See [PLAN](PLAN.md).
+
+## Phase 2 — Import progress logging
+
+- [x] Phase 2 — Import progress logging
+    - [x] Milestone 2.1 — Progress logging
+        - [x] T-011 — Report byte progress after completed batch writes
+            Requires released Phase 1. Implement the optional importer callback, flushed CLI reporting, and quiet mode. Verify exact raw byte accounting, transaction visibility, errors, empty input, and the installed command contract. Document the CLI option and record the milestone review.
+    - [x] Milestone 2.2 — Phase review
+        - [x] T-012 — Verify and package the progress release
+            Depends on T-011 and its verified milestone. Review the complete progress change. Repeat the acceptance and regression checks, exercise the installed distributions, validate the release package, and record the phase review.
+
+See the [progress milestone review](features/001_83e7d6a-import-progress/2.1.md) and [Phase 2 report](features/001_83e7d6a-import-progress/PHASE-REPORT.md).

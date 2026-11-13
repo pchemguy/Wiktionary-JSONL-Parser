@@ -5,7 +5,7 @@ The converter imports the Kaikki Russian Wiktionary extract from a local UTF-8 J
 ## Command line and output
 
 ```text
-wiktionary-jsonl-parser INPUT [--output PATH] [--batch-size N]
+wiktionary-jsonl-parser INPUT [--output PATH] [--batch-size N] [--no-progress]
 ```
 
 | Argument | Behavior |
@@ -13,6 +13,7 @@ wiktionary-jsonl-parser INPUT [--output PATH] [--batch-size N]
 | `INPUT` | Required path to a readable local UTF-8 JSONL file. |
 | `--output PATH` | Optional destination database path. When omitted, replace the final `.jsonl` suffix with `.sqlite` in the input path and keep the parent directory. For example, `data/ru-extract.jsonl` yields `data/ru-extract.sqlite`. If the input name has no final `.jsonl` suffix, supply an explicit output path. |
 | `--batch-size N` | Positive integer maximum number of source lines per batch. Defaults to 25,000. |
+| `--no-progress` | Suppress progress on stderr while retaining diagnostics. |
 
 Relative paths are interpreted from the working directory. The destination parent directory must exist. The converter refuses an existing destination without modifying it. It checks that the input can be opened and that SQLiteICUex's `UTF_CI` collation is available before creating the output. It initializes the output with the [SQLite schema](spec/schema.sql) and enforces foreign keys on the writing connection.
 
@@ -28,6 +29,14 @@ The importer reads up to the configured number of source lines per batch. For ea
 
 The converter stops at the first input, mapping, or persistence error. If a transaction is active, it rolls back the entire batch, including its log row. Earlier committed batches remain available. A retry requires a fresh output database. Diagnostics go to standard error and identify the error and the one-based source line where it can be determined. CLI exit status is 0 on successful completion, 1 on import failure, and 2 on command-line usage errors.
 
+## Progress reporting
+
+The CLI writes one flushed progress line to stderr after each successful batch write. A progress update reports the cumulative bytes read, decoded, and mapped for batches whose SQLite write is complete. The numerator counts the original bytes, including a BOM, CRLF, LF, and a final line without a terminator. The denominator is the byte size of the opened input file captured at the start. Progress requires no preliminary scan.
+
+For a positive total, use the format `52428800/209715200 bytes read and processed (25.0%)`. Round down to one decimal place so that 100.0% is reached at the full size for an unchanged file. If the initial size is zero but data is encountered, report just the byte count. Percentage semantics assume the input file stays unchanged during import. Empty input emits no progress line.
+
+Decode, mapping, or persistence failure leaves the last reported count at the preceding successful batch and emits the existing diagnostic. `--no-progress` suppresses only progress lines. Stdout stays empty. Library imports remain silent unless the caller supplies a keyword-only `on_progress` callback accepting two integers.
+
 ## Acceptance
 
 | Scenario | Required result |
@@ -41,3 +50,5 @@ The converter stops at the first input, mapping, or persistence error. If a tran
 | Malformed line after a committed batch | The diagnostic gives the source line, the CLI reports failure, and the database contains only the previously committed entries, children, and log rows. |
 | A database write fails within a batch | The batch contributes zero data or log rows, and all earlier commits remain intact. |
 | Empty input | Success produces the initialized schema with no entries or batch log rows. |
+| Successful batch with progress enabled | A flushed stderr line reports cumulative raw bytes after the database write. The final update for an unchanged nonempty input reaches 100.0%. |
+| Quiet, empty or failing import | Quiet mode suppresses progress while retaining errors. Empty input emits no progress. A failed batch emits only its diagnostic. |
