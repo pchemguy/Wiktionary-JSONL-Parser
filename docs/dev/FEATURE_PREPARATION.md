@@ -21,3 +21,4 @@ Interactive, one pass, with strict delivery. The user approved all feature check
 - FDOCS-005: The [specification](FEATURE-SPEC.md) at blob c543768ede458db8eaccffc9adcb8896c244b6ab and [review](FEATURE-SPEC-REVIEW-REPORT.md) are ready under the explicit preapproval.
 - FDOCS-006: The [delivery plan](FEATURE-PLAN.md) at blob 10cfeb42948b4b412dad2e6bda0251d62d0950d5 defines one delivery milestone and a final phase review.
 - FDOCS-007: Reuse the [repository layout](layout.md) for importer, CLI, tests and README. The [combined plan and layout review](FEATURE-PLAN-REVIEW-REPORT.md) confirms placement.
+- FDOCS-008: The [task list](FEATURE-TASKS.md) at blob 52816e06441620fc3e51ec97a0dffddbaa966124 selects T-011 and T-012. The [task review](FEATURE-TASKS-REVIEW-REPORT.md) passed.

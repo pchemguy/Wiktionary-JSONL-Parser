@@ -1,7 +1,7 @@
 # Project handoff
 
-Checkpoint — Import progress feature campaign opened.
+Checkpoint — Import progress feature documents prepared.
 
-Feature preparation runs on `design-docs/001_83e7d6a-import-progress`, from `main` at `83e7d6a5052649cc6accb7d23af6e2d3f765620c`, with `main` as integration target. This is a new interactive, single-pass campaign for CLI byte-based progress updates. See the [preparation record](FEATURE_PREPARATION.md), [checklist](FEATURE_DOCS_TASKS.md), and [GitHub milestone](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/6).
+Campaign `001_83e7d6a` starts from [released Phase 1](reports/phases/1/PHASE-REPORT.md) at `83e7d6a5052649cc6accb7d23af6e2d3f765620c`. The preparation branch is `design-docs/001_83e7d6a-import-progress`, with `main` as integration target. All feature checkpoints are approved.
 
-The [feature brief](FEATURE.md) is ready for review. The opening scope stops at this checkpoint. The [Phase 1 report](reports/phases/1/PHASE-REPORT.md#release) records the released baseline.
+The [preparation record](FEATURE_PREPARATION.md), [feature brief](FEATURE.md), [specification](FEATURE-SPEC.md), and [implementation task list](FEATURE-TASKS.md) govern the remaining work. Phase 2 includes T-011 and T-012. Complete package review and publish the preparation integration before activating the implementation branch.
