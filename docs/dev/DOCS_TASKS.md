@@ -7,7 +7,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Inspect all four root destinations: `AI_DISCLOSURE.md`, `SDD-MANAGER.md`, `AGENTS.md` and `SKILL_DISCOVERY_PROTOCOL.md`. Preserve existing files and copy only missing files unchanged from the running package.
     - Establish/reconcile this task list, `DOCS_PREPARATION.md` and `HANDOFF.md` after the applicable pre-write tracking gate. Record original retained/copied filenames, preservation/copy checks, actual provenance default/override basis and setup state and the continuation decision in DOCS_PREPARATION; provenance assets and generated records are outside the four-root-file presence test.
     - Commit initialization files, preparation evidence, HANDOFF and this task checked together; publish/read back before issue closure. Report initialization and stop before document work for mixed initial root-file presence unless explicit applicable preapproval covers continuation. None/all present adds no approval pause.
-- [ ] DOCS-002 — Prepare and accept PROJECT.
+- [x] DOCS-002 — Prepare and accept PROJECT.
     - Depends on DOCS-001 and resolution of any initialization continuation stop.
     - Establish purpose, users, outcomes, intended scope, non-goals and consequential constraints; resolve material assumptions/decisions. Maintain truthful root README disclosure/usage links.
     - Present the proposal for approval or apply scoped preapproval. Commit the accepted document state, DOCS_PREPARATION decision/evidence and this checked task together; publish/read back before issue closure or dependent work.
