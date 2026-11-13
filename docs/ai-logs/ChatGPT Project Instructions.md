@@ -17,7 +17,7 @@ Use `tools/` at the repository root as the default location for project tools, u
 
 ### Project Description
 
-
+Wiktionary JSONL Parser develops a collection of scripts for processing and postprocessing raw preprocessed Wiktionary dumps provided as JSONL archives 
 
 ### Versioning and releases
 
