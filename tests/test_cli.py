@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -56,7 +57,14 @@ def test_missing_default_suffix() -> None:
 
 
 def test_default_batch_size(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    def invoke(input_path: Path, output_path: Path, batch_size: int) -> None:
+    def invoke(
+        input_path: Path,
+        output_path: Path,
+        batch_size: int,
+        *,
+        on_progress: Callable[[int, int], None] | None,
+    ) -> None:
+        assert on_progress is not None
         assert input_path == tmp_path / "in.jsonl"
         assert output_path == tmp_path / "in.sqlite"
         assert batch_size == 25000

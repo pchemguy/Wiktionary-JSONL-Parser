@@ -1,7 +1,7 @@
 # Project handoff
 
-Checkpoint — Import progress feature documents prepared.
+Checkpoint — Import progress delivery milestone complete.
 
-Campaign `001_83e7d6a` starts from [released Phase 1](reports/phases/1/PHASE-REPORT.md) at `83e7d6a5052649cc6accb7d23af6e2d3f765620c`. The preparation branch is `design-docs/001_83e7d6a-import-progress`, with `main` as integration target. All feature checkpoints are approved.
+T-011 delivered byte-based import progress, the library callback, and quiet mode. The working branch is `feature/001_83e7d6a-import-progress`, based on the accepted preparation merge `a27a0a3`, with `main` as the integration target. See the [delivery review](features/001_83e7d6a-import-progress/2.1.md), [accepted specification](FEATURE-SPEC.md), and [checklist](FEATURE-TASKS.md).
 
-The [preparation record](FEATURE_PREPARATION.md), [feature brief](FEATURE.md), [specification](FEATURE-SPEC.md), and [implementation task list](FEATURE-TASKS.md) govern the remaining work. Phase 2 includes T-011 and T-012. Package review passed. Publish the preparation integration before activating the implementation branch.
+Next is T-012, the complete feature review and packaging. All checkpoints and complete implementation are authorized.

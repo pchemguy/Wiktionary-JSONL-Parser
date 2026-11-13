@@ -2,10 +2,11 @@
 
 import json
 import sqlite3
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import closing
 from importlib.resources import files
 from itertools import islice
+from os import fstat
 from pathlib import Path
 from sys import maxsize
 from typing import BinaryIO, NoReturn
@@ -122,14 +123,28 @@ def write_batch(
         raise ImportFailure(f"cannot write batch {batch_id}: {exc}") from exc
 
 
-def import_jsonl(input_path: Path, output_path: Path, batch_size: int) -> None:
-    """Import a local JSONL file into a fresh SQLite database."""
+def import_jsonl(
+    input_path: Path,
+    output_path: Path,
+    batch_size: int,
+    *,
+    on_progress: Callable[[int, int], None] | None = None,
+) -> None:
+    """Import a local JSONL file into a fresh SQLite database.
+
+    After a successful batch, on_progress receives the processed raw bytes and
+    initial input size. The callback runs after the database commit.
+    """
 
     if batch_size < 1:
         raise ImportFailure("batch size must be positive")
 
     try:
         with input_path.open("rb") as source:
+            bytes_total = (
+                fstat(source.fileno()).st_size if on_progress is not None else 0
+            )
+            bytes_processed = 0
             with closing(sqlite3.connect(":memory:")) as probe:
                 require_unicode_collation(probe)
             # Claim the destination exclusively before SQLite opens it.
@@ -151,5 +166,8 @@ def import_jsonl(input_path: Path, output_path: Path, batch_size: int) -> None:
                             ) from exc
                     rows["batch_log"].append((batch_id, len(batch)))
                     write_batch(db, rows, batch_id)
+                    if on_progress is not None:
+                        bytes_processed += sum(map(len, batch))
+                        on_progress(bytes_processed, bytes_total)
     except (OSError, sqlite3.Error) as exc:
         raise ImportFailure(str(exc)) from exc
