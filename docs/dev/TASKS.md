@@ -22,7 +22,7 @@
     - [ ] Milestone 1.3 — Installable CLI
         - [x] T-007 — Build and inspect the Python distributions
             Depends on T-006. Set initial version `0.1.0`, build the wheel and source distribution, and verify package metadata, the CLI entry point, and installation of the exact schema. Run the installed CLI from a separate working directory with SQLiteICUex and compare its database with the source-tree result.
-        - [ ] T-008 — Document installation, usage, and output
+        - [x] T-008 — Document installation, usage, and output
             Depends on T-007. Document how to provide SQLiteICUex, install and invoke the CLI, choose the output path and batch size, query the result, and interpret failures and partial committed output. Check commands and links against the installed behavior.
         - [ ] T-009 — Prepare and verify the release bundle
             Depends on T-007 and T-008. Prepare release notes and document any release helpers under `tools/`. Build the stable-named bundle with both installable distributions and generate `SHA256SUMS`. Verify the complete release asset inventory and checksums. Exercise an invalid versioned asset name and verify its rejection even when it is listed in the expected inventory, then rebuild and check the valid bundle. Complete the milestone review and checks, fix blockers, and record the results in `reports/phases/1/1.3.md` and HANDOFF.
