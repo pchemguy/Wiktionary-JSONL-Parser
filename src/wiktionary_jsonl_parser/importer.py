@@ -10,7 +10,7 @@ from pathlib import Path
 from sys import maxsize
 from typing import BinaryIO, NoReturn
 
-from .mapping import RowsByTable, append_record_rows
+from .mapping import LINKAGES, RowsByTable, append_record_rows
 
 
 class ImportFailure(Exception):
@@ -75,6 +75,19 @@ INSERTS = {
     "entries": (
         "INSERT INTO entries (id, word, lang_code, lang, pos, pos_title, literal_meaning, "
         "etymology_texts, categories, raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
+    **{
+        table: f"INSERT INTO {table} (entry_id, idx, word, sense, sense_index, raw_tags, tags) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)"
+        for table in LINKAGES
+    },
+    "forms": "INSERT INTO forms (entry_id, idx, form, raw_tags, tags) VALUES (?, ?, ?, ?, ?)",
+    "translations": (
+        "INSERT INTO translations (entry_id, idx, word, lang, lang_code, roman, sense, other, "
+        "raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
+    "hyphenations": (
+        "INSERT INTO hyphenations (entry_id, idx, parts, raw_tags, tags) VALUES (?, ?, ?, ?, ?)"
     ),
     "batch_log": "INSERT INTO batch_log (batch_id, line_count) VALUES (?, ?)",
 }

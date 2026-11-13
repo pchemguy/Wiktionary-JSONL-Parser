@@ -13,7 +13,7 @@
         - [x] T-003 — Deliver the entry importer through the CLI
             Depends on T-001 and T-002. Scope covers CLI arguments, destination handling, and the batch transaction with its log row. Verify default and explicit output paths, batch-size defaults and validation, empty input, a short final batch, missing input or collation, existing output protection, CLI status and diagnostics, and atomicity after a decode or write failure. Complete the milestone code review and checks, fix blockers, and record the results in `reports/phases/1/1.1.md` and HANDOFF.
     - [ ] Milestone 1.2 — Complete relational mapping
-        - [ ] T-004 — Map linkage and flat child arrays
+        - [x] T-004 — Map linkage and flat child arrays
             Depends on T-003. Extend the mapper and batch writing to all linkage tables, forms, translations, and hyphenations. Verify one row per array element, exact source indices, copied linkage `sense_index`, duplicates, and missing and explicit values.
         - [ ] T-005 — Map senses, examples, and sounds
             Depends on T-004. Complete the nested and transformed mappings. Verify sense and example keys, `form_of` compaction, preserved offset arrays, the fixed URL key order, and the handling of missing or invalid mapped values.
