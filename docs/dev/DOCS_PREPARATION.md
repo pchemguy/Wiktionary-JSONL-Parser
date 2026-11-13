@@ -14,12 +14,16 @@
 | --- | --- |
 | DOCS-001 | Initialization result below. |
 | DOCS-002 | The user explicitly accepted the revised [PROJECT.md](PROJECT.md) presented at commit `9a710112457cef6168f7ae31e7721a70bfe05c64`, Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. |
-| DOCS-003 | [ARCHITECTURE.md](ARCHITECTURE.md) is proposed at Git blob `d397b51d2c76192b9801662f7b146f9e0fc79548`. The proposal defines source-line batching and a single transaction per batch. Checked against the accepted brief. Human acceptance is pending. |
+| DOCS-003 | [ARCHITECTURE.md](ARCHITECTURE.md) is proposed at Git blob `e4d218d14fce4b9b9f8d6e8f5447dbb5e41c8695`. The revised proposal defines the single-process import flow, SQLiteICUex dependency, and atomic batch persistence. Checked against the accepted brief. Human acceptance is pending. |
 | DOCS-004 through DOCS-009 | Pending. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
 
 The user assigned the SQLite insert mechanism to DECOMPOSITION. Use exactly one `executemany()` call per populated table for each batch, including `batch_log`, with a fixed parameterized `INSERT` for each table and all row values bound. Group rows by table and write parent rows before dependent rows within the same batch transaction.
+
+DECOMPOSITION also defines how the CLI passes the input path, output path, and batch size to the importer. It assigns the importer responsibility for SQLite connection setup and enabling foreign-key enforcement.
+
+SPEC defines the user-facing CLI arguments, the `UTF_CI` check before output creation, the shorter final batch, and the actual source-line count stored in `batch_log`. It also defines which errors stop the import, source-line diagnostics when available, and fresh-import-only retries.
 
 ## Initialization
 

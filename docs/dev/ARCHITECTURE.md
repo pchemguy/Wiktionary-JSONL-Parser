@@ -1,11 +1,5 @@
 # Architecture
 
-The command-line interface passes the input path, output path, and batch size to a single-process importer. The importer checks that SQLiteICUex provides `UTF_CI` before creating the output, then uses one SQLite connection with foreign keys enabled. See the [project brief](PROJECT.md) for the input and output scope.
+The command-line interface invokes a single-process importer for local UTF-8 JSONL. The importer reads source lines in order in configurable batches, then decodes and maps each batch to related SQLite rows. See the [project brief](PROJECT.md) for the import scope.
 
-## Import loop
-
-1. Read up to the configured number of UTF-8 source lines into a batch. Preserve source order and process a shorter final batch at end of input.
-2. Decode the batch and map its records to related SQLite rows.
-3. Write the entire batch in one SQLite transaction, including a `batch_log` row with the actual source-line count.
-
-A read, decode, mapping, or database error stops the import. Roll back any active transaction and report the source line when known. Earlier committed batches remain in the database. A retry starts a fresh import.
+The importer writes through one SQLite connection and requires SQLiteICUex for the `UTF_CI` collation. Each batch and its `batch_log` row commit in one transaction, with referential integrity enforced. If a batch fails, none of its rows are committed and earlier commits remain intact.
