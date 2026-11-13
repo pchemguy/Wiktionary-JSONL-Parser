@@ -52,4 +52,6 @@ Describe the toolkit as a standalone implementation. Keep the schema, data mappi
 
 See [the development documents](docs/dev/HANDOFF.md) for the active design checkpoint and [repository layout](docs/dev/layout.md) for source, test, and documentation placement.
 
+For Linux runtime setup, see [Build Python with SQLiteICUex](docs/linux-sqlite-icuex-setup.md).
+
 Maintain project-specific navigation and validated setup/check commands here as they become established. Do not invent commands, paths, requirements or completion claims.
