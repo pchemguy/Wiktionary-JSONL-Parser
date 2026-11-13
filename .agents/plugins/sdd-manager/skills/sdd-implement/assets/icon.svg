@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SDD Implementation icon">
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#4C6085"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M39 37 64 24l25 13v34L64 84 39 71Z"/><path d="M39 37 64 51l25-14M64 51v33"/></g>
+  <rect x="31" y="87" width="66" height="26" rx="13" fill="#FFFFFF" opacity="0.95"/>
+  <text x="64" y="105" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="700" fill="#4C6085">IM</text>
+</svg>

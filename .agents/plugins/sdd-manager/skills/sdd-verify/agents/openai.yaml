@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Verification"
+  short_description: "Review boundary code, run checks and assess acceptance"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#356A88"
+  default_prompt: "Use $sdd-verify to review milestone/phase implementation code when requested, select and run checks for the requested work boundary, assess acceptance coverage, and return observed evidence, failure classifications, and remaining gaps without changing task status."
+policy:
+  allow_implicit_invocation: true

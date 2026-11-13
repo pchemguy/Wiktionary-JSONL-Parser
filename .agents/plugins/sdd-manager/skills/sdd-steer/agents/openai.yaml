@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Steering"
+  short_description: "Amend implemented scope at human-directed checkpoints"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#85586B"
+  default_prompt: "Use $sdd-steer to assess or implement my focused checkpoint amendment to existing development documents, code, tests, and documentation; verify, commit, and push authorized implementation, explicitly merge into the paused implementation branch, verify and publish the target, then stop without invoking sdd-implement."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SDD Tasks icon">
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#6954A1"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="31" y="24" width="66" height="59" rx="8"/><path d="m40 43 5 5 8-9M60 44h26M40 64h13M60 64h26"/></g>
+  <rect x="31" y="87" width="66" height="26" rx="13" fill="#FFFFFF" opacity="0.95"/>
+  <text x="64" y="105" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="700" fill="#6954A1">SDD</text>
+</svg>

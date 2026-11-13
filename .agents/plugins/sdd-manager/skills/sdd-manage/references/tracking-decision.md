@@ -1,0 +1,39 @@
+# Select optional hosted tracking
+
+At workflow entry, preparation handoff and phase activation, establish tracking selection for the repository and scope from the human's choice or applicable project policy. An enabled project policy satisfies the selection prerequisite; identify it as the basis rather than claiming a new human confirmation. Token/no-choice rows below apply only when neither a choice nor policy selects the mode. Git publication authority and authenticated access remain separate from tracking selection.
+
+| Observed decision / access context | Coordinator action and state |
+| --- | --- |
+| User explicitly requests enabling and maintaining phase labels, milestones and task issues | Treat the request as confirmation for the named repository and scope; do not ask again. Carry **requested/confirmed; projection pending** until the eligible phase objects and associations are verified. Load [phase activation](phase-activation.md) before implementation handoff. |
+| Applicable project policy selects a mode | Apply its actual scope and source, preserving explicit user overrides. Enabled policy means **policy-selected; projection pending** until objects are verified; disabled policy retains local/Git work. Resolve prospective main-preparation policy below before writes. |
+| User supplies a GitHub token for this repository workflow; no tracking choice or policy exists | Recommend **enable** by default. Ask for confirmation of the concrete managed scope before any hosted projection. State **recommended enabled; confirmation pending**. |
+| Confirmation already covers this repository/scope | Carry it forward without another question. Establish eligible phase identity and observed projection separately, then route missing projection/reconciliation to sdd-forge. No objects yet does not mean no tracking request. |
+| Explicit decline covers this scope | Respect it, retain **declined**, and continue local/Git work without repeated offers. A later supplied token alone does not erase the decline. |
+| No supplied token, choice or applicable policy | Offer supported tracking when relevant. Use existing authenticated access for confirmed operations; do not probe for credentials or invent consent to make the offer. |
+| Confirmation pending | Preserve **pending**, not declined or active. Preparation and independent authorized local work can continue; ask before an affected activation decision. Do not silently choose local-only execution at a phase gate requiring that choice. |
+
+The confirmation proposal identifies the established repository, eligible phase label, every milestone/task issue and their associations, and verification-based closure/reopening within the selected lifecycle. Use known accepted hierarchy counts when available; do not invent them before planning. A supplied token alone neither creates objects nor authorizes a new destination. An explicit request to create and maintain these objects is itself confirmation; do not ask the same question again.
+
+Record the actual user decision or policy selection and its source, repository/scope, eligible phase, and observed projection/associations in existing project/handoff evidence. Distinguish requested/confirmed tracking from pending, verified or unknown projection; authenticated access and object existence establish neither the decision nor execution readiness. An agent-authored PLAN statement that tracking is inactive describes performed state, not proof of a user decline. Do not create another state registry.
+
+## Main documentation preparation
+
+Resolve policy before the first preparation write. Preserve an established user choice and existing controlling project instructions. When root AGENTS.md is absent and authorized DOCS-001 will install the bundled [AGENTS template](../../../assets/AGENTS_TEMPLATE.md), apply that template's declared project-level tracking default at selection now, before branch/setup/copy operations. Report the policy source and documentation/implementation scope; do not wait until the file exists to apply its pre-write gate. An explicit decline/local-only choice remains effective when the unchanged template is copied. Existing AGENTS is preserved; if neither it nor a retained choice supplies tracking policy, use the ordinary optional-selection rows. This prospective adoption is limited to that target-project template, not a plugin-wide default or a grant of missing repository/provider authority.
+
+On resume, recover the established selection and real projection/initialization evidence; copying or discovering AGENTS does not reset it or prove earlier projection. A genuinely later policy change uses current reconciliation, without claiming retrospective compliance.
+
+An explicit request to maintain tracking throughout project development covers main preparation; preserve an explicit implementation-only scope or decline. Before any fresh/resumed main-preparation repository modification, use [main preparation](main-preparation.md) and sdd-forge to verify `sdd-docs-main` and its nine preparation issues from the bundled template, without waiting for product PLAN/TASKS. Pending projection blocks those writes unless explicitly overridden. This is separate from implementation [phase activation](phase-activation.md); the table above’s permission for independent preparation while an implementation tracking choice is pending does not waive an enabled preparation gate.
+
+## Feature documentation preparation
+
+An applicable choice/policy for tracking throughout development includes feature preparation unless explicitly narrowed. Resolve its scope before feature writes, without treating the token as selection. Use [feature preparation](feature-preparation.md#establish-preparation-before-writes) and sdd-forge's [feature projection lifecycle](../../sdd-forge/references/github-feature-preparation.md): campaign-specific milestone, nine campaign-qualified FDOCS issues, associations/readback, current-pass closure/reset and published-integration-before-milestone closure. No product PLAN/TASKS or phase label is required for this separate operation. Main-only templates/utilities and sdd-docs-main are not reused for feature objects. Preserve an explicit decline/local-only choice and pending effects through resume; do not ask again for confirmed scope.
+
+## Late confirmation
+
+When confirmed after local execution begins, discover existing eligible-phase objects and reconcile missing identities/associations idempotently. Attach retained commit/check evidence and close only verified tasks/milestones; leave incomplete work open. Do not repeat product tasks, create future-phase objects or rewrite historical reports to imply earlier projection. Apply phase activation, document readiness and backend lifecycle rules to the actual continuation state.
+
+## Recover an omitted requested gate
+
+An initial explicit tracking request discovered after untracked execution is not late user confirmation. Retain the actual request, missed boundary and performed state separately; do not ask the human to enable tracking again or rewrite evidence to imply earlier compliance.
+
+Preserve pending files/index, task identities and verified results. Publish already verified retained commits first. Before further affected implementation edits/tests or phase advancement, route discovery/reconciliation of the existing eligible phase and required predecessor lifecycle through sdd-forge and [phase activation](phase-activation.md). Reuse matched objects, read uncertain effects before retry, attach retained commit/check evidence and close only verified work. Missing or unknown required projection/closure remains a blocker. Do not replay product tasks, reset work, bulk-project future phases or fabricate historical projection. An actual explicit human local-only override records its scope and pending hosted obligations.

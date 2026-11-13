@@ -1,0 +1,51 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "sdd-manager",
+  "version": "0.16.5",
+  "description": "Git-based specification-driven development with central workflow coordination, design, specification, planning, task lists, documentation, TDD, verification, bounded implementation, human-directed steering, feature integration, reporting, and optional GitHub tracking, release packaging and release publication.",
+  "author": {
+    "name": "PChemGuy",
+    "url": "https://github.com/pchemguy"
+  },
+  "homepage": "https://github.com/pchemguy/SDD-Manager",
+  "repository": "https://github.com/pchemguy/SDD-Manager",
+  "keywords": [
+    "specification-driven-development",
+    "skills",
+    "architecture",
+    "planning",
+    "tasks",
+    "tdd",
+    "verification",
+    "recovery",
+    "workflow"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "SDD Manager",
+        "websiteURL": "https://github.com/pchemguy/SDD-Manager",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Interactive",
+          "Read",
+          "Write"
+        ],
+        "shortDescription": "Spec-driven development",
+        "longDescription": "Git-based specification-driven development with central workflow coordination, design, specification, planning, task lists, documentation, TDD, verification, bounded implementation, human-directed steering, feature integration, reporting, and optional GitHub tracking, release packaging and release publication.",
+        "developerName": "PChemGuy",
+        "defaultPrompt": [
+          "Prepare this Git project through design, specification, plan and tasks.",
+          "Resume the interrupted task range, verify, commit and push."
+        ],
+        "brandColor": "#082B59",
+        "brandColorDark": "#00BFA5",
+        "composerIcon": "./assets/icon.svg",
+        "composerIconDark": "./assets/icon.svg",
+        "logo": "./assets/logo.svg",
+        "logoDark": "./assets/logo.svg",
+        "screenshots": []
+      }
+    }
+  }
+}

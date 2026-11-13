@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Report"
+  short_description: "Draft evidence-backed issues, commits, and reports"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#725C92"
+  default_prompt: "Use $sdd-report to draft the requested task issue, task or merge commit message, PR description, completion report, or review/revision campaign artifact from verified project evidence."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Specify Behavior"
+  short_description: "Define and review system contracts and acceptance"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#654C98"
+  default_prompt: "Use $sdd-specify to define or review this project's required behavior, API/data contracts and acceptance, using linked contract artifacts where useful."
+policy:
+  allow_implicit_invocation: true

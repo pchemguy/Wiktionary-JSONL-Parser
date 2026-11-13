@@ -1,0 +1,9 @@
+interface:
+  display_name: "Technical Writing Assistant"
+  short_description: "Review writing; create and assess outlines and maps"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#245E78"
+  default_prompt: "Use $technical-writing-assistant to review, revise, or develop this material, or create and assess its outline or map. Preserve technical meaning and adapt the workflow to the purpose. Clarify the evidence mode when relevant and unclear."
+policy:
+  allow_implicit_invocation: true

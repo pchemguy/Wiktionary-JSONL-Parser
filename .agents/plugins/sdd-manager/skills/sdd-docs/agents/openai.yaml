@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Documentation"
+  short_description: "Maintain docstrings, README, guides, and documentation quality"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#397463"
+  default_prompt: "Use $sdd-docs to review and maintain the selected module and API documentation, README, and guides; report proposed amendments to governing documents to me and defer those decisions."
+policy:
+  allow_implicit_invocation: true

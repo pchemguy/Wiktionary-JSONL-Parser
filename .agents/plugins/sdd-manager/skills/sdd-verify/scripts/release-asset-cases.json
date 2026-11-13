@@ -1,0 +1,6 @@
+{
+  "release_version": "1.2.3",
+  "valid": ["sample", "sample.opaque", "sample2d-windows-x64.zip", "sample2d-x86_64.payload", "SHA256SUMS"],
+  "invalid_markers": ["v7", "version-7", "release-7", "rev7", "r7", "v1.2.3", "1.2.3", "1_2_3", "1-2-3", "0.4.2", "v\uff11.\uff12.\uff13"],
+  "suffixes": ["", ".unfamiliar", ".signature.sha256"]
+}

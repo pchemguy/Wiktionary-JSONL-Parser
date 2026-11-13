@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SDD Specify Behavior icon">
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#654C98"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M44 23h28l15 15v45H44Z"/><path d="M72 23v15h15M53 51h25M53 61h25M53 71h17"/></g>
+  <rect x="31" y="87" width="66" height="26" rx="13" fill="#FFFFFF" opacity="0.95"/>
+  <text x="64" y="105" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="700" fill="#654C98">SDD</text>
+</svg>

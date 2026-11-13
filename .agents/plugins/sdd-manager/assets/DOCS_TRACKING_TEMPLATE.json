@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "kind": "docs-main",
+  "milestones": [
+    {
+      "id": "docs-main",
+      "name": "sdd-docs-main",
+      "kind": "docs-main",
+      "description": "Prepare and accept the main development documents, pass whole-package quality review, and verify their published integration into the default branch. Complete the nine documentation tasks and verify their issue closures before closing this milestone after integration.",
+      "review_task": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "DOCS-001",
+      "name": "Initialize the repository for SDD Manager.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [],
+      "prerequisites": "Main preparation and its tracking scope are selected. Verify this milestone, all nine issues and their associations before target-repository writes; only the coordinator-defined transient projection lock exception applies. Establish eligible Git ownership and preserve controlling instructions.",
+      "scope": "Inspect all four root destinations: AI_DISCLOSURE.md, SDD-MANAGER.md, AGENTS.md and SKILL_DISCOVERY_PROTOCOL.md. Preserve existing files byte for byte and copy only missing files from the running package. Create or reuse task-only docs/dev/DOCS_TASKS.md and the separate docs/dev/DOCS_PREPARATION.md control/evidence record; establish or reconcile docs/dev/HANDOFF.md as checkpoint metadata outside the four-file presence test. Execute/reuse manual AI provenance setup by default without an opt-in question. Unless an explicit human/project opt-out or deferral applies, initialize the two-file scaffold on design-docs/ai-logs from the current default tip, publish its preliminary checkpoint and explicit verified default merge before fresh design-docs/main setup. Provenance assets are outside the four-root-file presence test.",
+      "acceptance": "Record original retained/copied filenames in DOCS_PREPARATION and verify preservation and copied bytes. Publish and verify the initialization files, DOCS_PREPARATION evidence, checked DOCS-001 and HANDOFF in one commit before closing this issue. If some but not all four files existed initially, report the retained/copied files and stop before document work unless explicit applicable preapproval covers continuation. Empty/full initial sets need no additional approval pause. Retain the default or explicit human/project override basis and actual provenance setup state/seed/merge identities in DOCS_PREPARATION. Verify enabled setup before completion; report/recover blockers rather than silently deferring. An unspecified choice is not an opt-out. Explicit opt-out/deferral permits omission; missing transcripts and conversation-URL access never block initialization. A preliminary scaffold commit or merge leaves DOCS-001 and this issue incomplete until normal initialization closes once; existing pre-write and publication gates still apply.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-manage/references/main-preparation.md",
+        "Running SDD Manager package: skills/sdd-manage/references/ai-logs.md"
+      ]
+    },
+    {
+      "id": "DOCS-002",
+      "name": "Prepare and accept PROJECT.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-001"
+      ],
+      "prerequisites": "Initialization completion and issue closure are verified. Any mixed-initialization continuation decision is resolved within its actual preapproval scope.",
+      "scope": "Develop the project brief: purpose, users, intended outcomes, scope, non-goals, consequential constraints, material assumptions and unresolved decisions. Reuse valid existing inputs and facilitate needed exploration. Maintain truthful root README disclosure and SDD Manager usage links with this checkpoint.",
+      "acceptance": "Present the substantive proposal for human first approval unless explicit applicable preapproval covers it. An unapproved proposal leaves DOCS-002 unchecked. Submit the approved PROJECT state, decision recorded in DOCS_PREPARATION and checked DOCS-002 together, retaining unchanged approved bytes when appropriate; push and verify containment before closing this issue or advancing.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-design/references/project-brief.md",
+        "Running SDD Manager package: skills/sdd-manage/references/human-document-review.md"
+      ]
+    },
+    {
+      "id": "DOCS-003",
+      "name": "Prepare and accept ARCHITECTURE.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-002"
+      ],
+      "prerequisites": "The accepted project brief and DOCS-002 publication/issue closure are established. Resolve consequential design decisions within the agreed project scope.",
+      "scope": "Define major system blocks, relationships, dependency direction and consequential structural decisions from the accepted brief. Include necessary focused children without creating additional preparation issues.",
+      "acceptance": "Check consistency with PROJECT, present the architecture for human first approval or apply explicit scoped preapproval, and submit the accepted state with its DOCS_PREPARATION decision/QC evidence and checked DOCS-003 in one commit. Push and verify containment before closing this issue or advancing. Preserve a pending approval on interruption.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-design/SKILL.md",
+        "Running SDD Manager package: skills/sdd-manage/references/human-document-review.md"
+      ]
+    },
+    {
+      "id": "DOCS-004",
+      "name": "Prepare and accept DECOMPOSITION.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-003"
+      ],
+      "prerequisites": "The accepted architecture and DOCS-003 publication/issue closure are established.",
+      "scope": "Define component responsibilities, collaboration, ownership and design-level interface boundaries consistently with ARCHITECTURE. Keep detailed responsibilities cohesive and include necessary focused children. Include explicit external/internal API surfaces, types/signatures and state ownership, plus selected model/API-design artifacts in the decomposition proposal and acceptance.",
+      "acceptance": "Check design consistency, present DECOMPOSITION for human first approval or apply explicit scoped preapproval, and submit the accepted document state with its DOCS_PREPARATION decision/QC evidence and checked DOCS-004 in one commit. Push and verify containment before closing this issue or advancing. The selected optional artifacts share this task's proposal, acceptance, commit and issue; add no preparation task or checkpoint.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-design/SKILL.md",
+        "Running SDD Manager package: skills/sdd-manage/references/human-document-review.md"
+      ]
+    },
+    {
+      "id": "DOCS-005",
+      "name": "Prepare and accept SPEC.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-004"
+      ],
+      "prerequisites": "The accepted design and DOCS-004 publication/issue closure are established.",
+      "scope": "Specify observable behavior, interfaces, data and error contracts, required qualities and acceptance conditions from the accepted design. Include necessary focused specification children and retain required SPEC QC evidence. Include selected detailed contract artifacts and check referenced model/API-design definitions within SPEC QC and acceptance.",
+      "acceptance": "Pass the required SPEC readiness checks and resolve blockers, then obtain human first approval or apply explicit scoped preapproval. Submit the approved SPEC state, QC references/decision in DOCS_PREPARATION and checked DOCS-005 together; push and verify containment before closing this issue or advancing. The selected optional artifacts share this task's proposal, acceptance, commit and issue; add no preparation task or checkpoint.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-specify/SKILL.md",
+        "Running SDD Manager package: skills/sdd-manage/references/document-qc-gates.md"
+      ]
+    },
+    {
+      "id": "DOCS-006",
+      "name": "Prepare and accept PLAN.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-005"
+      ],
+      "prerequisites": "The accepted specification, required SPEC QC and DOCS-005 publication/issue closure are established.",
+      "scope": "Define delivery phases, milestones, dependencies and exit conditions against SPEC. Each phase delivers a bounded useful functionality increment, starting with the simplest reasonable MVP; release or version scope does not make every requested capability part of the first phase. Retain PLAN strategy QC evidence. Plan needed API/model/contract refinement, consumer integration and verification with explicit prerequisites.",
+      "acceptance": "Pass PLAN strategy QC and obtain human first approval or apply explicit scoped preapproval. Submit the approved PLAN state, review references/decision in DOCS_PREPARATION and checked DOCS-006 together; push and verify containment before closing this issue or advancing to layout.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-plan/SKILL.md",
+        "Running SDD Manager package: skills/sdd-manage/references/document-qc-gates.md"
+      ]
+    },
+    {
+      "id": "DOCS-007",
+      "name": "Prepare and accept layout.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-006"
+      ],
+      "prerequisites": "The accepted PLAN, its strategy QC and DOCS-006 publication/issue closure are established.",
+      "scope": "Allocate source, tests, documentation and artifacts to physical paths consistently with the accepted design and PLAN. Review PLAN and layout together and update the PLAN review report. Allocate public headers/exports/entry points, internals, schemas, tests and documentation to physical owners.",
+      "acceptance": "Pass combined PLAN/layout QC, then obtain human first approval or apply explicit scoped preapproval. Submit the approved layout state, updated QC references/decision in DOCS_PREPARATION and checked DOCS-007 together; push and verify containment before closing this issue or advancing.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-plan/SKILL.md",
+        "Running SDD Manager package: skills/sdd-manage/references/document-qc-gates.md"
+      ]
+    },
+    {
+      "id": "DOCS-008",
+      "name": "Prepare and accept TASKS.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-007"
+      ],
+      "prerequisites": "Accepted SPEC, PLAN and layout, their required QC and DOCS-007 publication/issue closure are established.",
+      "scope": "Derive executable implementation tasks, dependencies and required milestone/phase review units from accepted SPEC, PLAN and layout. Check the complete task list, traceability, bounded increments and review dependencies. Do not start implementation or activate implementation-phase objects in this task. Derive bounded work and consumer/contract checks against the selected model, API-design and contract owners.",
+      "acceptance": "Pass task-list QC, obtain human first approval or apply explicit scoped preapproval, and submit the approved TASKS state, QC references/decision in DOCS_PREPARATION and checked DOCS-008 together. Push and verify containment before closing this issue, then apply the selected mode's stop/reset/advance boundary. Completing DOCS-008 alone does not authorize whole-package QC or implementation.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-tasks/SKILL.md",
+        "Running SDD Manager package: skills/sdd-manage/references/document-qc-gates.md"
+      ]
+    },
+    {
+      "id": "DOCS-009",
+      "name": "Pass documentation package QC.",
+      "milestone_id": "docs-main",
+      "role": "documentation",
+      "depends_on": [
+        "DOCS-001",
+        "DOCS-002",
+        "DOCS-003",
+        "DOCS-004",
+        "DOCS-005",
+        "DOCS-006",
+        "DOCS-007",
+        "DOCS-008"
+      ],
+      "prerequisites": "All preceding DOCS tasks are complete and their issue closures are verified. The current document set and required per-document QC/acceptance/publication evidence are available.",
+      "scope": "Review the complete document set, necessary children and QC reports for consistency, traceability, delivery readiness and unresolved blockers. Check task-only DOCS_TASKS, DOCS_PREPARATION control/decision evidence, initialization, orientation and actual human acceptance/publication evidence. Resolve blockers through owning documents and recheck affected readiness and acceptance; retain docs/dev/DOCS-QC-REPORT.md. Include every selected model/API-design/contract artifact and its acceptance/QC evidence in whole-package readiness.",
+      "acceptance": "Publish a passing package report, DOCS_PREPARATION evidence, checked DOCS-009 and refreshed HANDOFF together; verify containment before closing this issue. HANDOFF records later integration/milestone effects as pending confirmation. After this task and issue close, the coordinator explicitly merges documentation into the actual default branch, verifies and publishes the merge, then closes/verifies sdd-docs-main and reaches the final preimplementation checkpoint. Those later operations are milestone completion gates, not prerequisites for completing DOCS-009.",
+      "sources": [
+        "Running SDD Manager package: assets/DOCS_TASKS_TEMPLATE.md",
+        "Running SDD Manager package: assets/DOCS_PREPARATION_TEMPLATE.md",
+        "Running SDD Manager package: skills/sdd-manage/references/main-preparation.md",
+        "Running SDD Manager package: skills/sdd-forge/references/github-docs-preparation.md"
+      ]
+    }
+  ]
+}

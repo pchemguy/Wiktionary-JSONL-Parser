@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Forge"
+  short_description: "Prepare Git highlights and GitHub releases"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#176C68"
+  default_prompt: "Use $sdd-forge for local Git release highlights, incremental note drafts, GitHub tracking, package/workflow preparation, or release operations. Resolve the exact source and baseline, verify the selected outputs, and stop at the requested boundary."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Test-Driven Development"
+  short_description: "Design tests and guide red-green-refactor development"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#865335"
+  default_prompt: "Use $sdd-tdd to define testing strategy, write meaningful behavior tests with independent expectations, and guide the selected task through red-green-refactor while preserving existing code."
+policy:
+  allow_implicit_invocation: true

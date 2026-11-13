@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Workflow Manager"
+  short_description: "Coordinate bounded SDD workflows and human decisions"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#354F8C"
+  default_prompt: "Use $sdd-manage to coordinate this project objective or review/revision campaign, establish inputs and working/target branches, coordinate verified explicit merges and publication for authorized boundaries, and stop at the requested boundary."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Project Orientation"
+  short_description: "Inspect project context, Git, and interrupted task state"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#215B78"
+  default_prompt: "Use $sdd-orient to inspect this project's Git worktree, governing instructions, development documents, and task state before SDD work, identifying completed pending or incomplete work for sdd-implement."
+policy:
+  allow_implicit_invocation: true

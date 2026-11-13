@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Implementation"
+  short_description: "Select and implement bounded task ranges"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#4C6085"
+  default_prompt: "Use $sdd-implement to resolve the requested range, or inspect publication eligibility, push eligible outstanding commits first and execute or resume the selected TASKS or FEATURE-TASKS range, verify and document each task, commit and push its result, pause incomplete main phases or coordinate eligible verified explicit integration and target publication, and stop at the requested checkpoint."
+policy:
+  allow_implicit_invocation: true

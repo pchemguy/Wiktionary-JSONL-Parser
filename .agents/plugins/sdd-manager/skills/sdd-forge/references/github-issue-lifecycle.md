@@ -1,0 +1,29 @@
+# Task issue references and lifecycle
+
+Main documentation preparation uses [its separate lifecycle](github-docs-preparation.md), including pre-write projection without product PLAN/TASKS, first-approval issues and milestone closure after published integration. Feature FDOCS lookup/closure/reset uses [its campaign-scoped preparation lifecycle](github-feature-preparation.md#resolve-feature-preparation-issues), including direct calls: establish the campaign from FEATURE_PREPARATION or the explicit request before resolving a repeated stage ID. DOCS/FDOCS preparation issues do not use the product implementation lifecycle below.
+
+Apply the [backend object lifecycle](../../sdd-conventions/references/backend-object-lifecycle.md); issue completion requires the task result/status commit to be pushed with verified remote containment before closure. Milestone closure is a separate subsequent operation.
+
+## Resolve for implementation
+
+Given a stable task ID, resolve the intended GitHub repository and find the uniquely matching issue using the exact task prefix and `sdd-forge:task-id` marker. Check both open and closed issues and exclude pull requests. Return the repository, task ID, issue number, URL, and state to the invoking workflow. Do not rely on a remembered number, title substring alone, phase label, or milestone association alone. For several tasks, return each mapping independently; stop the affected operation on missing, duplicate, or conflicting matches.
+
+The implementation workflow owns the Git commit. Pass resolved issue references and verified completion status to its commit composer (or **sdd-report** when available), which determines the message format. A commit may reference more than one issue when its verified change genuinely contributes to each. A reference does not itself establish completion. GitHub may close an issue referenced by a closing keyword when the commit reaches the default branch; reconcile verified task closure under the procedure below without waiting for that event.
+
+## Close or reopen
+
+When the project has opted into GitHub task-issue tracking, reconcile issue state after each task completion: close its issue once the task has been fully implemented, its required evidence verified, and its durable commit and completion state in the owning TASKS or FEATURE-TASKS reconciled. The initial request to publish and maintain hosted task issues authorizes this continuing reconciliation; a one-time inspection does not. Check the corresponding task ID, repository, issue association, and issue state immediately before the change. Add a concise evidence comment or report link with task ID, commit SHA, and verification facts if that information is not already available on the issue; use a completed closure reason where supported. If the issue is already closed with matching evidence, do not duplicate comments or state changes. Do not close for a checkbox alone, a partial commit, or a milestone-level promise. If GitHub is unavailable, retain the verified local task state and report hosted reconciliation as pending. Apply the GitHub operational-failure protocol to uncertain closure/comment writes: inspect actual state, reason, and existing evidence before replaying; an unreadable outcome remains unknown.
+
+If later steering invalidates completion, do not silently flip hosted state. Reassess TASKS, any active FEATURE-TASKS, and evidence, then reopen the unique issue if the user has requested hosted reconciliation, stating the new outstanding work and preserving its history. An issue closed on an unmerged working branch represents verified task work there; report its branch and commit explicitly. Default Git integration happens at the completed workflow boundary and is reported separately with its target and merge commit. Do not reopen a verified task merely because target publication is pending. PR creation and merge are separate operations outside this backend's present scope.
+
+No local issue-map file is needed initially. The project-wide stable task ID from the owning list, exact GitHub marker, scoped repository identity, and handoff provide bidirectional lookup. Introduce a checked-in mapping only for a demonstrated offline or cross-host requirement, with ownership and conflict reconciliation specified first; otherwise it would become a second mutable record of GitHub state.
+
+### Optional scripted completion
+
+After the completion/publication gates above, an eligible generated-prefix implementation issue can use the backend's [completion utility](../scripts/forge-close.md), task mode. Carry the exact title/number/phase/milestone and published task/commit/verification/report association into its request. Reuse its managed evidence, validate final identity and completed reason, and retain partial/unknown effects rather than replaying a lost comment. The utility does not decide acceptance, reopen/retire work or replace another valid evidence/client procedure.
+
+## Retired task disposition
+
+An explicitly accepted scope amendment may retire an unfinished managed task. Resolve its stable ID from the amendment and retained owning-list/Git history; verify its exact issue marker and preserve history. Under authorized hosted reconciliation, record the accepted retirement/commit and close an open retired issue with reason `not_planned`, not `completed`; read back state/reason. A removed checkbox alone does not authorize closure. Already completed historical work remains historical completion unless current acceptance is explicitly invalidated. Unknown retirement writes require the same readback-before-replay protocol.
+
+Use GitHub's [issue update documentation](https://docs.github.com/en/rest/issues/issues#update-an-issue) for current state/reason semantics. Retirement is a scope disposition, not verified implementation; milestone closure still requires the accepted remaining tasks and current review/exits/report evidence.

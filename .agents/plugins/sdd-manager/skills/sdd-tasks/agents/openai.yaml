@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Tasks"
+  short_description: "Derive executable task lists and review progress"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#6954A1"
+  default_prompt: "Use $sdd-tasks to derive executable task lists or review task progress."
+policy:
+  allow_implicit_invocation: true

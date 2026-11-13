@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Shared Conventions"
+  short_description: "Apply design, workflow, and token conventions"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#346451"
+  default_prompt: "Apply review/revision campaign identity, retention, and repository token rules when relevant. Use $sdd-conventions to evaluate this design, code change, or Phase → Milestone → Task hierarchy against the relevant conventions."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,9 @@
+interface:
+  display_name: "SDD Plan and Layout"
+  short_description: "Plan delivery phases and physical ownership"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#176C68"
+  default_prompt: "Use $sdd-plan to define this project's delivery strategy and physical layout before deriving tasks."
+policy:
+  allow_implicit_invocation: true
