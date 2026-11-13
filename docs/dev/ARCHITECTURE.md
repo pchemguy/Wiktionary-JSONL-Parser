@@ -4,8 +4,8 @@ The command-line interface passes the input path, output path, and batch size to
 
 ## Import loop
 
-1. Read the UTF-8 input in source order, tracking the source line number. Decode each line, apply the project's field mapping, and insert the entry and its related rows.
-2. At the configured line count or the end of a nonempty final batch, insert a `batch_log` row with the actual batch line count and commit it in the same transaction as the data.
-3. On a read, decode, mapping, or database error, stop and roll back any active batch. Report the source line when known. Previously committed batches remain in the database. A retry starts a fresh import.
+1. Read up to the configured number of UTF-8 source lines into a batch. Preserve source order and process a shorter final batch at end of input.
+2. Decode and map the batch into row lists grouped by table. Assign entry IDs before insertion so each related row can carry its parent key.
+3. Write the entire batch in one SQLite transaction. Call `executemany()` exactly once per table that receives rows, including `batch_log`, which receives one row with the actual source-line count. Insert entries before their dependent rows and senses before examples, then commit.
 
-The loop holds one record's decoded and mapped data at a time. The mapping rules determine which values go into which rows. SQLite assigns entry IDs and enforces relationships between rows.
+A read, decode, mapping, or database error stops the import. Roll back any active transaction and report the source line when known. Earlier committed batches remain in the database. A retry starts a fresh import.
