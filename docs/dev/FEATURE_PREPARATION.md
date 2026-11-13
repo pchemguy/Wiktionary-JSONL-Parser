@@ -14,4 +14,4 @@ Interactive, one pass, with strict delivery. Scope is feature campaign opening a
 
 - User direction establishes the progress unit and reporting point. The proposal counts the actual raw bytes read and processed for each completed batch and reports them after the batch write returns. The input file size supplies the denominator.
 - Proposed CLI defaults for the brief review are one flushed progress line per batch on stderr and `--no-progress` to suppress updates.
-- FDOCS-001 is complete. FDOCS-002 owns the first brief review. Later preparation stages await that checkpoint.
+- FDOCS-001 is complete and [issue #20](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/20) was verified closed. FDOCS-002 presents [the feature brief](FEATURE.md), blob `24f4d40a1512fc472034f802b5e0ca8e8442e1e1`, for review. The proposal matches the directed unit and reporting point and preserves the existing import and failure contract. Acceptance remains pending.
