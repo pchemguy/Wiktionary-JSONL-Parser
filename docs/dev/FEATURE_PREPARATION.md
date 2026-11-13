@@ -18,3 +18,4 @@ Interactive, one pass, with strict delivery. The user approved all feature check
 - FDOCS-002: Accepted FEATURE blob 24f4d40a1512fc472034f802b5e0ca8e8442e1e1 under the user’s explicit approval.
 - FDOCS-003: The single-process pipeline and existing CLI-to-importer boundary apply. Progress observes the completion of an existing batch write and does not introduce another component or connection.
 - FDOCS-004: The [decomposition delta](FEATURE_DECOMPOSITION.md) at blob 3a0c33938666ccc3335cdd88cc0180fdc90c5e2c defines importer measurement and CLI presentation.
+- FDOCS-005: The [specification](FEATURE-SPEC.md) at blob c543768ede458db8eaccffc9adcb8896c244b6ab and [review](FEATURE-SPEC-REVIEW-REPORT.md) are ready under the explicit preapproval.
