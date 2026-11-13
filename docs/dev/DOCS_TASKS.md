@@ -19,7 +19,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Depends on DOCS-003.
     - Define component responsibilities, explicit external/internal API surfaces, types/signatures, collaboration and state ownership consistently with ARCHITECTURE. Include selected model/API-design artifacts in this task's proposal and acceptance.
     - Check consistency, obtain approval or apply scoped preapproval, and commit the accepted state, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
-- [ ] DOCS-005 — Prepare and accept SPEC.
+- [x] DOCS-005 — Prepare and accept SPEC.
     - Depends on DOCS-004.
     - Specify observable behavior, precise API/data/error contracts, required qualities and acceptance from the accepted design. Include selected contract artifacts and assess their referenced models/API design in this task's QC and acceptance.
     - Pass required SPEC QC and approval/preapproval. Commit the accepted state, QC report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
