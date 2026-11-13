@@ -89,6 +89,18 @@ INSERTS = {
     "hyphenations": (
         "INSERT INTO hyphenations (entry_id, idx, parts, raw_tags, tags) VALUES (?, ?, ?, ?, ?)"
     ),
+    "senses": (
+        "INSERT INTO senses (entry_id, idx, glosses, form_of, categories, topics, raw_tags, tags) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
+    "examples": (
+        "INSERT INTO examples (sense_entry_id, sense_idx, idx, text, translation, ref, "
+        "bold_text_offsets, bold_translation_offsets) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
+    "sounds": (
+        "INSERT INTO sounds (entry_id, idx, audio, ipa, rhymes, homophones, urls, raw_tags, tags) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
     "batch_log": "INSERT INTO batch_log (batch_id, line_count) VALUES (?, ?)",
 }
 

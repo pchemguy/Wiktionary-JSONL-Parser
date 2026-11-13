@@ -102,7 +102,7 @@ def append_record_rows(
         )
     )
 
-    for key in (*LINKAGES, "forms", "translations", "hyphenations"):
+    for key in (*LINKAGES, "forms", "translations", "hyphenations", "sounds"):
         if key not in record:
             continue
         try:
@@ -112,6 +112,13 @@ def append_record_rows(
                 )
         except ValueError as exc:
             raise ValueError(f"{key}: {exc}") from exc
+
+    if "senses" in record:
+        try:
+            for idx, sense in array_items(record["senses"]):
+                append_sense_rows(sense, entry_id, idx, rows_by_table)
+        except ValueError as exc:
+            raise ValueError(f"senses: {exc}") from exc
 
 
 def flat_child_values(table: str, item: dict[str, object]) -> Row:
@@ -127,6 +134,71 @@ def flat_child_values(table: str, item: dict[str, object]) -> Row:
             text(item, "other"),
             *tags(item),
         )
+    if table == "sounds":
+        return (
+            text(item, "audio"),
+            text(item, "ipa"),
+            text(item, "rhymes"),
+            retained_array(item, "homophones"),
+            sound_urls(item),
+            *tags(item),
+        )
     if table == "hyphenations":
         return (retained_array(item, "parts"), *tags(item))
     return (text(item, "word"), text(item, "sense"), sense_index(item), *tags(item))
+
+
+def sound_urls(item: dict[str, object]) -> str | None:
+    urls = {
+        key: text(item, key)
+        for key in ("flac_url", "mp3_url", "oga_url", "ogg_url", "opus_url", "wav_url")
+        if key in item
+    }
+    return json_text(urls, "urls") if urls else None
+
+
+def form_of(sense: dict[str, object]) -> str | None:
+    if "form_of" not in sense:
+        return None
+    try:
+        words = [
+            text(form, "word", required=True)
+            for _, form in array_items(sense["form_of"])
+        ]
+        return json_text(words, "form_of")
+    except ValueError as exc:
+        raise ValueError(f"form_of: {exc}") from exc
+
+
+def append_sense_rows(
+    sense: dict[str, object], entry_id: int, sense_idx: int, rows_by_table: RowsByTable
+) -> None:
+    rows_by_table["senses"].append(
+        (
+            entry_id,
+            sense_idx,
+            retained_array(sense, "glosses"),
+            form_of(sense),
+            retained_array(sense, "categories"),
+            retained_array(sense, "topics"),
+            *tags(sense),
+        )
+    )
+    if "examples" not in sense:
+        return
+    try:
+        for idx, example in array_items(sense["examples"]):
+            rows_by_table["examples"].append(
+                (
+                    entry_id,
+                    sense_idx,
+                    idx,
+                    text(example, "text", required=True),
+                    text(example, "translation"),
+                    text(example, "ref"),
+                    retained_array(example, "bold_text_offsets"),
+                    retained_array(example, "bold_translation_offsets"),
+                )
+            )
+    except ValueError as exc:
+        raise ValueError(f"sense {sense_idx} examples: {exc}") from exc

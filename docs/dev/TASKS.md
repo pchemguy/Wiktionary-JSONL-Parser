@@ -15,7 +15,7 @@
     - [ ] Milestone 1.2 — Complete relational mapping
         - [x] T-004 — Map linkage and flat child arrays
             Depends on T-003. Extend the mapper and batch writing to all linkage tables, forms, translations, and hyphenations. Verify one row per array element, exact source indices, copied linkage `sense_index`, duplicates, and missing and explicit values.
-        - [ ] T-005 — Map senses, examples, and sounds
+        - [x] T-005 — Map senses, examples, and sounds
             Depends on T-004. Complete the nested and transformed mappings. Verify sense and example keys, `form_of` compaction, preserved offset arrays, the fixed URL key order, and the handling of missing or invalid mapped values.
         - [ ] T-006 — Verify the full mapping and batch failure boundary
             Depends on T-005. Use a fixture covering every data table and compare database values with the mapping contract. Verify one parameterized `executemany()` per populated table, parent ordering, zero foreign-key violations, and rollback after mapping, child insert, and log insert failures. Confirm the committed prefix remains queryable. Complete the milestone code review and checks, fix blockers, and record the results in `reports/phases/1/1.2.md` and HANDOFF.
