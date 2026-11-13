@@ -1,6 +1,6 @@
 # Plan review report
 
-**Gate result — Ready for PLAN review.** The delivery strategy covers the accepted specification and design. Physical ownership is assessed with the layout proposal.
+**Gate result — Ready for layout review.** The accepted plan and proposed layout cover the specification and design. Task derivation follows layout acceptance.
 
 | Reviewed or governing file | Git blob |
 | --- | --- |
@@ -24,3 +24,9 @@
 One coherent delivery phase contains three delivery milestones and one dedicated phase review milestone. The entry-only CLI milestone tests the complete data path and the highest integration risk before the full relational mapping is added. Each following milestone adds a verifiable result. The phase has a single public delivery outcome, the installable complete converter.
 
 The review checked milestone identities and dependencies, coverage of the nine specification acceptance scenarios, internal links, and the release naming and runtime verification conditions. These are planning checks. The native SQLiteICUex runtime and built distributions are verified during delivery.
+
+## Revision 1 — Layout review
+
+Reviewed [layout.md](layout.md) at Git blob `dfba18b39239f550fda0ae480380b5c67c2167d4` against the accepted plan at Git blob `62360836fb102ea7f05cf497c2cdb415a1a8557c` and the governing files above. The CLI placement matches the existing Python entry point. Import and mapping ownership match DECOMPOSITION. The schema has a canonical contract and a separate runtime package location. Test and fixture locations support the entry import, full mapping, database failure cases, and installation checks. Release utilities are placed under `tools/`.
+
+Checked ownership coverage, Markdown links, and compatibility with the three delivery milestones and the phase review. No placement findings remain. Runtime files, packages, and tests are planned deliverables.
