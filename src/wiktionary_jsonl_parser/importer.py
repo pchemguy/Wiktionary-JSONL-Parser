@@ -3,9 +3,14 @@
 import json
 import sqlite3
 from collections.abc import Iterator
+from contextlib import closing
 from importlib.resources import files
 from itertools import islice
+from pathlib import Path
+from sys import maxsize
 from typing import BinaryIO, NoReturn
+
+from .mapping import RowsByTable, append_record_rows
 
 
 class ImportFailure(Exception):
@@ -43,7 +48,7 @@ def initialize_database(db: sqlite3.Connection) -> None:
 def read_batches(source: BinaryIO, batch_size: int) -> Iterator[list[bytes]]:
     """Read complete physical lines using LF framing."""
 
-    while batch := list(islice(source, batch_size)):
+    while batch := list(islice(source, min(batch_size, maxsize))):
         yield batch
 
 
@@ -64,3 +69,62 @@ def decode_record(raw: bytes, line_number: int) -> dict[str, object]:
     if not isinstance(data, dict):
         raise ImportFailure("expected a JSON object", line_number)
     return data
+
+
+INSERTS = {
+    "entries": (
+        "INSERT INTO entries (id, word, lang_code, lang, pos, pos_title, literal_meaning, "
+        "etymology_texts, categories, raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ),
+    "batch_log": "INSERT INTO batch_log (batch_id, line_count) VALUES (?, ?)",
+}
+
+
+def write_batch(
+    db: sqlite3.Connection, rows_by_table: RowsByTable, batch_id: int
+) -> None:
+    """Commit one batch atomically, including its log row."""
+
+    try:
+        db.execute("BEGIN")
+        for table, sql in INSERTS.items():
+            if rows_by_table[table]:
+                db.executemany(sql, rows_by_table[table])
+        db.commit()
+    except sqlite3.Error as exc:
+        if db.in_transaction:
+            db.rollback()
+        raise ImportFailure(f"cannot write batch {batch_id}: {exc}") from exc
+
+
+def import_jsonl(input_path: Path, output_path: Path, batch_size: int) -> None:
+    """Import a local JSONL file into a fresh SQLite database."""
+
+    if batch_size < 1:
+        raise ImportFailure("batch size must be positive")
+
+    try:
+        with input_path.open("rb") as source:
+            with closing(sqlite3.connect(":memory:")) as probe:
+                require_unicode_collation(probe)
+            # Claim the destination exclusively before SQLite opens it.
+            with output_path.open("xb"):
+                pass
+            with closing(sqlite3.connect(output_path)) as db:
+                initialize_database(db)
+                line_number = 0
+                for batch_id, batch in enumerate(read_batches(source, batch_size), 1):
+                    rows: RowsByTable = {table: [] for table in INSERTS}
+                    for raw in batch:
+                        line_number += 1
+                        record = decode_record(raw, line_number)
+                        try:
+                            append_record_rows(record, line_number, rows)
+                        except ValueError as exc:
+                            raise ImportFailure(
+                                f"invalid mapped value: {exc}", line_number
+                            ) from exc
+                    rows["batch_log"].append((batch_id, len(batch)))
+                    write_batch(db, rows, batch_id)
+    except (OSError, sqlite3.Error) as exc:
+        raise ImportFailure(str(exc)) from exc

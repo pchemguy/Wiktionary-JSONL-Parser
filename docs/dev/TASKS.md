@@ -5,12 +5,12 @@
 ## Phase 1 — JSONL-to-SQLite converter
 
 - [ ] Phase 1 — JSONL-to-SQLite converter
-    - [ ] Milestone 1.1 — Entry import
+    - [x] Milestone 1.1 — Entry import
         - [x] T-001 — Package the schema and establish the SQLite runtime check
             Scope covers the package schema, the importer's SQLite setup, and focused tests. Load the packaged DDL from any working directory. Check SQLiteICUex's `UTF_CI` before creating output and enable foreign keys before batch writes. Verify exact schema bytes, all 21 tables, and failure before output creation when the collation is unavailable.
         - [x] T-002 — Decode source batches and map entry rows
             Scope covers the reader, root-entry mapper, and focused tests. Implement UTF-8 framing, batch sizing, source-line reporting, JSON decoding, entry IDs in source order, and all root-field mappings. Verify BOM, LF and CRLF, an unterminated final line, repeated property names, malformed and non-object records, bare nonfinite constants, duplicates, and explicit nulls and empty values.
-        - [ ] T-003 — Deliver the entry importer through the CLI
+        - [x] T-003 — Deliver the entry importer through the CLI
             Depends on T-001 and T-002. Scope covers CLI arguments, destination handling, and the batch transaction with its log row. Verify default and explicit output paths, batch-size defaults and validation, empty input, a short final batch, missing input or collation, existing output protection, CLI status and diagnostics, and atomicity after a decode or write failure. Complete the milestone code review and checks, fix blockers, and record the results in `reports/phases/1/1.1.md` and HANDOFF.
     - [ ] Milestone 1.2 — Complete relational mapping
         - [ ] T-004 — Map linkage and flat child arrays

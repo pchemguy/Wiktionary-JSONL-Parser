@@ -1,28 +1,11 @@
 # Project handoff
 
-Checkpoint — Main documentation preparation, implementation checkpoint.
+Checkpoint — Phase 1 milestone 1.1, entry import.
 
-Outcome — The preparation milestone and nine issues were verified. The manual provenance template is integrated into the default branch. The four root guidance files were present and preserved. GitHub verified DOCS-001 closed as completed. The user accepted the revised project brief. GitHub verified DOCS-002 closed as completed. The user accepted the architecture and decomposition. GitHub verified DOCS-003 and DOCS-004 closed as completed. The user directed continuation to planning, and GitHub verified DOCS-005 closed as completed. The user accepted PLAN, and GitHub verified DOCS-006 closed as completed. The user accepted the layout, and GitHub verified DOCS-007 closed as completed.
+T-001 through T-003 implement and verify the entry importer. See the [milestone evidence](reports/phases/1/1.1.md), [owning checklist](TASKS.md), [specification](SPEC.md), [plan](PLAN.md), and [accepted preparation](DOCS-QC-REPORT.md).
 
-## Workflow and sources
+The user authorized the full accepted Phase 1 range, T-001 through T-010, default branch integration and the initial release. [GitHub tracking](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestones) is enabled.
 
-- Main documentation preparation, interactive mode, one pass.
-- See the [accepted brief](PROJECT.md), [accepted architecture](ARCHITECTURE.md), [accepted decomposition](DECOMPOSITION.md), [accepted SPEC](SPEC.md), [accepted PLAN](PLAN.md), [accepted layout](layout.md), [accepted TASKS](TASKS.md), [package review](DOCS-QC-REPORT.md), [preparation record](DOCS_PREPARATION.md), and [documentation tasks](DOCS_TASKS.md).
-- The initial converter imports local, extracted Kaikki Russian Wiktionary JSONL into SQLite in configurable source-line batches.
+Working branch — `phase/1-jsonl-to-sqlite-converter`. Creation parent and integration target — `main`. Branch-off commit — `9fad5f27465d1ec4db61d264ba2fa38781924a5b`.
 
-## Scope and human decisions
-
-- Prepare the main design documents for the Russian Wiktionary converter.
-- Pause for the implementation range after the documentation merge and milestone closure.
-- The repository policy enables GitHub tracking through [milestone #1](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/1).
-
-## Branches and return
-
-- Documentation branch — `design-docs/main`.
-- Default branch — `main`.
-- Creation parent and integration target — `main`.
-- Branch-off commit — `c0bff86d0c13a611c930e18a040d23b42d5141e7`.
-
-## Pending work and next action
-
-Verify that this merge is published on `main`, then close `sdd-docs-main`. Select an implementation range before activating Phase 1.
+Next eligible task is T-004 after milestone issue closure. Use the [Linux SQLiteICUex setup](../linux-sqlite-icuex-setup.md) for verification.
