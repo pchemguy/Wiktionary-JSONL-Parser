@@ -27,7 +27,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Depends on DOCS-005 and required SPEC QC.
     - Define bounded useful delivery phases, milestones, dependencies and exits against SPEC, starting with the simplest reasonable MVP. Include needed API/model/contract refinement, consumer integration and verification prerequisites.
     - Pass PLAN strategy QC and approval/preapproval. Commit the accepted state, review report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or layout work.
-- [ ] DOCS-007 — Prepare and accept layout.
+- [x] DOCS-007 — Prepare and accept layout.
     - Depends on DOCS-006 and PLAN strategy QC.
     - Allocate public API headers/exports/entry points, internal source, schemas, tests, documentation and artifacts to physical owners consistently with design and PLAN; review PLAN/layout together and update the PLAN review report.
     - Pass combined QC and approval/preapproval. Commit the accepted state, updated review report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.

@@ -6,7 +6,7 @@
 - Current scope — Main development documents for the single-process Russian Wiktionary JSONL-to-SQLite converter.
 - Approval basis — Each applicable document checkpoint requires explicit acceptance. No checkpoint has been preapproved.
 - Tracking and publication — Repository policy enables GitHub preparation tracking. [Milestone #1](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/1) and all nine DOCS issues were verified before branch creation.
-- Next boundary — Review the layout proposal before TASKS.
+- Next boundary — Prepare the TASKS proposal after verifying DOCS-007 closure.
 
 ## Decisions and document evidence
 
@@ -18,7 +18,7 @@
 | DOCS-004 | The user accepted the revised [DECOMPOSITION.md](DECOMPOSITION.md) at commit `ea1493b0def01d461746bf4a260819231dd592c6`, Git blob `ada9ca6234f02d034784d8c331b71c88c0c39da8`. |
 | DOCS-005 | The user directed continuation after reviewing [SPEC.md](SPEC.md) at commit `455361a5910dcea7ef6a1b537359e50d85f8595a`. Accepted set: SPEC blob `5c3cb1dfc33ba20ca5e2a16604c72f0d73f6caf9`, [mapping](spec/mapping.md) blob `f832e2eb0ab308acac1594c6ae6093057a2778b7`, [schema](spec/schema.sql) blob `d5c3253c85eb3f4434c1d6edfe92934badeb89aa`. The [review report](SPEC-REVIEW-REPORT.md) records conformance evidence. |
 | DOCS-006 | The user approved [PLAN.md](PLAN.md) at commit `43cb5e843c5b874355b162f54c26d6554e08dd73`, Git blob `62360836fb102ea7f05cf497c2cdb415a1a8557c`. The [plan review report](PLAN-REVIEW-REPORT.md) records conformance. |
-| DOCS-007 | [layout.md](layout.md) is proposed at Git blob `dfba18b39239f550fda0ae480380b5c67c2167d4`. The [combined plan and layout report](PLAN-REVIEW-REPORT.md#revision-1--layout-review) records the placement checks. Human acceptance is pending. |
+| DOCS-007 | The user approved [layout.md](layout.md) at commit `88d975f6801a90a4ad509e1e44735c442a94de69`, Git blob `dfba18b39239f550fda0ae480380b5c67c2167d4`. The [plan and layout review](PLAN-REVIEW-REPORT.md#revision-1--layout-review) records conformance. |
 | DOCS-008 through DOCS-009 | Pending. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
@@ -38,4 +38,4 @@ SPEC defines the user-facing CLI arguments, including the optional output path a
 
 ## Pending transitions
 
-GitHub verified [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3) closed as completed. GitHub verified [DOCS-004](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/4) closed as completed. GitHub verified [DOCS-005](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/5) closed as completed. GitHub verified [DOCS-006](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/6) closed as completed. Await acceptance of [layout](layout.md). [DOCS-007](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/7) remains open.
+GitHub verified [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3) closed as completed. GitHub verified [DOCS-004](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/4) closed as completed. GitHub verified [DOCS-005](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/5) closed as completed. GitHub verified [DOCS-006](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/6) closed as completed. Verify publication of the layout acceptance commit, then close [DOCS-007](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/7).
