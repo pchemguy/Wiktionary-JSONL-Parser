@@ -135,7 +135,7 @@ def import_jsonl(input_path: Path, output_path: Path, batch_size: int) -> None:
             # Claim the destination exclusively before SQLite opens it.
             with output_path.open("xb"):
                 pass
-            with closing(sqlite3.connect(output_path)) as db:
+            with closing(sqlite3.connect(output_path.absolute())) as db:
                 initialize_database(db)
                 line_number = 0
                 for batch_id, batch in enumerate(read_batches(source, batch_size), 1):

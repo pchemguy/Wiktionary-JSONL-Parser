@@ -4,7 +4,7 @@
 
 ## Phase 1 — JSONL-to-SQLite converter
 
-- [ ] Phase 1 — JSONL-to-SQLite converter
+- [x] Phase 1 — JSONL-to-SQLite converter
     - [x] Milestone 1.1 — Entry import
         - [x] T-001 — Package the schema and establish the SQLite runtime check
             Scope covers the package schema, the importer's SQLite setup, and focused tests. Load the packaged DDL from any working directory. Check SQLiteICUex's `UTF_CI` before creating output and enable foreign keys before batch writes. Verify exact schema bytes, all 21 tables, and failure before output creation when the collation is unavailable.
@@ -26,8 +26,8 @@
             Depends on T-007. Document how to provide SQLiteICUex, install and invoke the CLI, choose the output path and batch size, query the result, and interpret failures and partial committed output. Check commands and links against the installed behavior.
         - [x] T-009 — Prepare and verify the release bundle
             Depends on T-007 and T-008. Prepare release notes and document any release helpers under `tools/`. Build the stable-named bundle with both installable distributions and generate `SHA256SUMS`. Verify the complete release asset inventory and checksums. Exercise an invalid versioned asset name and verify its rejection even when it is listed in the expected inventory, then rebuild and check the valid bundle. Complete the milestone review and checks, fix blockers, and record the results in `reports/phases/1/1.3.md` and HANDOFF.
-    - [ ] Milestone 1.4 — Phase review
-        - [ ] T-010 — Review, test, and report Phase 1
+    - [x] Milestone 1.4 — Phase review
+        - [x] T-010 — Review, test, and report Phase 1
             Requires completion of milestones 1.1 through 1.3 and their hosted closures when tracking is active. Review the integrated implementation and rerun the acceptance, regression, and package checks. Run the CLI with SQLiteICUex on a representative local sample and record elapsed time, committed lines, and batch size. Fix blocking findings. Record phase evidence in `reports/phases/1/PHASE-REPORT.md`, aggregate remaining findings in `reports/IMPLEMENTATION-REPORT.md`, and update HANDOFF.
 
 After Phase 1 completes, verify integration into the default branch and publish the release from that revision. Rebuild and check the release inventory against the verified source, then verify the hosted download and checksum. See [PLAN](PLAN.md).

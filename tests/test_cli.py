@@ -125,3 +125,17 @@ def test_write_failure_keeps_only_committed_batches(
     dest = source.with_suffix(".sqlite")
     assert rows(dest, "SELECT word FROM entries ORDER BY id") == [("a",), ("b",)]
     assert rows(dest, "SELECT * FROM batch_log") == [(1, 2)]
+
+
+def test_literal_memory_filename_is_on_disk(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import os
+
+    if os.name == "nt":
+        pytest.skip("Windows filenames cannot contain a colon")
+    monkeypatch.chdir(tmp_path)
+    source = Path("input.jsonl")
+    write_entries(source, "on disk")
+    assert main([str(source), "--output", ":memory:"]) == 0
+    assert rows(tmp_path / ":memory:", "SELECT word FROM entries") == [("on disk",)]

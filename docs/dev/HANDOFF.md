@@ -1,11 +1,9 @@
 # Project handoff
 
-Checkpoint — Phase 1 milestone 1.3, installable CLI.
+Checkpoint — Phase 1 implementation and review complete.
 
-T-001 through T-009 deliver the converter, tested distributions, usage documentation, and a checked release bundle. See the [milestone evidence](reports/phases/1/1.3.md), [owning checklist](TASKS.md), [specification](SPEC.md), [plan](PLAN.md), and [accepted preparation](DOCS-QC-REPORT.md).
+The full authorized range T-001 through T-010 has passed the [phase verification](reports/phases/1/PHASE-REPORT.md). See the [owning checklist](TASKS.md), [specification](SPEC.md), [plan](PLAN.md), and [implementation report](reports/IMPLEMENTATION-REPORT.md).
 
-The user authorized the full accepted Phase 1 range, T-001 through T-010, default branch integration and the initial release. [GitHub tracking](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestones) is enabled.
+Working branch — `phase/1-jsonl-to-sqlite-converter`. Creation parent and integration target — `main`. Branch-off commit — `9fad5f27465d1ec4db61d264ba2fa38781924a5b`. [GitHub tracking](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestones) is enabled.
 
-Working branch — `phase/1-jsonl-to-sqlite-converter`. Creation parent and integration target — `main`. Branch-off commit — `9fad5f27465d1ec4db61d264ba2fa38781924a5b`.
-
-Next eligible task is T-010 after milestone issue closure. Use the [Linux SQLiteICUex setup](../linux-sqlite-icuex-setup.md) for verification.
+The user authorized Phase 1 integration and publication of the initial release. After closing the final tracking milestone, merge the verified phase into `main`, rebuild from the merged revision, and publish and verify [release v0.1.0](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/tag/v0.1.0).
