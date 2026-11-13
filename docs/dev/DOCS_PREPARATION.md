@@ -6,7 +6,7 @@
 - Current scope — Main development documents for the single-process Russian Wiktionary JSONL-to-SQLite converter.
 - Approval basis — Each applicable document checkpoint requires explicit acceptance. No checkpoint has been preapproved.
 - Tracking and publication — Repository policy enables GitHub preparation tracking. [Milestone #1](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/1) and all nine DOCS issues were verified before branch creation.
-- Next boundary — Review the ARCHITECTURE proposal before DECOMPOSITION.
+- Next boundary — Prepare the DECOMPOSITION proposal after verifying DOCS-003 closure.
 
 ## Decisions and document evidence
 
@@ -14,7 +14,7 @@
 | --- | --- |
 | DOCS-001 | Initialization result below. |
 | DOCS-002 | The user explicitly accepted the revised [PROJECT.md](PROJECT.md) presented at commit `9a710112457cef6168f7ae31e7721a70bfe05c64`, Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. |
-| DOCS-003 | [ARCHITECTURE.md](ARCHITECTURE.md) is proposed at Git blob `e4d218d14fce4b9b9f8d6e8f5447dbb5e41c8695`. The revised proposal defines the single-process import flow, SQLiteICUex dependency, and atomic batch persistence. Checked against the accepted brief. Human acceptance is pending. |
+| DOCS-003 | The user accepted the published [ARCHITECTURE.md](ARCHITECTURE.md) at commit `526d7051f8de7c050cf9b2fee8c4fe0635bb0738`, Git blob `e4d218d14fce4b9b9f8d6e8f5447dbb5e41c8695`. |
 | DOCS-004 through DOCS-009 | Pending. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
@@ -34,4 +34,4 @@ SPEC defines the user-facing CLI arguments, the `UTF_CI` check before output cre
 
 ## Pending transitions
 
-GitHub verified [DOCS-002](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/2) closed as completed. Await acceptance of the [ARCHITECTURE proposal](ARCHITECTURE.md). [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3) remains open.
+Verify publication of this acceptance commit, then close [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3).

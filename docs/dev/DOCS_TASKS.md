@@ -11,7 +11,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Depends on DOCS-001 and resolution of any initialization continuation stop.
     - Establish purpose, users, outcomes, intended scope, non-goals and consequential constraints; resolve material assumptions/decisions. Maintain truthful root README disclosure/usage links.
     - Present the proposal for approval or apply scoped preapproval. Commit the accepted document state, DOCS_PREPARATION decision/evidence and this checked task together; publish/read back before issue closure or dependent work.
-- [ ] DOCS-003 — Prepare and accept ARCHITECTURE.
+- [x] DOCS-003 — Prepare and accept ARCHITECTURE.
     - Depends on DOCS-002.
     - Define major blocks, relationships, dependency direction and consequential structural decisions from the accepted brief, including necessary children.
     - Check consistency, obtain approval or apply scoped preapproval, and commit the accepted state, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.

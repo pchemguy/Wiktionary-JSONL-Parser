@@ -1,19 +1,19 @@
 # Project handoff
 
-Checkpoint — Main documentation preparation, ARCHITECTURE proposal.
+Checkpoint — Main documentation preparation, ARCHITECTURE accepted.
 
-Outcome — The preparation milestone and nine issues were verified. The manual provenance template is integrated into the default branch. The four root guidance files were present and preserved. GitHub verified DOCS-001 closed as completed. The user accepted the revised project brief. GitHub verified DOCS-002 closed as completed.
+Outcome — The preparation milestone and nine issues were verified. The manual provenance template is integrated into the default branch. The four root guidance files were present and preserved. GitHub verified DOCS-001 closed as completed. The user accepted the revised project brief. GitHub verified DOCS-002 closed as completed. The user accepted the architecture.
 
 ## Workflow and sources
 
 - Main documentation preparation, interactive mode, one pass.
-- See the [accepted brief](PROJECT.md), [architecture proposal](ARCHITECTURE.md), [preparation record](DOCS_PREPARATION.md), and [documentation tasks](DOCS_TASKS.md).
+- See the [accepted brief](PROJECT.md), [accepted architecture](ARCHITECTURE.md), [preparation record](DOCS_PREPARATION.md), and [documentation tasks](DOCS_TASKS.md).
 - The initial converter imports local, extracted Kaikki Russian Wiktionary JSONL into SQLite in configurable source-line batches.
 
 ## Scope and human decisions
 
 - Prepare the main design documents for the Russian Wiktionary converter.
-- Await acceptance of the architecture proposal before decomposition. Further document approvals remain active.
+- Present the decomposition proposal for acceptance before SPEC. Further document approvals remain active.
 - The repository policy enables GitHub tracking through [milestone #1](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/1).
 
 ## Branches and return
@@ -24,4 +24,4 @@ Outcome — The preparation milestone and nine issues were verified. The manual 
 
 ## Pending work and next action
 
-Await architecture acceptance. Recover subsequent decisions from the preparation record and Git history.
+Verify DOCS-003 closure, then prepare DECOMPOSITION.
