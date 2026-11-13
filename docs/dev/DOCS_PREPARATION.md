@@ -14,7 +14,7 @@
 | --- | --- |
 | DOCS-001 | Initialization result below. |
 | DOCS-002 | The user explicitly accepted the revised [PROJECT.md](PROJECT.md) presented at commit `9a710112457cef6168f7ae31e7721a70bfe05c64`, Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. |
-| DOCS-003 | [ARCHITECTURE.md](ARCHITECTURE.md) is proposed at Git blob `79c9a29f924fd5faec1ffbf0a48867ad6f443ae1`. Boundary, dependency, and brief-alignment checks were completed. Human acceptance is pending. |
+| DOCS-003 | [ARCHITECTURE.md](ARCHITECTURE.md) is proposed at Git blob `cfdf36c3c86bf63821c571c7813af3ea5333fe5a`. Revised at the user's direction to use one sequential import loop with configurable SQLite transactions. Checked against the accepted brief. Human acceptance is pending. |
 | DOCS-004 through DOCS-009 | Pending. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
