@@ -35,7 +35,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Depends on DOCS-007 and required SPEC/PLAN/layout QC.
     - Derive executable tasks, dependencies and milestone/phase review units against selected API/model/contract owners, including consumer checks and documentation; check traceability and bounded increments.
     - Pass task-list QC and approval/preapproval. Commit the accepted TASKS state, QC report, DOCS_PREPARATION evidence and this checked task together, including HANDOFF at an autodoc stop; publish/read back before issue closure and the selected stop/reset/advance boundary. Do not start implementation or activate implementation-phase objects.
-- [ ] DOCS-009 — Pass documentation package QC.
+- [x] DOCS-009 — Pass documentation package QC.
     - Depends on DOCS-001–008 completion and verified issue closures when tracking is enabled; the selected mode/range must permit package QC.
     - Review the complete document set, selected model/API-design/contract artifacts and QC reports, DOCS_TASKS, DOCS_PREPARATION and initialization/orientation/acceptance/publication evidence for consistency, traceability, readiness and blockers. Resolve/recheck blockers through their owners.
     - Commit passing `DOCS-QC-REPORT.md`, DOCS_PREPARATION evidence, refreshed HANDOFF and this checked task together; publish/read back before final QC issue closure. Keep later integration/milestone effects pending until verified; task completion alone does not complete preparation.

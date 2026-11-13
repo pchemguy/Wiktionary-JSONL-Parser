@@ -6,7 +6,7 @@
 - Current scope — Main development documents for the single-process Russian Wiktionary JSONL-to-SQLite converter.
 - Approval basis — Each applicable document checkpoint requires explicit acceptance. No checkpoint has been preapproved.
 - Tracking and publication — Repository policy enables GitHub preparation tracking. [Milestone #1](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/1) and all nine DOCS issues were verified before branch creation.
-- Next boundary — Run whole-package QC after verifying DOCS-008 closure.
+- Next boundary — Publish the reviewed documentation to the default branch, verify it there, and close the preparation milestone before the implementation checkpoint.
 
 ## Decisions and document evidence
 
@@ -20,7 +20,7 @@
 | DOCS-006 | The user approved [PLAN.md](PLAN.md) at commit `43cb5e843c5b874355b162f54c26d6554e08dd73`, Git blob `62360836fb102ea7f05cf497c2cdb415a1a8557c`. The [plan review report](PLAN-REVIEW-REPORT.md) records conformance. |
 | DOCS-007 | The user approved [layout.md](layout.md) at commit `88d975f6801a90a4ad509e1e44735c442a94de69`, Git blob `dfba18b39239f550fda0ae480380b5c67c2167d4`. The [plan and layout review](PLAN-REVIEW-REPORT.md#revision-1--layout-review) records conformance. |
 | DOCS-008 | The user approved [TASKS.md](TASKS.md) at commit `283a815527825b250cedea34571c64baf648e67b`, Git blob `d9c2e7d0c1384e621e5e78509121d0aafeff6c38`. The [task-list review report](TASKS-REVIEW-REPORT.md) records conformance. |
-| DOCS-009 | Pending. |
+| DOCS-009 | The [documentation package review](DOCS-QC-REPORT.md) passed against the approved documents. Publish the review evidence and verify default-branch integration. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
 
@@ -39,4 +39,4 @@ SPEC defines the user-facing CLI arguments, including the optional output path a
 
 ## Pending transitions
 
-GitHub verified [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3) closed as completed. GitHub verified [DOCS-004](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/4) closed as completed. GitHub verified [DOCS-005](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/5) closed as completed. GitHub verified [DOCS-006](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/6) closed as completed. GitHub verified [DOCS-007](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/7) closed as completed. Verify publication of the TASKS acceptance commit, then close [DOCS-008](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/8).
+GitHub verified [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3) closed as completed. GitHub verified [DOCS-004](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/4) closed as completed. GitHub verified [DOCS-005](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/5) closed as completed. GitHub verified [DOCS-006](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/6) closed as completed. GitHub verified [DOCS-007](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/7) closed as completed. GitHub verified [DOCS-008](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/8) closed as completed. Verify publication of the package review, close [DOCS-009](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/9), integrate the documentation into `main`, and close the preparation milestone after publication.
