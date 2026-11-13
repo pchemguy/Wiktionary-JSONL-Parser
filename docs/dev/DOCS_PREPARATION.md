@@ -13,9 +13,9 @@
 | Task | Evidence |
 | --- | --- |
 | DOCS-001 | Initialization result below. |
-| DOCS-002 | The user explicitly accepted the revised [PROJECT.md](PROJECT.md) presented at commit `9a710112457cef6168f7ae31e7721a70bfe05c64`, Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. |
+| DOCS-002 | The user explicitly accepted the revised [PROJECT.md](PROJECT.md) presented at commit `9a710112457cef6168f7ae31e7721a70bfe05c64`, Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. The user subsequently set the output path default. [PROJECT.md](PROJECT.md) records that amendment at Git blob `9d149b1b3a88531e58204f8cdb3c0ce445902590`. |
 | DOCS-003 | The user accepted the published [ARCHITECTURE.md](ARCHITECTURE.md) at commit `526d7051f8de7c050cf9b2fee8c4fe0635bb0738`, Git blob `e4d218d14fce4b9b9f8d6e8f5447dbb5e41c8695`. |
-| DOCS-004 | [DECOMPOSITION.md](DECOMPOSITION.md) is proposed at Git blob `0a5f1e0884da3603fbd32a9f39ecb28f0b0cb0d5`. Checked against the accepted architecture and verified the write pattern with a small in-memory SQLite probe. Human acceptance is pending. |
+| DOCS-004 | [DECOMPOSITION.md](DECOMPOSITION.md) is proposed at Git blob `ada9ca6234f02d034784d8c331b71c88c0c39da8`. Checked against the accepted architecture. The write pattern was verified with a small in-memory SQLite probe. The revised proposal assigns output path resolution to the CLI. Human acceptance is pending. |
 | DOCS-005 through DOCS-009 | Pending. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
@@ -24,7 +24,7 @@ The user assigned the SQLite insert mechanism to DECOMPOSITION. Use exactly one 
 
 DECOMPOSITION also defines how the CLI passes the input path, output path, and batch size to the importer. It assigns the importer responsibility for SQLite connection setup and enabling foreign-key enforcement.
 
-SPEC defines the user-facing CLI arguments, the `UTF_CI` check before output creation, the shorter final batch, and the actual source-line count stored in `batch_log`. It also defines which errors stop the import, source-line diagnostics when available, and fresh-import-only retries.
+SPEC defines the user-facing CLI arguments, including the optional output path and its default, the `UTF_CI` check before output creation, the shorter final batch, and the actual source-line count stored in `batch_log`. It also defines which errors stop the import, source-line diagnostics when available, and fresh-import-only retries.
 
 ## Initialization
 

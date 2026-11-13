@@ -20,7 +20,7 @@ SQLiteICUex is required to provide the `UTF_CI` collation. The importer checks t
 
 The mapper stores `etymology_texts` and ignores `etymology_links`. The presence of `etymology_links` does not cause a record to be rejected.
 
-The proposed command-line interface takes explicit input and output paths and refuses an existing output file by default.
+The command-line interface requires an input path and accepts an optional output path. By default, it creates the database next to the input file, replacing the final `.jsonl` suffix with `.sqlite`. The converter refuses an existing output file by default.
 
 ## Reference inputs
 

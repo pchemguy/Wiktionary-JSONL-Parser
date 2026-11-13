@@ -4,7 +4,7 @@ The [architecture](ARCHITECTURE.md) uses one import loop and one output SQLite c
 
 | Unit | Interface and ownership |
 | --- | --- |
-| CLI | `main(argv: Sequence[str] \| None = None) -> int` parses the command line and calls `import_jsonl` with the input path, output path, and batch size in source lines. It renders the result or diagnostic and returns the process status. |
+| CLI | `main(argv: Sequence[str] \| None = None) -> int` parses the command line, resolves the output path, and calls `import_jsonl` with the input path, resolved output path, and batch size in source lines. When the output path is omitted, the CLI keeps the input directory and replaces the final `.jsonl` suffix with `.sqlite`. It renders the result or diagnostic and returns the process status. |
 | Importer | `import_jsonl(input_path: Path, output_path: Path, batch_size: int) -> None` runs a fresh import. It owns the input file, source line counter, entry ID allocation, current batch, and the output connection. It completes normally on success and raises an import error on failure, carrying the source line when known. |
 | Mapping function | `append_record_rows(record, entry_id, rows_by_table) -> None` maps one decoded JSON object into the current batch. It appends parameter tuples in the fixed column order for each table. Its inputs are the decoded object, the assigned integer entry ID, and the batch's row lists. |
 
