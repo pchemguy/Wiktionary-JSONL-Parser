@@ -6,7 +6,7 @@
 - Current scope — Main development documents for the single-process Russian Wiktionary JSONL-to-SQLite converter.
 - Approval basis — Each applicable document checkpoint requires explicit acceptance. No checkpoint has been preapproved.
 - Tracking and publication — Repository policy enables GitHub preparation tracking. [Milestone #1](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/1) and all nine DOCS issues were verified before branch creation.
-- Next boundary — Prepare the ARCHITECTURE proposal after verifying DOCS-002 closure.
+- Next boundary — Review the ARCHITECTURE proposal before DECOMPOSITION.
 
 ## Decisions and document evidence
 
@@ -14,7 +14,8 @@
 | --- | --- |
 | DOCS-001 | Initialization result below. |
 | DOCS-002 | The user explicitly accepted the revised [PROJECT.md](PROJECT.md) presented at commit `9a710112457cef6168f7ae31e7721a70bfe05c64`, Git blob `92964f9d3047b14f6a5b94659342cf72d491fdf1`. |
-| DOCS-003 through DOCS-009 | Pending. |
+| DOCS-003 | [ARCHITECTURE.md](ARCHITECTURE.md) is proposed at Git blob `79c9a29f924fd5faec1ffbf0a48867ad6f443ae1`. Boundary, dependency, and brief-alignment checks were completed. Human acceptance is pending. |
+| DOCS-004 through DOCS-009 | Pending. |
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
 
@@ -27,4 +28,4 @@ The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one proc
 
 ## Pending transitions
 
-Verify publication of the acceptance commit, then close and verify [DOCS-002](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/2).
+GitHub verified [DOCS-002](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/2) closed as completed. Await acceptance of the [ARCHITECTURE proposal](ARCHITECTURE.md). [DOCS-003](https://github.com/pchemguy/Wiktionary-JSONL-Parser/issues/3) remains open.
