@@ -1,13 +1,13 @@
 # Project handoff
 
-Checkpoint — Main documentation initialization.
+Checkpoint — Main documentation preparation, PROJECT proposal.
 
-Outcome — The preparation milestone and nine issues were verified. The manual provenance template is integrated into the default branch. The four root guidance files were present and preserved.
+Outcome — The preparation milestone and nine issues were verified. The manual provenance template is integrated into the default branch. The four root guidance files were present and preserved. GitHub verified DOCS-001 closed as completed.
 
 ## Workflow and sources
 
 - Main documentation preparation, interactive mode, one pass.
-- See [preparation record](DOCS_PREPARATION.md) and [documentation tasks](DOCS_TASKS.md).
+- See the [proposed brief](PROJECT.md), [preparation record](DOCS_PREPARATION.md), and [documentation tasks](DOCS_TASKS.md).
 - The initial converter targets a local, extracted Kaikki Russian Wiktionary JSONL file and adopts the legacy SQL schema and mapping.
 
 ## Scope and human decisions
@@ -24,4 +24,4 @@ Outcome — The preparation milestone and nine issues were verified. The manual 
 
 ## Pending work and next action
 
-Verify initialization publication, close DOCS-001, then prepare the project brief. Recover subsequent work from the preparation record and Git history.
+Await review of the PROJECT proposal and its proposed handling of interrupted imports, SQLite collation, and unmapped fields. Recover subsequent decisions from the preparation record and Git history.
