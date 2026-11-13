@@ -20,7 +20,7 @@
         - [x] T-006 — Verify the full mapping and batch failure boundary
             Depends on T-005. Use a fixture covering every data table and compare database values with the mapping contract. Verify one parameterized `executemany()` per populated table, parent ordering, zero foreign-key violations, and rollback after mapping, child insert, and log insert failures. Confirm the committed prefix remains queryable. Complete the milestone code review and checks, fix blockers, and record the results in `reports/phases/1/1.2.md` and HANDOFF.
     - [ ] Milestone 1.3 — Installable CLI
-        - [ ] T-007 — Build and inspect the Python distributions
+        - [x] T-007 — Build and inspect the Python distributions
             Depends on T-006. Set initial version `0.1.0`, build the wheel and source distribution, and verify package metadata, the CLI entry point, and installation of the exact schema. Run the installed CLI from a separate working directory with SQLiteICUex and compare its database with the source-tree result.
         - [ ] T-008 — Document installation, usage, and output
             Depends on T-007. Document how to provide SQLiteICUex, install and invoke the CLI, choose the output path and batch size, query the result, and interpret failures and partial committed output. Check commands and links against the installed behavior.

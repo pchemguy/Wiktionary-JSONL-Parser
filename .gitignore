@@ -5,3 +5,7 @@
 # Python bytecode
 __pycache__/
 *.py[cod]
+
+# Distribution and release output
+/dist/
+/release/
