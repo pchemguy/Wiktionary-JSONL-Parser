@@ -31,7 +31,7 @@ Preparation tasks and completion checkboxes only. Control, decisions and evidenc
     - Depends on DOCS-006 and PLAN strategy QC.
     - Allocate public API headers/exports/entry points, internal source, schemas, tests, documentation and artifacts to physical owners consistently with design and PLAN; review PLAN/layout together and update the PLAN review report.
     - Pass combined QC and approval/preapproval. Commit the accepted state, updated review report, DOCS_PREPARATION evidence and this checked task together; publish/read back before issue closure or dependent work.
-- [ ] DOCS-008 — Prepare and accept TASKS.
+- [x] DOCS-008 — Prepare and accept TASKS.
     - Depends on DOCS-007 and required SPEC/PLAN/layout QC.
     - Derive executable tasks, dependencies and milestone/phase review units against selected API/model/contract owners, including consumer checks and documentation; check traceability and bounded increments.
     - Pass task-list QC and approval/preapproval. Commit the accepted TASKS state, QC report, DOCS_PREPARATION evidence and this checked task together, including HANDOFF at an autodoc stop; publish/read back before issue closure and the selected stop/reset/advance boundary. Do not start implementation or activate implementation-phase objects.
