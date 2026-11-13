@@ -19,6 +19,8 @@
 
 The converter reads local, extracted Kaikki Russian Wiktionary JSONL in one process with configurable source-line batches. The user confirmed that imports start fresh, SQLiteICUex is required, and the mapper ignores `etymology_links`.
 
+The user requires parameterized SQL for inserts. Capture this in DECOMPOSITION as fixed `INSERT` statements for each table, with row values passed as bound parameters to `executemany()`.
+
 ## Initialization
 
 - Retained root files — `AI_DISCLOSURE.md`, `SDD-MANAGER.md`, `AGENTS.md`, and `SKILL_DISCOVERY_PROTOCOL.md`. Blob identities matched the baseline for all four. No root files needed copying.
