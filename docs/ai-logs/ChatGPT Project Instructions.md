@@ -1,5 +1,6 @@
 ---
-project: https://chatgpt.com/g/g-p-6af586bb7bc08191bcee9b798c23b57e
+project: https://chatgpt.com/g/g-p-6af71f94b84c8191a0cdd714e7ff16b0
+url: https://chatgpt.com/c/6af71f9b-3910-83ed-ac12-14f7f70fc929
 ---
 > [!IMPORTANT]
 >

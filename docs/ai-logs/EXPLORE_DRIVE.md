@@ -1,6 +1,7 @@
 ---
 urls:
-    - "<CONVERSATION_URL>"
+  - <CONVERSATION_URL>
+project: https://chatgpt.com/g/g-p-6af71f94b84c8191a0cdd714e7ff16b0
 ---
 
 > [!IMPORTANT]
