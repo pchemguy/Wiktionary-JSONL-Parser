@@ -48,4 +48,8 @@ Follow `sdd-manage`'s preparation and phase-activation workflows for required tr
 
 ## Project guidance
 
+Describe the toolkit as a standalone implementation. Keep the schema, data mapping, and implementation documentation self-contained within this repository.
+
+See [the development documents](docs/dev/HANDOFF.md) for the active design checkpoint and [repository layout](docs/dev/layout.md) for source, test, and documentation placement.
+
 Maintain project-specific navigation and validated setup/check commands here as they become established. Do not invent commands, paths, requirements or completion claims.
