@@ -22,3 +22,9 @@ The source-tree CLI imported 106,545,145 input bytes and committed 29,921 lines 
 ## Open findings
 
 No blocking implementation findings against the accepted contracts. The unfiltered dump prefix demonstrates a source-format limitation. Redirect-only records need a product decision about storage or omission before the importer can accept them directly. The README describes the entry-only input requirement. No full-dump timing was measured.
+
+## Release
+
+The phase was merged into `main` at `c9f5c7e1dd10e24973a57c37a67613dbf8b55aac`. The annotated `v0.1.0` tag resolves to that commit. GitHub reported [v0.1.0](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/tag/v0.1.0) as the latest stable release, and all ten task issues and four phase milestones were verified closed.
+
+The two hosted assets passed the inventory check. The tag-specific downloads and latest-release URLs returned the same bytes as the locally verified assets. The downloaded ZIP passed `sha256sum -c SHA256SUMS`. Its SHA-256 is `d3c6b0863aa279a079a5c5a233ad4ea5aad3e487be2cacf4a542b8919cb4e5b3`.
