@@ -25,7 +25,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
     - Depends on FDOCS-005 and required publication/issue closure.
     - Define bounded changed outcomes, phases/milestones/dependencies and exits, including needed API/model/contract refinement and consumer verification, in FEATURE-PLAN where needed, or assess sufficient existing strategy. Complete strategy QC/report and applicable approval without imposing a new MVP.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-007 — Assess and accept feature layout.
+- [x] FDOCS-007 — Assess and accept feature layout.
     - Depends on FDOCS-006 and required publication/issue closure.
     - Define affected public API, implementation, schema, test and documentation placement using the established layout/feature-plan owner, or assess sufficient existing allocation. Complete combined PLAN/layout QC and applicable approval; no FEATURE-LAYOUT filename is introduced.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
