@@ -2,8 +2,8 @@ from io import BytesIO
 
 import pytest
 
-from wiktionary_jsonl_parser.importer import ImportFailure, decode_record, read_batches
-from wiktionary_jsonl_parser.mapping import append_record_rows
+from wiktionary_jsonl_parser.editions.ru.mapping import append_record_rows
+from wiktionary_jsonl_parser.worker import ImportFailure, decode_record, read_batches
 
 
 def test_framing_order_and_mapping() -> None:

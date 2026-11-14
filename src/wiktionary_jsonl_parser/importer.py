@@ -1,173 +1,341 @@
 """Read Wiktionary JSONL and persist source-line batches to SQLite."""
 
 import json
+import os
 import sqlite3
-from collections.abc import Callable, Iterator
+import subprocess
+import sys
+from collections.abc import Callable
 from contextlib import closing
-from importlib.resources import files
-from itertools import islice
-from os import fstat
+from dataclasses import dataclass
 from pathlib import Path
-from sys import maxsize
-from typing import BinaryIO, NoReturn
+from queue import Queue
+from tempfile import TemporaryDirectory
+from threading import Thread
+from typing import BinaryIO
 
-from .mapping import LINKAGES, RowsByTable, append_record_rows
+from .editions import get_edition
+from .merge import merge_databases
+from .worker import (
+    ID_RANGE,
+    Chunk,
+    ImportFailure as ImportFailure,
+    Progress,
+    require_unicode_collation,
+)
 
 
-class ImportFailure(Exception):
-    """An import error, optionally tied to a one-based input line."""
+@dataclass(frozen=True)
+class RunPlan:
+    worker_count: int
+    merge_group_size: int
 
-    def __init__(self, message: str, line_number: int | None = None) -> None:
-        self.line_number = line_number
-        super().__init__(
-            message if line_number is None else f"line {line_number}: {message}"
+
+def plan_run(
+    cpu_count: int | None,
+    attachment_limit: int,
+    on_warning: Callable[[str], None] | None,
+    confirm_single_worker: Callable[[], bool] | None,
+) -> RunPlan:
+    """Choose the process count and number of attachments per merge group."""
+
+    requested = cpu_count - 2 if cpu_count is not None and cpu_count > 2 else 1
+    if requested > attachment_limit and on_warning is not None:
+        on_warning(
+            f"requested {requested} workers but SQLite allows {attachment_limit} attachments"
         )
+    if requested == 1:
+        return RunPlan(1, 0)
+    if attachment_limit == 0:
+        if confirm_single_worker is not None and confirm_single_worker() is True:
+            return RunPlan(1, 0)
+        raise ImportFailure("running with one worker requires explicit confirmation")
+    if attachment_limit < requested and 2 * requested < 3 * attachment_limit:
+        return RunPlan(attachment_limit, attachment_limit)
+    return RunPlan(requested, min(requested, attachment_limit))
 
 
-def schema_sql() -> str:
-    """Read the packaged SQLite DDL."""
-
-    return files(__package__).joinpath("schema.sql").read_text(encoding="utf-8")
-
-
-def require_unicode_collation(db: sqlite3.Connection) -> None:
-    """Check that the connection provides the required SQLiteICUex collation."""
-
-    try:
-        db.execute("SELECT 'a' = 'A' COLLATE UTF_CI").fetchone()
-    except sqlite3.OperationalError as exc:
-        raise ImportFailure("SQLiteICUex must provide the UTF_CI collation") from exc
+def probe_attachment_limit() -> int:
+    with closing(sqlite3.connect(":memory:")) as probe:
+        require_unicode_collation(probe)
+        return probe.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)
 
 
-def initialize_database(db: sqlite3.Connection) -> None:
-    """Enable foreign keys and create the converter schema."""
+def partition_source(source: BinaryIO, size: int, worker_count: int) -> list[Chunk]:
+    """Divide the source at LF boundaries, reading each crossed line at most once."""
 
-    db.execute("PRAGMA foreign_keys = ON")
-    db.executescript(schema_sql())
-
-
-def read_batches(source: BinaryIO, batch_size: int) -> Iterator[list[bytes]]:
-    """Read complete physical lines using LF framing."""
-
-    while batch := list(islice(source, min(batch_size, maxsize))):
-        yield batch
-
-
-def reject_json_constant(token: str) -> NoReturn:
-    raise ValueError(f"invalid JSON constant {token}")
-
-
-def decode_record(raw: bytes, line_number: int) -> dict[str, object]:
-    """Decode one JSON object and attach its source line to decoding errors."""
-
-    try:
-        data = json.loads(
-            raw.decode("utf-8-sig" if line_number == 1 else "utf-8"),
-            parse_constant=reject_json_constant,
-        )
-    except (ValueError, RecursionError) as exc:
-        raise ImportFailure(f"invalid JSONL record: {exc}", line_number) from exc
-    if not isinstance(data, dict):
-        raise ImportFailure("expected a JSON object", line_number)
-    return data
+    chunks = []
+    start = 0
+    for index in range(worker_count - 1):
+        stop = size * (index + 1) // worker_count
+        if stop <= start:
+            stop = start
+        else:
+            source.seek(stop - 1)
+            if source.read(1) != b"\n":
+                while stop < size:
+                    block = source.readline(min(size - stop, 128 * 1024))
+                    if not block:
+                        raise ImportFailure(
+                            "input ended while finding a chunk boundary"
+                        )
+                    stop += len(block)
+                    if block.endswith(b"\n"):
+                        break
+        chunks.append(Chunk(index, start, stop))
+        start = stop
+    chunks.append(Chunk(worker_count - 1, start, size))
+    return chunks
 
 
-INSERTS = {
-    "entries": (
-        "INSERT INTO entries (id, word, lang_code, lang, pos, pos_title, literal_meaning, "
-        "etymology_texts, categories, raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    **{
-        table: f"INSERT INTO {table} (entry_id, idx, word, sense, sense_index, raw_tags, tags) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?)"
-        for table in LINKAGES
-    },
-    "forms": "INSERT INTO forms (entry_id, idx, form, raw_tags, tags) VALUES (?, ?, ?, ?, ?)",
-    "translations": (
-        "INSERT INTO translations (entry_id, idx, word, lang, lang_code, roman, sense, other, "
-        "raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "hyphenations": (
-        "INSERT INTO hyphenations (entry_id, idx, parts, raw_tags, tags) VALUES (?, ?, ?, ?, ?)"
-    ),
-    "senses": (
-        "INSERT INTO senses (entry_id, idx, glosses, form_of, categories, topics, raw_tags, tags) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "examples": (
-        "INSERT INTO examples (sense_entry_id, sense_idx, idx, text, translation, ref, "
-        "bold_text_offsets, bold_translation_offsets) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "sounds": (
-        "INSERT INTO sounds (entry_id, idx, audio, ipa, rhymes, homophones, urls, raw_tags, tags) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "batch_log": "INSERT INTO batch_log (batch_id, line_count) VALUES (?, ?)",
-}
+WorkerEvents = Queue[tuple[int, str | int | ImportFailure]]
 
 
-def write_batch(
-    db: sqlite3.Connection, rows_by_table: RowsByTable, batch_id: int
+def drain_worker(
+    index: int, child: subprocess.Popen[str], events: WorkerEvents
 ) -> None:
-    """Commit one batch atomically, including its log row."""
+    """Forward child output while the importing thread handles callbacks."""
 
+    assert child.stdout is not None
     try:
-        db.execute("BEGIN")
-        for table, sql in INSERTS.items():
-            if rows_by_table[table]:
-                db.executemany(sql, rows_by_table[table])
-        db.commit()
-    except sqlite3.Error as exc:
-        if db.in_transaction:
-            db.rollback()
-        raise ImportFailure(f"cannot write batch {batch_id}: {exc}") from exc
+        with child.stdout:
+            for line in child.stdout:
+                events.put((index, line))
+        events.put((index, child.wait()))
+    except Exception as exc:
+        events.put((index, ImportFailure(str(exc), stage="worker", chunk_index=index)))
+
+
+def cancel_workers(
+    children: dict[int, subprocess.Popen[str]], readers: dict[int, Thread]
+) -> None:
+    errors: list[Exception] = []
+    for child in children.values():
+        try:
+            if child.poll() is None:
+                child.terminate()
+        except ProcessLookupError:
+            # The child exited between polling and signalling.
+            pass
+        except OSError as exc:
+            errors.append(exc)
+
+    for index, child in children.items():
+        try:
+            try:
+                child.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                try:
+                    child.kill()
+                except ProcessLookupError:
+                    pass
+                child.wait(timeout=3)
+            reader = readers.get(index)
+            if reader is not None:
+                reader.join()
+            if child.stdout is not None:
+                child.stdout.close()
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            errors.append(exc)
+
+    if errors:
+        raise ExceptionGroup("worker cleanup", errors)
+
+
+def run_workers(
+    source: Path,
+    outputs: list[Path],
+    chunks: list[Chunk],
+    batch_size: int,
+    on_progress: Progress | None,
+    *,
+    edition_id: str,
+) -> None:
+    """Start fresh Python interpreters and reap them before returning."""
+
+    children: dict[int, subprocess.Popen[str]] = {}
+    readers: dict[int, Thread] = {}
+    events: WorkerEvents = Queue()
+    # Give the child the same package root as the importer, independent of cwd.
+    package_root = Path(__file__).resolve().parents[1]
+    command = [
+        sys.executable,
+        "-I",
+        "-c",
+        "import sys; sys.path.insert(0, sys.argv.pop(1)); "
+        "from wiktionary_jsonl_parser.worker import main; raise SystemExit(main())",
+        str(package_root),
+    ]
+    try:
+        for chunk, output in zip(chunks, outputs, strict=True):
+            try:
+                child = subprocess.Popen(
+                    [
+                        *command,
+                        str(source),
+                        str(output),
+                        str(chunk.index),
+                        str(chunk.start),
+                        str(chunk.stop),
+                        str(min(batch_size, ID_RANGE)),
+                        edition_id,
+                        "1" if on_progress is not None else "0",
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    encoding="utf-8",
+                    errors="replace",
+                )
+                children[chunk.index] = child
+                reader = Thread(
+                    target=drain_worker, args=(chunk.index, child, events), daemon=True
+                )
+                reader.start()
+                readers[chunk.index] = reader
+            except (OSError, RuntimeError) as exc:
+                raise ImportFailure(
+                    f"cannot start worker: {exc}",
+                    stage="worker",
+                    chunk_index=chunk.index,
+                ) from exc
+
+        remaining = len(children)
+        diagnostics: dict[int, str] = {}
+        while remaining:
+            index, event = events.get()
+            if isinstance(event, ImportFailure):
+                raise event
+            if isinstance(event, int):
+                if event:
+                    details = diagnostics.get(index)
+                    message = f"exited with status {event}"
+                    if details:
+                        message += f": {details}"
+                    raise ImportFailure(message, stage="worker", chunk_index=index)
+                remaining -= 1
+                continue
+            try:
+                message = json.loads(event)
+            except (ValueError, RecursionError):
+                diagnostics[index] = event.strip()[-1000:]
+                continue
+            match message:
+                case ["progress", int(processed), int(total)]:
+                    if on_progress is not None:
+                        on_progress(index, processed, total)
+                case ["failure", str(detail), line]:
+                    raise ImportFailure(detail, line, stage="worker", chunk_index=index)
+                case _:
+                    diagnostics[index] = event.strip()[-1000:]
+    except BaseException as exc:
+        try:
+            cancel_workers(children, readers)
+        except ExceptionGroup as cleanup:
+            for error in cleanup.exceptions:
+                exc.add_note(f"worker cleanup: {error}")
+        raise
+    else:
+        for reader in readers.values():
+            reader.join()
 
 
 def import_jsonl(
-    input_path: Path,
-    output_path: Path,
-    batch_size: int,
+    input_path: str | Path,
+    output_path: str | Path,
+    batch_size: int = 10_000,
     *,
-    on_progress: Callable[[int, int], None] | None = None,
+    on_warning: Callable[[str], None] | None = None,
+    confirm_single_worker: Callable[[], bool] | None = None,
+    on_progress: Progress | None = None,
 ) -> None:
-    """Import a local JSONL file into a fresh SQLite database.
+    """Import local JSONL through staged worker databases into a new file."""
 
-    After a successful batch, on_progress receives the processed raw bytes and
-    initial input size. The callback runs after the database commit.
-    """
-
-    if batch_size < 1:
-        raise ImportFailure("batch size must be positive")
-
+    if (
+        not isinstance(batch_size, int)
+        or isinstance(batch_size, bool)
+        or batch_size < 1
+    ):
+        raise ImportFailure("batch size must be a positive integer", stage="bootstrap")
+    stage = "bootstrap"
+    staging: TemporaryDirectory[str] | None = None
     try:
-        with input_path.open("rb") as source:
-            bytes_total = (
-                fstat(source.fileno()).st_size if on_progress is not None else 0
+        edition = get_edition("ru")
+        source_path = Path(input_path).absolute()
+        destination = Path(output_path).absolute()
+        with source_path.open("rb") as source:
+            if os.path.lexists(destination):
+                raise FileExistsError(f"output already exists: {destination}")
+            if not destination.parent.is_dir():
+                raise NotADirectoryError(
+                    f"output directory does not exist: {destination.parent}"
+                )
+            destination = destination.parent.resolve(strict=True) / destination.name
+            limit = probe_attachment_limit()
+            plan = plan_run(os.cpu_count(), limit, on_warning, confirm_single_worker)
+            stage = "partition"
+            chunks = partition_source(
+                source, os.fstat(source.fileno()).st_size, plan.worker_count
             )
-            bytes_processed = 0
-            with closing(sqlite3.connect(":memory:")) as probe:
-                require_unicode_collation(probe)
-            # Claim the destination exclusively before SQLite opens it.
-            with output_path.open("xb"):
-                pass
-            with closing(sqlite3.connect(output_path.absolute())) as db:
-                initialize_database(db)
-                line_number = 0
-                for batch_id, batch in enumerate(read_batches(source, batch_size), 1):
-                    rows: RowsByTable = {table: [] for table in INSERTS}
-                    for raw in batch:
-                        line_number += 1
-                        record = decode_record(raw, line_number)
-                        try:
-                            append_record_rows(record, line_number, rows)
-                        except ValueError as exc:
-                            raise ImportFailure(
-                                f"invalid mapped value: {exc}", line_number
-                            ) from exc
-                    rows["batch_log"].append((batch_id, len(batch)))
-                    write_batch(db, rows, batch_id)
-                    if on_progress is not None:
-                        bytes_processed += sum(map(len, batch))
-                        on_progress(bytes_processed, bytes_total)
-    except (OSError, sqlite3.Error) as exc:
-        raise ImportFailure(str(exc)) from exc
+        stage = "staging"
+        staging = TemporaryDirectory(
+            prefix=".wiktionary-import-", dir=destination.parent
+        )
+        root = Path(staging.name)
+        outputs = [root / f"worker-{chunk.index}.sqlite" for chunk in chunks]
+
+        stage = "workers"
+        run_workers(
+            source_path,
+            outputs,
+            chunks,
+            batch_size,
+            on_progress,
+            edition_id=edition.identifier,
+        )
+
+        staged_output = outputs[0]
+        if plan.worker_count > 1:
+            stage = "merge"
+            staged_output = root / "merged.sqlite"
+            merge_databases(
+                outputs, staged_output, plan.merge_group_size, edition=edition
+            )
+
+        stage = "publication"
+        publish_database(staged_output, destination)
+    except BaseException as exc:
+        if staging is not None:
+            try:
+                staging.cleanup()
+            except OSError as cleanup:
+                exc.add_note(f"staging cleanup: {cleanup}")
+        if isinstance(exc, ImportFailure) and exc.stage is not None:
+            raise
+        if isinstance(exc, Exception):
+            failure = ImportFailure(str(exc), stage=stage)
+            for note in getattr(exc, "__notes__", ()):
+                failure.add_note(note)
+            raise failure from exc
+        raise
+    else:
+        assert staging is not None
+        try:
+            staging.cleanup()
+        except OSError as exc:
+            if on_warning is not None:
+                try:
+                    on_warning(
+                        f"database published, but could not remove staging at {staging.name}: {exc}"
+                    )
+                except Exception:
+                    # Once published, a warning handler cannot undo completion.
+                    pass
+
+
+def publish_database(staged: Path, destination: Path) -> None:
+    """Make a closed database visible atomically without replacing a destination."""
+
+    if os.name == "nt":
+        os.rename(staged, destination)
+    else:
+        os.link(staged, destination)

@@ -1,13 +1,14 @@
 import json
-import sqlite3
+import os
 import sys
-from contextlib import closing
 from pathlib import Path
 
 import pytest
 
 from wiktionary_jsonl_parser import importer
 from wiktionary_jsonl_parser.cli import main, report_progress
+
+pytestmark = pytest.mark.usefixtures("single_worker")
 
 
 def entry(word: str) -> bytes:
@@ -26,13 +27,15 @@ def test_raw_counts_after_visible_writes(tmp_path: Path) -> None:
     dest = source.with_suffix(".sqlite")
     updates = []
 
-    def observe(processed: int, total: int) -> None:
-        with closing(sqlite3.connect(dest)) as db:
-            records = db.execute("SELECT sum(line_count) FROM batch_log").fetchone()
-        updates.append((processed, total, records[0]))
+    caller_pid = os.getpid()
+
+    def observe(chunk: int, processed: int, total: int) -> None:
+        assert not dest.exists()
+        assert os.getpid() == caller_pid
+        updates.append((chunk, processed, total))
 
     importer.import_jsonl(source, dest, 2, on_progress=observe)
-    assert updates == [(len(first + second), len(data), 2), (len(data), len(data), 3)]
+    assert updates == [(0, len(first + second), len(data)), (0, len(data), len(data))]
 
 
 def test_cli_progress_and_quiet(
@@ -47,8 +50,8 @@ def test_cli_progress_and_quiet(
     out, err = capsys.readouterr()
     assert out == ""
     assert err.splitlines() == [
-        f"{size * 2}/{size * 3} bytes read and processed (66.6%)",
-        f"{size * 3}/{size * 3} bytes read and processed (100.0%)",
+        f"[chunk 0] {size * 2}/{size * 3} bytes read and processed (66.6%)",
+        f"[chunk 0] {size * 3}/{size * 3} bytes read and processed (100.0%)",
     ]
     assert main([*args, "--output", str(tmp_path / "quiet.db"), "--no-progress"]) == 0
     assert capsys.readouterr() == ("", "")
@@ -63,35 +66,24 @@ def test_empty_import_is_silent(
     assert capsys.readouterr() == ("", "")
 
 
-@pytest.mark.parametrize("failure", ["decode", "mapping", "write"])
+@pytest.mark.parametrize("failure", ["decode", "mapping"])
 def test_failed_batch_emits_only_prior_progress(
     failure: str,
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
-    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     source = tmp_path / "failure.jsonl"
     first = entry("ok") + b"\n"
-    invalid = {"decode": b"invalid", "mapping": b"{}", "write": entry("reject")}
+    invalid = {"decode": b"invalid", "mapping": b"{}"}
     source.write_bytes(first + invalid[failure])
-    if failure == "write":
-        initialize = importer.initialize_database
-
-        def add_trigger(db: sqlite3.Connection) -> None:
-            initialize(db)
-            db.execute("""CREATE TRIGGER reject_log BEFORE INSERT ON batch_log
-                WHEN NEW.batch_id = 2 BEGIN SELECT RAISE(ABORT, 'forced batch failure'); END""")
-
-        monkeypatch.setattr(importer, "initialize_database", add_trigger)
     assert main([str(source), "--batch-size", "1"]) == 1
     lines = capsys.readouterr().err.splitlines()
     assert len(lines) == 2
     assert lines[0].startswith(
-        f"{len(first)}/{source.stat().st_size} bytes read and processed"
+        f"[chunk 0] {len(first)}/{source.stat().st_size} bytes read and processed"
     )
     assert lines[1].startswith("wiktionary-jsonl-parser: ")
-    with closing(sqlite3.connect(source.with_suffix(".sqlite"))) as db:
-        assert db.execute("SELECT * FROM batch_log").fetchall() == [(1, 1)]
+    assert not source.with_suffix(".sqlite").exists()
     assert (
         main(
             [
@@ -132,6 +124,6 @@ def test_progress_output_is_flushed(monkeypatch: pytest.MonkeyPatch) -> None:
 
     stream = Stream()
     monkeypatch.setattr(sys, "stderr", stream)
-    report_progress(9999, 10000)
-    assert stream.text == "9999/10000 bytes read and processed (99.9%)\n"
+    report_progress(2, 9999, 10000)
+    assert stream.text == "[chunk 2] 9999/10000 bytes read and processed (99.9%)\n"
     assert stream.flushed

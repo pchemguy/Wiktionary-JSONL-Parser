@@ -1,0 +1,3 @@
+# Milestone 3.3 — Release candidate review and correction
+
+The [candidate report](candidate.md) pins the 0.3.0 distributions and full-sample output. The [comprehensive review](../../reviews/006_d6dcd3e-phase-3-release/REVIEW-REPORT.md) records the coverage and findings. The [correction report](../../reviews/006_d6dcd3e-phase-3-release/REVISION-REPORT.md) records fixes, a fresh build, Linux test and package checks, and repeated full-size verification. Each corrected sample output matched the prior candidate byte for byte. Windows-native execution remains unverified. T-022 integrates the canonical documents and verifies the phase exit.

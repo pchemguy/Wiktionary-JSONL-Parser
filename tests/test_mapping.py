@@ -1,6 +1,6 @@
 import pytest
 
-from wiktionary_jsonl_parser.mapping import RowsByTable, append_record_rows
+from wiktionary_jsonl_parser.editions.ru.mapping import RowsByTable, append_record_rows
 
 ROOT = {"word": "word", "lang_code": "en", "lang": "English"}
 

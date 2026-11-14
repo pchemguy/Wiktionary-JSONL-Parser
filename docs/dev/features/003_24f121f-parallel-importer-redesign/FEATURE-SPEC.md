@@ -1,6 +1,6 @@
 # Parallel importer specification
 
-Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [feature brief](FEATURE.md) defines the worker policy, the [architecture](FEATURE_ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](FEATURE_DECOMPOSITION.md) defines the components. The [DDL](spec/schema.sql) and [mapping rules](spec/mapping.md) govern the output. The input must remain unchanged throughout the run.
+Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [feature brief](FEATURE.md) defines the worker policy, the [architecture](FEATURE_ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](FEATURE_DECOMPOSITION.md) defines the components. The public CLI and library import the Russian Wiktionary edition. The [DDL](../../spec/schema.sql) and [mapping rules](../../spec/mapping.md) govern its output. The input must remain unchanged throughout the run.
 
 ## Entry points
 
@@ -18,7 +18,7 @@ The library operation is `import_jsonl(input_path, output_path, batch_size=10_00
 | `confirm_single_worker() -> bool` | Invoked only for multiple requested workers and zero attachment capacity. Only an explicit affirmative result authorizes one worker. Without a handler or with unavailable or negative confirmation, fail before launching any worker. |
 | `on_progress(chunk_index: int, processed_bytes: int, chunk_bytes: int) -> None` | When supplied, receives each worker's cumulative bytes after that worker commits a batch. |
 
-Callback failures abort the import before publication. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty. `--no-progress` suppresses progress messages. Diagnostic and confirmation handling still applies.
+An exception from a callback invoked before publication aborts the import. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty. `--no-progress` suppresses progress messages. Diagnostic and confirmation handling still applies.
 
 ## Bootstrap and partitioning
 
@@ -38,13 +38,13 @@ Split the file into ordered half-open byte ranges. Place the nominal boundaries 
 
 ## Worker writes and publication
 
-Use a zero-based chunk index `i` and a one-based chunk-local source line number `n`. Assign `entries.id = 10_000_000 * i + n`. Each chunk supports local line numbers 1 through 10,000,000 inclusive. An attempt to exceed that range or the SQLite integer key range fails the run. Child foreign keys use the final entry ID. Child indices preserve the [mapping rules](spec/mapping.md). Batch IDs use the same chunk offset plus the one-based local batch number. Batch-log line counts record the actual lines committed, including a shorter last batch.
+Use a zero-based chunk index `i` and a one-based chunk-local source line number `n`. Assign `entries.id = 10_000_000 * i + n`. Each chunk supports local line numbers 1 through 10,000,000 inclusive. An attempt to exceed that range or the SQLite integer key range fails the run. Child foreign keys use the final entry ID. Child indices preserve the [mapping rules](../../spec/mapping.md). Batch IDs use the same chunk offset plus the one-based local batch number. Batch-log line counts record the actual lines committed, including a shorter last batch.
 
 Each worker opens its own file handle and SQLite connection. It fully decodes and maps each batch, then uses one transaction and one parameterized `executemany()` per populated table. It writes parent tables before dependents and commits the batch log with the data. Foreign keys are enforced. CLI progress reports `[chunk N] P/T bytes read and processed (X.Y%)` after each successful batch commit. `P` counts original bytes committed by that worker and `T` is the byte length of its range. Round percentages down to one decimal place, reaching 100.0% at that chunk's end. Progress is independent for each chunk. The final destination is ready after successful publication.
 
 Wait for all worker databases to close successfully. For multiple workers, attach each merge group read-only, insert parent tables before dependents with foreign keys enabled, copy IDs directly, and release each group before the next. Use one `INSERT ... SELECT ... UNION ALL ...` per table and group, with an ordinary `INSERT ... SELECT ...` for single-source groups. One worker publishes its closed staged database directly. Publish the result with a no-overwrite file operation on the destination filesystem after all work succeeds.
 
-On failure cancel and reap owned workers, close connections and remove owned staging files. Leave the requested destination unpublished and preserve any preexisting destination. Retain the original diagnostic if cleanup also fails. The CLI identifies the failing chunk and local line where known. Restart after a failure uses a fresh import.
+On failure cancel and reap owned workers, close connections and remove owned staging files. Leave the requested destination unpublished and preserve any preexisting destination. Retain the original diagnostic if cleanup also fails. The CLI identifies the failing chunk and local line where known. Restart after a failure uses a fresh import. If staging cleanup fails after publication, keep the completed destination and send a warning through the configured handler. The import remains successful.
 
 ## Acceptance
 

@@ -4,7 +4,7 @@
 
 - Campaign `003_24f121f` starts at `24f121f3f328aa575d52121acaf079f83d5a7a5c` on `main`. Preparation branch `design-docs/003_24f121f-parallel-importer-redesign` returns to `main`. The intended implementation branch is `feature/003_24f121f-parallel-importer-redesign`, from the published preparation merge.
 - Open an architectural redesign campaign based on the benchmarked parallel path. Keep the 10,000-line default. Schedule comprehensive prerelease review, fixes, and re-verification before the final campaign release.
-- The affected main sources are the [project brief](PROJECT.md), [architecture](ARCHITECTURE.md), [decomposition](DECOMPOSITION.md), [specification](SPEC.md), and [delivery plan](PLAN.md). The [benchmark](reports/importer-performance.md#seven-concurrent-imports-with-ids-assigned-during-insertion) and [batch-size sweep](reports/importer-performance.md#batch-size-sweep-with-seven-concurrent-workers) supply the measured baseline.
+- The affected main sources are the [project brief](../../PROJECT.md), [architecture](../../ARCHITECTURE.md), [decomposition](../../DECOMPOSITION.md), [specification](../../SPEC.md), and [delivery plan](../../PLAN.md). The [benchmark](../../reports/importer-performance.md#seven-concurrent-imports-with-ids-assigned-during-insertion) and [batch-size sweep](../../reports/importer-performance.md#batch-size-sweep-with-seven-concurrent-workers) supply the measured baseline.
 
 ## Current control
 
