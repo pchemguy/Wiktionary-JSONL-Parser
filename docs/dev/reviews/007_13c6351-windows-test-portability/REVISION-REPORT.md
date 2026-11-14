@@ -11,3 +11,7 @@ The suite-wide `PYTHONPATH` fixture and a redundant environment copy in an isola
 ## A-002 — Missing-input diagnostic
 
 The Windows run showed Python's OS exception rendering the filename with escaped backslashes. A Linux pytest run with a literal backslash in its temporary directory reproduced the same assertion failure. The test now checks the exact filename representation used by the exception. It avoids localized error wording and still verifies the failure exit code, absent output and preservation of an existing destination. The focused regression and CLI suite passed.
+
+## A-003 — Destination symlink coverage
+
+The supplied Windows log shows the expected POSIX traversal result was absent. The test now exercises a simple symlinked destination parent on every platform that can create the link and exercises the original `symlink/..` case on POSIX. Each case checks that the output lands in the resolved directory and that staging is cleaned up. Both variants and the assembly regressions passed on Linux with pytest 9.0.3. The Windows path was assessed from the attached run and platform path semantics.
