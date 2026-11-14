@@ -29,7 +29,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
     - Depends on FDOCS-006 and required publication/issue closure.
     - Define affected public API, implementation, schema, test and documentation placement using the established layout/feature-plan owner, or assess sufficient existing allocation. Complete combined PLAN/layout QC and applicable approval; no FEATURE-LAYOUT filename is introduced.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-008 — Prepare and accept FEATURE-TASKS.
+- [x] FDOCS-008 — Prepare and accept FEATURE-TASKS.
     - Depends on FDOCS-007 and required publication/issue closure.
     - Derive scoped product T tasks/reviews, including API consumers and contract checks against selected artifact owners, with global IDs and single executable ownership. Complete task QC/report and applicable approval. Include HANDOFF at the mapped pass stop; do not activate implementation solely from this completion.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.

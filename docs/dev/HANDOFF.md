@@ -14,4 +14,4 @@ A-005 fixed the schema check for worktrees that already contain a CRLF copy. The
 
 ## Active feature preparation
 
-Campaign `008_984ad61` prepares redirect skipping while preserving source-position IDs. It starts from `main` at `984ad61` and returns to `main` after preparation verification. See the [preparation record](FEATURE_PREPARATION.md), [checklist](FEATURE_DOCS_TASKS.md), and [GitHub milestone](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/14). The [feature brief](FEATURE.md) is published for approval.
+Campaign `008_984ad61` prepares redirect skipping while preserving source-position IDs. It starts from `main` at `984ad61` and returns to `main` after preparation verification. See the [preparation record](FEATURE_PREPARATION.md), [checklist](FEATURE_DOCS_TASKS.md), and [GitHub milestone](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/14). The [feature documents](FEATURE-TASKS.md) are accepted. The next preparation checkpoint is whole-package verification.

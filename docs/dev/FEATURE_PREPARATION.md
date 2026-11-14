@@ -31,3 +31,4 @@ Interactive, one pass, with strict delivery. The first stop is the feature brief
 - FDOCS-005 accepted the [specification](FEATURE-SPEC.md) and its [review](FEATURE-SPEC-REVIEW-REPORT.md) under preapproval. The exact rule includes empty redirect strings and treats null entry fields as present.
 - FDOCS-006 accepted the [delivery plan](FEATURE-PLAN.md) and its [review](FEATURE-PLAN-REVIEW-REPORT.md) under preapproval. Phase 4 tests the original unfiltered archive with original-position accounting and row equivalence.
 - FDOCS-007 verified the [existing layout](layout.md) against the plan and recorded [layout readiness](FEATURE-PLAN-REVIEW-REPORT.md#layout-review).
+- FDOCS-008 accepted the [implementation tasks](FEATURE-TASKS.md) and their [review](FEATURE-TASKS-REVIEW-REPORT.md) under preapproval. T-023 through T-025 own Phase 4. The next preparation checkpoint is whole-package QC.
