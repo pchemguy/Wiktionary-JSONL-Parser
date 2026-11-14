@@ -8,7 +8,7 @@
 
 ## Current control
 
-Interactive, one pass, with strict delivery. The request opens the campaign and schedules the release gate. The current stop is feature architecture acceptance. All nine issues and their association with [milestone 9](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9) were verified before the branch or documents were created. The repository already has the manual provenance scaffolding under `docs/ai-logs/`.
+Interactive, one pass, with strict delivery. The request opens the campaign and schedules the release gate. The current stop is feature decomposition acceptance. All nine issues and their association with [milestone 9](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9) were verified before the branch or documents were created. The repository already has the manual provenance scaffolding under `docs/ai-logs/`.
 
 ## Decisions and evidence
 
@@ -24,4 +24,4 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - Exceeding a worker's ID range fails the whole run.
 - FDOCS-002 accepted the [feature brief](FEATURE.md) at Git blob `a2fda32dfb97b953f32876a24c3357962fee72f0` on 2026-11-14. The user's acceptance selects architecture review next.
 
-- FDOCS-003 presents the [feature architecture](FEATURE_ARCHITECTURE.md) at Git blob `50eb121d54fd5211aef3b779a9dcf0abf9f1b75e` for first acceptance. The proposal gives worker processes independent source ranges and SQLite connections, with shared mapping and separate staged publication. It follows the accepted worker limits, ID policy, and failure boundary.
+- FDOCS-003 accepted the [feature architecture](FEATURE_ARCHITECTURE.md) at Git blob `50eb121d54fd5211aef3b779a9dcf0abf9f1b75e` on 2026-11-14. The user's approval selects decomposition review next.
