@@ -7,3 +7,7 @@ Campaign `007_13c6351` started from `main` at `13c63511ebe5b57a3ac791c660c3dcf64
 The Linux run used pytest 9.0.3 to reproduce the two oversized node IDs at 300,061 and 300,055 characters. An isolated test runner enforcing the Windows environment-variable limit reproduced four setup and teardown errors and the downstream persistence-test setup failure. With explicit IDs, all seven partition cases and the following persistence test passed under that same limit. The persistence case also passed when selected directly.
 
 The suite-wide `PYTHONPATH` fixture and a redundant environment copy in an isolated child launch were removed. The worker provenance regression and three supervision tests passed with pytest 9.0.3. The runner's dependency path is scoped to the test command. Native Windows execution has not been performed.
+
+## A-002 — Missing-input diagnostic
+
+The Windows run showed Python's OS exception rendering the filename with escaped backslashes. A Linux pytest run with a literal backslash in its temporary directory reproduced the same assertion failure. The test now checks the exact filename representation used by the exception. It avoids localized error wording and still verifies the failure exit code, absent output and preservation of an existing destination. The focused regression and CLI suite passed.
