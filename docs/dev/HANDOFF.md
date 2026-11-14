@@ -22,4 +22,4 @@ The feature reports total elapsed processing time on successful CLI imports. See
 
 ## Comprehensive review
 
-Campaign `010_380e014` is active on `revision/010_380e014-comprehensive-review` and targets `main`. The [review plan](reviews/010_380e014-comprehensive-review/REVIEW-PLAN.md) records the baseline, coverage and conditional patch release.
+Campaign `010_380e014` verified the converter and repaired three project tools. The [review report](reviews/010_380e014-comprehensive-review/REVIEW-REPORT.md) records the baseline observations and the [revision report](reviews/010_380e014-comprehensive-review/REVISION-REPORT.md) records the fixes and candidate verification. The patch release is 0.4.2.
