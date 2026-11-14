@@ -18,7 +18,7 @@ The library operation is `import_jsonl(input_path, output_path, batch_size=10_00
 | `confirm_single_worker() -> bool` | Invoked only for multiple requested workers and zero attachment capacity. Only an explicit affirmative result authorizes one worker. Without a handler or with unavailable or negative confirmation, fail before launching any worker. |
 | `on_progress(chunk_index: int, processed_bytes: int, chunk_bytes: int) -> None` | When supplied, receives each worker's cumulative bytes after that worker commits a batch. |
 
-Callback failures abort the import before publication. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty. `--no-progress` suppresses progress messages. Diagnostic and confirmation handling still applies.
+An exception from a callback invoked before publication aborts the import. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty. `--no-progress` suppresses progress messages. Diagnostic and confirmation handling still applies.
 
 ## Bootstrap and partitioning
 
@@ -44,7 +44,7 @@ Each worker opens its own file handle and SQLite connection. It fully decodes an
 
 Wait for all worker databases to close successfully. For multiple workers, attach each merge group read-only, insert parent tables before dependents with foreign keys enabled, copy IDs directly, and release each group before the next. Use one `INSERT ... SELECT ... UNION ALL ...` per table and group, with an ordinary `INSERT ... SELECT ...` for single-source groups. One worker publishes its closed staged database directly. Publish the result with a no-overwrite file operation on the destination filesystem after all work succeeds.
 
-On failure cancel and reap owned workers, close connections and remove owned staging files. Leave the requested destination unpublished and preserve any preexisting destination. Retain the original diagnostic if cleanup also fails. The CLI identifies the failing chunk and local line where known. Restart after a failure uses a fresh import.
+On failure cancel and reap owned workers, close connections and remove owned staging files. Leave the requested destination unpublished and preserve any preexisting destination. Retain the original diagnostic if cleanup also fails. The CLI identifies the failing chunk and local line where known. Restart after a failure uses a fresh import. If staging cleanup fails after publication, keep the completed destination and send a warning through the configured handler. The import remains successful.
 
 ## Acceptance
 

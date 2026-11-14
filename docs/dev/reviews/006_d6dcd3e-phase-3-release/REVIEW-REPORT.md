@@ -12,6 +12,7 @@ The [review plan](REVIEW-PLAN.md) covers product tree `d3e1ceba4b866f9f08c987b85
 | R-004 | High | When an output path contains a symlink followed by `..`, staging creation and the temporary path returned by Python can use different directories. This was reproduced on Python 3.12, leaving staging behind. | Resolve the parent before creating staging, preserving the final filename and destination collision check. Test real symlink and parent traversal on Linux. |
 | R-005 | Low | A positive library batch size of `10**4301` fails at integer-to-string conversion while starting workers. | Bound the serialized worker batch at the maximum possible successful chunk size and retain overflow failure for larger chunks. |
 | R-006 | Medium | The README points to the single-process canonical specification until T-022 incorporates accepted Phase 3 behavior. Production publication needs hard-link support on POSIX, as already documented for the benchmark. | Incorporate architecture, decomposition, specification, task ownership and plan at T-022. Document the filesystem prerequisite and check active links. |
+| R-007 | Medium | The read-only attachment regression creates a filename with a question mark, which Windows disallows. The test would fail before reaching the merge. | Keep the escaping case and use Windows-valid filename characters. |
 
 ## Coverage
 

@@ -19,12 +19,12 @@
             Depends on T-016. Implement group-by-group read-only attachment, parent-first inserts, direct single-worker publication, and no-overwrite publication. Verify staged cleanup and failure injection for writes, merging, and publication.
         - [x] T-018 — Expose the parallel CLI and library interfaces
             Depends on T-017. Connect arguments, callbacks, worker failure diagnostics, quiet mode and usage docs. Verify the 10,000-line default, installed interfaces, zero-limit fallback, and valid and failing imports. Review milestone 3.2 and record the result and handoff.
-    - [ ] Milestone 3.3 — Release candidate review and correction
+    - [x] Milestone 3.3 — Release candidate review and correction
         - [x] T-019 — Build and benchmark the release candidate
             Depends on T-018. Build the wheel and source distribution. Verify schema and entry points, compare the resulting database with the serial reference after translating IDs, and measure elapsed time and throughput on the shared sample.
         - [x] T-020 — Comprehensively review the pinned release candidate
             Depends on T-019. Review the current candidate source and assets under the plan's release gate, including the shared pipeline and edition definition boundary. Record findings, platform and performance evidence, and the corrections required for release.
-        - [ ] T-021 — Correct candidate findings and verify the fixes
+        - [x] T-021 — Correct candidate findings and verify the fixes
             Depends on T-020. Fix confirmed in-scope findings or record the review's verified clean disposition. Rebuild and rerun affected verification, regressions, and package checks. Complete milestone 3.3 review and record the result and handoff.
     - [ ] Milestone 3.4 — Phase review
         - [ ] T-022 — Verify Phase 3 and the final release boundary

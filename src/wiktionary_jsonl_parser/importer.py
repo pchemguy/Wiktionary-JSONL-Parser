@@ -17,6 +17,7 @@ from typing import BinaryIO
 from .editions import get_edition
 from .merge import merge_databases
 from .worker import (
+    ID_RANGE,
     Chunk,
     ImportFailure as ImportFailure,
     Progress,
@@ -106,22 +107,39 @@ def drain_worker(
 
 
 def cancel_workers(
-    children: dict[int, subprocess.Popen[str]], readers: list[Thread]
+    children: dict[int, subprocess.Popen[str]], readers: dict[int, Thread]
 ) -> None:
-    for child in children.values():
-        if child.poll() is None:
-            child.terminate()
+    errors: list[Exception] = []
     for child in children.values():
         try:
-            child.wait(timeout=3)
-        except subprocess.TimeoutExpired:
-            child.kill()
-            child.wait()
-    for reader in readers:
-        reader.join()
-    for child in children.values():
-        if child.stdout is not None:
-            child.stdout.close()
+            if child.poll() is None:
+                child.terminate()
+        except ProcessLookupError:
+            # The child exited between polling and signalling.
+            pass
+        except OSError as exc:
+            errors.append(exc)
+
+    for index, child in children.items():
+        try:
+            try:
+                child.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                try:
+                    child.kill()
+                except ProcessLookupError:
+                    pass
+                child.wait(timeout=3)
+            reader = readers.get(index)
+            if reader is not None:
+                reader.join()
+            if child.stdout is not None:
+                child.stdout.close()
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            errors.append(exc)
+
+    if errors:
+        raise ExceptionGroup("worker cleanup", errors)
 
 
 def run_workers(
@@ -136,22 +154,30 @@ def run_workers(
     """Start fresh Python interpreters and reap them before returning."""
 
     children: dict[int, subprocess.Popen[str]] = {}
-    readers: list[Thread] = []
+    readers: dict[int, Thread] = {}
     events: WorkerEvents = Queue()
+    # Give the child the same package root as the importer, independent of cwd.
+    package_root = Path(__file__).resolve().parents[1]
+    command = [
+        sys.executable,
+        "-I",
+        "-c",
+        "import sys; sys.path.insert(0, sys.argv.pop(1)); "
+        "from wiktionary_jsonl_parser.worker import main; raise SystemExit(main())",
+        str(package_root),
+    ]
     try:
         for chunk, output in zip(chunks, outputs, strict=True):
             try:
                 child = subprocess.Popen(
                     [
-                        sys.executable,
-                        "-m",
-                        "wiktionary_jsonl_parser.worker",
+                        *command,
                         str(source),
                         str(output),
                         str(chunk.index),
                         str(chunk.start),
                         str(chunk.stop),
-                        str(batch_size),
+                        str(min(batch_size, ID_RANGE)),
                         edition_id,
                         "1" if on_progress is not None else "0",
                     ],
@@ -161,9 +187,11 @@ def run_workers(
                     errors="replace",
                 )
                 children[chunk.index] = child
-                reader = Thread(target=drain_worker, args=(chunk.index, child, events))
+                reader = Thread(
+                    target=drain_worker, args=(chunk.index, child, events), daemon=True
+                )
                 reader.start()
-                readers.append(reader)
+                readers[chunk.index] = reader
             except (OSError, RuntimeError) as exc:
                 raise ImportFailure(
                     f"cannot start worker: {exc}",
@@ -202,11 +230,12 @@ def run_workers(
     except BaseException as exc:
         try:
             cancel_workers(children, readers)
-        except Exception as cleanup:
-            exc.add_note(f"worker cleanup: {cleanup}")
+        except ExceptionGroup as cleanup:
+            for error in cleanup.exceptions:
+                exc.add_note(f"worker cleanup: {error}")
         raise
     else:
-        for reader in readers:
+        for reader in readers.values():
             reader.join()
 
 
@@ -240,6 +269,7 @@ def import_jsonl(
                 raise NotADirectoryError(
                     f"output directory does not exist: {destination.parent}"
                 )
+            destination = destination.parent.resolve(strict=True) / destination.name
             limit = probe_attachment_limit()
             plan = plan_run(os.cpu_count(), limit, on_warning, confirm_single_worker)
             stage = "partition"
@@ -289,7 +319,17 @@ def import_jsonl(
         raise
     else:
         assert staging is not None
-        staging.cleanup()
+        try:
+            staging.cleanup()
+        except OSError as exc:
+            if on_warning is not None:
+                try:
+                    on_warning(
+                        f"database published, but could not remove staging at {staging.name}: {exc}"
+                    )
+                except Exception:
+                    # Once published, a warning handler cannot undo completion.
+                    pass
 
 
 def publish_database(staged: Path, destination: Path) -> None:

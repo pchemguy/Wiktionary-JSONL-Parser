@@ -49,7 +49,7 @@ def test_merge_uses_read_only_attachments_and_switches_groups(tmp_path: Path) ->
     source = tmp_path / "source"
     source.write_bytes(FIXTURE.read_bytes())
     size = source.stat().st_size
-    paths = [tmp_path / f"source ?#{i}.sqlite" for i in range(3)]
+    paths = [tmp_path / f"source #%{i}.sqlite" for i in range(3)]
     for i, path in enumerate(paths):
         worker.run_chunk(
             source, path, worker.Chunk(i, 0, size), 2, edition=RUSSIAN_EDITION

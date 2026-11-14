@@ -21,3 +21,5 @@ Milestone 3.1 delivered and verified run planning, byte partitioning, and indepe
 Milestone 3.2 delivered and verified the staged parallel CLI and library importer. See the [milestone report](features/003_24f121f-parallel-importer-redesign/milestone-3.2.md). Continue at T-019 for the release candidate and benchmark.
 
 T-019 is complete. The edition boundary amendment refreshed the 0.3.0 candidate, verified unchanged Russian output, and left the feature paused before T-020. Use the [refreshed candidate and benchmark](features/003_24f121f-parallel-importer-redesign/candidate.md#candidate-after-the-edition-boundary-amendment) and the [amendment report](reports/phases/3/revisions/005_d0f14dd-edition-boundary/REVISION-REPORT.md) when starting comprehensive review.
+
+Milestone 3.3 completed the comprehensive review and candidate corrections. See the [review and correction evidence](features/003_24f121f-parallel-importer-redesign/milestone-3.3.md). Continue at T-022 for final incorporation and verification.
