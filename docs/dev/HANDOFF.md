@@ -15,3 +15,5 @@ A-005 fixed the schema check for worktrees that already contain a CRLF copy. The
 ## Redirect-skipping implementation handoff
 
 Campaign `008_984ad61` completed feature preparation and package QC. See the [preparation record](FEATURE_PREPARATION.md), [package review](FEATURE-QC-REPORT.md), and [Phase 4 tasks](FEATURE-TASKS.md). The next task is T-023 after activation on `feature/008_984ad61-skip-redirect-records` from the published preparation merge. Run T-024 against the original unfiltered Kaikki extract.
+
+T-024 verified the installed candidate on the original unfiltered archive. See the [full-extract evidence](features/008_984ad61-skip-redirect-records/full-extract.md). Continue at T-025 for phase review and governing-document incorporation.

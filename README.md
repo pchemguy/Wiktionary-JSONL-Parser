@@ -9,10 +9,10 @@ Use Python 3.11 or later with [SQLiteICUex](https://github.com/pchemguy/SQLiteIC
 Download `wiktionary-jsonl-parser-python.zip` from the [latest release](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/latest) and extract its wheel and source distribution. Set `python_icu` to your SQLiteICUex-enabled Python executable. From the directory containing the extracted wheel, install it with pip:
 
 ```bash
-"$python_icu" -m pip install ./wiktionary_jsonl_parser-0.3.0-py3-none-any.whl
+"$python_icu" -m pip install ./wiktionary_jsonl_parser-0.4.0-py3-none-any.whl
 ```
 
-If your private interpreter has no pip, use `uv pip install --python "$python_icu" ./wiktionary_jsonl_parser-0.3.0-py3-none-any.whl`.
+If your private interpreter has no pip, use `uv pip install --python "$python_icu" ./wiktionary_jsonl_parser-0.4.0-py3-none-any.whl`.
 
 ## Convert
 
