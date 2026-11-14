@@ -16,7 +16,9 @@ Let `W = os.cpu_count() - 2` when Python reports more than two logical CPUs. Use
 
 When `W > 1`, read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)` at bootstrap. Reserve one attachment slot, giving a capacity of `L - 1` worker databases per merge group.
 
-Apply the rules in this order:
+For `W > 1` and `L = 1`, warn that the reserved slot leaves no capacity to merge worker databases. Ask the user to confirm running with one worker before starting the import. On explicit confirmation, set `W = 1` and publish the completed worker database directly. If the user declines or confirmation is unavailable, abort before starting any worker.
+
+For `W > 1` and `L >= 2`, apply the rules in this order:
 
 | Condition | Workers | Merge groups |
 | --- | ---: | --- |
@@ -24,7 +26,7 @@ Apply the rules in this order:
 | `L < W + 1` and `W + 1 < 1.5 * L` | `L - 1` | One group |
 | `W + 1 >= 1.5 * L` after the first two checks | `W` | Groups of at most `L - 1` databases |
 
-For `L = 10`, a requested 7 workers stays at 7, a requested 10 is reduced to 9, and a requested 14 stays at 14 with merge groups of 9 and 5. For a multi-worker run, a bootstrap limit below two leaves no usable merge slots under this policy. The proposed handling is to fail during bootstrap with a diagnostic.
+For `L = 10`, a requested 7 workers stays at 7, a requested 10 is reduced to 9, and a requested 14 stays at 14 with merge groups of 9 and 5. For `W > 1` and `L = 0`, the proposed handling is to fail during bootstrap with a diagnostic.
 
 ### IDs and destination
 
