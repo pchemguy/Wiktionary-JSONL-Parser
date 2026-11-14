@@ -23,3 +23,7 @@ Interactive, one pass, with strict delivery. The first stop is the feature brief
 - Validate the feature on mixed records, redirect-only batches and files, valid and invalid edge cases, and the original unfiltered full extract. Architecture and implementation decisions follow brief acceptance.
 
 - FDOCS-002 accepted the published brief (blob `a918c00e1b220942e1dc96bc2b3ecc8a657662ac`). The user approved all remaining checkpoints. Continue the interactive preparation workflow under that preapproval through package QC and preparation integration.
+
+## Design and specification decisions
+
+- FDOCS-003 reuses the [main architecture](ARCHITECTURE.md). Redirect classification belongs to the selected edition inside the existing worker and does not change process roles, ownership of line positions, the merger, or publication. No architecture overlay is needed.

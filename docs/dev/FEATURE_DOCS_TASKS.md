@@ -9,7 +9,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
     - Depends on FDOCS-001 and required publication/issue closure.
     - Define intended outcome, included/non-goal delta, retained behavior, compatibility/constraints and material decisions. Present first brief approval unless explicitly preapproved; retain decision provenance.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-003 — Assess and accept feature architecture.
+- [x] FDOCS-003 — Assess and accept feature architecture.
     - Depends on FDOCS-002 and required publication/issue closure.
     - Assess affected main architecture; prepare FEATURE_ARCHITECTURE and children only where required. Record evidenced reuse or review/acceptance of the necessary new proposal.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
