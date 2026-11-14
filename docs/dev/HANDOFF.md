@@ -22,4 +22,4 @@ The feature reports total elapsed processing time on successful CLI imports. See
 
 ## Comprehensive review
 
-Campaign `010_380e014` verified the converter and repaired three project tools. The [review report](reviews/010_380e014-comprehensive-review/REVIEW-REPORT.md) records the baseline observations and the [revision report](reviews/010_380e014-comprehensive-review/REVISION-REPORT.md) records the fixes and candidate verification. The patch release is 0.4.2.
+Campaign `010_380e014` verified the converter and repaired three project tools. The [review report](reviews/010_380e014-comprehensive-review/REVIEW-REPORT.md) records the baseline observations and the [revision report](reviews/010_380e014-comprehensive-review/REVISION-REPORT.md) records the fixes and candidate verification. The [v0.4.2 patch release](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/tag/v0.4.2) is tagged at `0709fe1dafec73b7599dc3d4abd0ef6f5c1f5a1d`. The tagged and latest downloads match the verified build byte for byte. The campaign is closed.
