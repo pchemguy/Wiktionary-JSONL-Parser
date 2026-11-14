@@ -17,7 +17,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
     - Depends on FDOCS-003 and required publication/issue closure.
     - Assess affected components, external/internal APIs and models against accepted architecture; prepare FEATURE_DECOMPOSITION and selected model/API-design artifacts where required. Include them in this task's reuse assessment or proposal/acceptance.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-005 — Prepare and accept FEATURE-SPEC.
+- [x] FDOCS-005 — Prepare and accept FEATURE-SPEC.
     - Depends on FDOCS-004 and required publication/issue closure.
     - Define precise changed behavior and API/data contracts against accepted FEATURE/design, including selected contract artifacts and referenced model/API owners. Complete scoped SPEC QC/report and this task's human approval/preapproval.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
