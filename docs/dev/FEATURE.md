@@ -14,19 +14,19 @@ Divide the input into contiguous, roughly byte-balanced chunks at complete line 
 
 Let `W = os.cpu_count() - 2` when Python reports more than two logical CPUs. Use one worker when the CPU count is unavailable or at most two. Whenever the worker count is one, the worker processes the whole input and writes the complete database to a staging path. After the worker succeeds and closes the database, publish that file directly. This path requires zero SQLite attachments.
 
-When `W > 1`, read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)` at bootstrap. Reserve one attachment slot, giving a capacity of `L - 1` worker databases per merge group.
+When `W > 1`, read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)` at bootstrap. Open the staged destination as `main`, so all `L` attachment slots are available for worker databases.
 
-For `W > 1` and `L = 1`, warn that the reserved slot leaves no capacity to merge worker databases. Ask the user to confirm running with one worker before starting the import. On explicit confirmation, set `W = 1` and publish the completed worker database directly. If the user declines or confirmation is unavailable, abort before starting any worker.
+For `W > 1` and `L = 1`, warn that only one worker database can be attached at a time and ask the user to confirm running with one worker. On explicit confirmation, set `W = 1` and publish the completed worker database directly. If the user declines or confirmation is unavailable, abort before starting any worker.
 
-For `W > 1` and `L >= 2`, apply the rules in this order:
+For `W > 1` and `L >= 2`, apply these rules:
 
 | Condition | Workers | Merge groups |
 | --- | ---: | --- |
-| `L >= W + 1` | `W` | One group |
-| `L < W + 1` and `W + 1 < 1.5 * L` | `L - 1` | One group |
-| `W + 1 >= 1.5 * L` after the first two checks | `W` | Groups of at most `L - 1` databases |
+| `L >= W` | `W` | One group |
+| `L < W < 1.5 * L` | `L` | One group |
+| `W >= 1.5 * L` | `W` | Groups of at most `L` databases |
 
-For `L = 10`, a requested 7 workers stays at 7, a requested 10 is reduced to 9, and a requested 14 stays at 14 with merge groups of 9 and 5. For `W > 1` and `L = 0`, the proposed handling is to fail during bootstrap with a diagnostic.
+For `L = 10`, a request for 10 workers proceeds with all 10, a request for 14 uses 10, and a request for 15 proceeds with groups of 10 and 5. For `W > 1` and `L = 0`, the proposed handling is to fail during bootstrap with a diagnostic.
 
 ### IDs and destination
 
