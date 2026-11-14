@@ -20,7 +20,7 @@ python tools/merge_databases.py merged.sqlite part-1.sqlite part-2.sqlite part-3
 
 Pass completed importer databases in source order, using a new path for the destination. Each input must use the same importer schema. Assign disjoint `entries.id` and `batch_log.batch_id` ranges before calling the tool. Carry each entry offset through the related `entry_id` and `examples.sense_entry_id` columns. Keep child indices within each entry or sense unchanged.
 
-The tool attaches the inputs read-only and inserts each table with a single `INSERT ... SELECT ... UNION ALL ...` statement. Foreign keys are checked with parent tables inserted first. All table inserts commit in one transaction. Its timer includes creating the destination schema, attaching and checking schemas, copying rows, and committing. Prepare IDs before timing so the reported duration measures the merge itself.
+The tool attaches the inputs read-only and inserts each table with a single `INSERT ... SELECT ... UNION ALL ...` statement. Foreign keys are checked with parent tables inserted first. All table inserts commit in one transaction. The tool stages the merge beside the destination and publishes the closed database atomically, preserving any competing destination. Its timer includes staging, creating the schema, attaching and checking schemas, copying and committing rows, publishing the database, and cleaning up. Prepare IDs before timing so the reported duration measures the merge itself.
 
 ## Benchmark parallel imports
 
