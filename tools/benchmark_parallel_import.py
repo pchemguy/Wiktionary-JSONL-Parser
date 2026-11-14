@@ -14,6 +14,7 @@ from merge_databases import merge_databases
 
 from wiktionary_jsonl_parser.cli import report_progress
 from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
+from wiktionary_jsonl_parser.importer import cancel_workers
 from wiktionary_jsonl_parser.worker import (
     Chunk,
     ImportFailure,
@@ -43,7 +44,7 @@ def chunk_bounds(path: Path, workers: int) -> list[int]:
 
 def run_workers(source: Path, bounds: list[int], outputs: list[Path]) -> None:
     """Start independent workers and terminate any that remain after failure."""
-    running: dict[int, subprocess.Popen[bytes]] = {}
+    running: dict[int, subprocess.Popen[str]] = {}
     try:
         for index, output in enumerate(outputs):
             running[index] = subprocess.Popen(
@@ -68,16 +69,13 @@ def run_workers(source: Path, bounds: list[int], outputs: list[Path]) -> None:
                 del running[index]
             if running:
                 sleep(0.01)
-    finally:
-        for process in running.values():
-            if process.poll() is None:
-                process.terminate()
-        for process in running.values():
-            try:
-                process.wait(timeout=2)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
+    except BaseException as exc:
+        try:
+            cancel_workers(running, {})
+        except ExceptionGroup as cleanup:
+            for error in cleanup.exceptions:
+                exc.add_note(f"worker cleanup: {error}")
+        raise
 
 
 def benchmark(source: Path, output: Path) -> None:
@@ -160,7 +158,10 @@ def main() -> int:
     try:
         benchmark(args.source, args.output)
     except (ImportFailure, OSError, sqlite3.Error, ValueError) as exc:
-        parser.exit(1, f"{parser.prog}: {exc}\n")
+        diagnostic = "\n".join(
+            [f"{parser.prog}: {exc}", *getattr(exc, "__notes__", ())]
+        )
+        parser.exit(1, diagnostic + "\n")
     return 0
 
 

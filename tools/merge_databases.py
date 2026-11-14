@@ -1,14 +1,17 @@
 """Merge importer databases with globally unique IDs using SQLite UNION ALL."""
 
 import argparse
+import os
 import sqlite3
 from collections.abc import Sequence
 from contextlib import closing
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from time import perf_counter
 
 from wiktionary_jsonl_parser.editions import initialize_database
 from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
+from wiktionary_jsonl_parser.importer import publish_database
 from wiktionary_jsonl_parser.worker import ImportFailure, require_unicode_collation
 
 
@@ -31,11 +34,14 @@ def merge_databases(output: Path, sources: Sequence[Path]) -> dict[str, int]:
 
     with closing(sqlite3.connect(":memory:")) as probe:
         require_unicode_collation(probe)
-    with output.open("xb"):
-        pass
-
-    try:
-        with closing(sqlite3.connect(output.absolute().as_uri(), uri=True)) as db:
+    if os.path.lexists(output):
+        raise FileExistsError(f"output already exists: {output}")
+    destination = output.parent.resolve(strict=True) / output.name
+    with TemporaryDirectory(
+        prefix=".wiktionary-merge-", dir=destination.parent
+    ) as directory:
+        staged = Path(directory) / "merged.sqlite"
+        with closing(sqlite3.connect(staged.as_uri(), uri=True)) as db:
             initialize_database(db, RUSSIAN_EDITION)
             expected_schema = schema_signature(db, "main")
             attachments = []
@@ -63,10 +69,8 @@ def merge_databases(output: Path, sources: Sequence[Path]) -> dict[str, int]:
                         f'INSERT INTO main."{table}" ({columns}) {union}'
                     )
                     counts[table] = cursor.rowcount
-        return counts
-    except BaseException:
-        output.unlink()
-        raise
+        publish_database(staged, destination)
+    return counts
 
 
 def main(argv: Sequence[str] | None = None) -> int:
