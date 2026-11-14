@@ -2,7 +2,7 @@ from io import BytesIO
 
 import pytest
 
-from wiktionary_jsonl_parser.mapping import append_record_rows
+from wiktionary_jsonl_parser.editions.ru.mapping import append_record_rows
 from wiktionary_jsonl_parser.worker import ImportFailure, decode_record, read_batches
 
 

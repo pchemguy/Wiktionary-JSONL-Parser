@@ -4,11 +4,15 @@ from pathlib import Path
 import pytest
 
 from wiktionary_jsonl_parser import worker as importer
+from wiktionary_jsonl_parser.editions import BATCH_LOG_SCHEMA, initialize_database
+from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
 
 
 def test_schema_matches_contract() -> None:
     specified = Path(__file__).resolve().parents[1] / "docs/dev/spec/schema.sql"
-    assert importer.schema_sql().encode("utf-8") == specified.read_bytes()
+    assert (BATCH_LOG_SCHEMA + RUSSIAN_EDITION.schema_sql()).encode(
+        "utf-8"
+    ) == specified.read_bytes()
 
 
 def test_initialize_schema_from_any_working_directory(
@@ -19,7 +23,7 @@ def test_initialize_schema_from_any_working_directory(
         db.create_collation(
             "UTF_CI", lambda left, right: (left > right) - (left < right)
         )
-        importer.initialize_database(db)
+        initialize_database(db, RUSSIAN_EDITION)
         assert db.execute("PRAGMA foreign_keys").fetchone() == (1,)
         assert db.execute(
             "SELECT count(*) FROM sqlite_schema WHERE type = 'table'"

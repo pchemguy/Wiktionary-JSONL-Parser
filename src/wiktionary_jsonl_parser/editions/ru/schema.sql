@@ -1,8 +1,3 @@
-CREATE TABLE batch_log (
-    batch_id            INTEGER PRIMARY KEY,
-    line_count          INTEGER NOT NULL
-);
-
 CREATE TABLE entries (
     id                  INTEGER PRIMARY KEY,
     word                TEXT NOT NULL,

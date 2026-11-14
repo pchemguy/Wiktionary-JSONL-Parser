@@ -21,3 +21,23 @@ The same entry-only Kaikki sample used for the earlier bench contains 765,085,58
 Parallel median wall time was 3.37 times faster than the same-session serial baseline. The [earlier single-process benchmark](../../reports/importer-performance.md) is historical evidence from a separate run.
 
 After translating parallel entry IDs to source-order ordinals, all 6,100,292 rows in the 20 mapped tables matched the serial reference, including duplicate entries, child references and text values. Batch logs were verified independently against the exact chunk IDs and line counts. Both databases passed integrity and foreign-key checks. Comparison and verification time is excluded from import throughput.
+
+## Candidate after the edition boundary amendment
+
+T-020 reviews the refreshed product tree `d3e1ceba4b866f9f08c987b8588316e84b682074`. The tree is based on `d0f14dd30c12fd778d003e3336605ed325abfada` and includes the edition boundary implementation, tests and documentation. Candidate package hashes apply to the build before recording the resulting verification evidence and handoff.
+
+| Refreshed candidate artifact | SHA-256 |
+| --- | --- |
+| `wiktionary_jsonl_parser-0.3.0-py3-none-any.whl` | `101a17b4772e68edca93b2d0b4592154da26fb05abecd918f91d9b05b45c9ade` |
+| `wiktionary_jsonl_parser-0.3.0.tar.gz` | `4639a5f4802bfcd74976d158ee7c1dda84d0e0a999a5e1bd669e056905d6ebb3` |
+| `SHA256SUMS` | `23e08e9b9c69b7d887e4781b2b23eaebd0756cfee6cd063042ee2674d628804a` |
+| `wiktionary-jsonl-parser-python.zip` | `7f557d8d8b91b12bb6b231191f8883697c15cea2249240775eabbb11c25f8fe7` |
+
+The benchmark used the same sample, runtime, seven workers and settings described above.
+
+| CLI | Runs (s) | Median (s) | MiB/s | Lines/s |
+| --- | --- | ---: | ---: | ---: |
+| Serial | 46.541, 47.822, 47.153 | 47.153 | 15.47 | 6,346 |
+| Parallel | 12.885, 12.142, 12.882 | 12.882 | 56.64 | 23,227 |
+
+Median parallel wall time was 3.66× faster than the same-session serial run. The output matched the original parallel candidate byte for byte. After translating keys, the renewed comparison matched all 6,100,292 mapped rows against the serial reference. Both databases passed the independent batch-log, integrity and foreign-key checks. See the [amendment report](../../reports/phases/3/revisions/005_d0f14dd-edition-boundary/REVISION-REPORT.md) for regression and installed-package evidence.

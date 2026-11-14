@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 
 from wiktionary_jsonl_parser import worker
+from wiktionary_jsonl_parser.editions import Edition
+from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
 
 FIXTURE = Path(__file__).with_name("fixtures") / "all-tables.jsonl"
 RECORD = b'{"word":"duplicate","lang":"Russian","lang_code":"ru"}'
@@ -26,7 +28,12 @@ def test_worker_keys_and_committed_progress(tmp_path: Path) -> None:
             updates.append((chunk, done, total, lines.fetchone()[0]))
 
     worker.run_chunk(
-        source, db, worker.Chunk(2, len(prefix), len(prefix + data)), 2, progress
+        source,
+        db,
+        worker.Chunk(2, len(prefix), len(prefix + data)),
+        2,
+        progress,
+        edition=RUSSIAN_EDITION,
     )
     assert updates == [
         (2, len(first + second), len(data), 2),
@@ -58,7 +65,11 @@ def test_noninitial_bom_is_rejected(tmp_path: Path) -> None:
     start = len(RECORD) + 1
     with pytest.raises(worker.ImportFailure, match="chunk 1.*line 1.*JSONL"):
         worker.run_chunk(
-            source, tmp_path / "db", worker.Chunk(1, start, len(records)), 2
+            source,
+            tmp_path / "db",
+            worker.Chunk(1, start, len(records)),
+            2,
+            edition=RUSSIAN_EDITION,
         )
 
 
@@ -78,8 +89,8 @@ def test_worker_rolls_back_and_suppresses_failed_progress(
 ) -> None:
     setup = worker.initialize_database
 
-    def reject_last_log(db: sqlite3.Connection) -> None:
-        setup(db)
+    def reject_last_log(db: sqlite3.Connection, edition: Edition) -> None:
+        setup(db, edition)
         db.execute("""CREATE TRIGGER reject_log BEFORE INSERT ON batch_log
             WHEN NEW.batch_id = 10000002 BEGIN SELECT RAISE(ABORT, 'forced'); END""")
 
@@ -95,6 +106,7 @@ def test_worker_rolls_back_and_suppresses_failed_progress(
             worker.Chunk(1, 0, size),
             1,
             lambda chunk, done, total: updates.append((chunk, done, total)),
+            edition=RUSSIAN_EDITION,
         )
     assert updates == [(1, size // 2, size)]
     with closing(sqlite3.connect(output)) as db:

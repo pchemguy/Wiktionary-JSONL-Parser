@@ -28,7 +28,7 @@ def test_fresh_workers_report_progress_to_the_importing_thread(tmp_path: Path) -
         assert threading.get_ident() == owner
         updates.append((chunk, done, total))
 
-    importer.run_workers(source, paths, chunks, 1, progress)
+    importer.run_workers(source, paths, chunks, 1, progress, edition_id="ru")
     assert sorted(updates) == [
         (i, done, chunk_size) for i in range(2) for done in (len(LINE), chunk_size)
     ]
@@ -52,6 +52,7 @@ def test_failed_worker_stops_and_reaps_sibling(
     started: list[subprocess.Popen[str]] = []
 
     def inject(args: list[str], **kwargs: object) -> subprocess.Popen[str]:
+        assert args[-2] == "ru"
         if args[-1] == "1":
             pytest.fail("progress must be disabled for this supervision test")
         if len(started) == 1:
@@ -65,7 +66,7 @@ def test_failed_worker_stops_and_reaps_sibling(
     monkeypatch.setattr(importer.subprocess, "Popen", inject)
     match = "chunk 0.*status 15" if unexpected else "chunk 0.*line 1.*JSONL"
     with pytest.raises(importer.ImportFailure, match=match):
-        importer.run_workers(source, paths, chunks, 2, None)
+        importer.run_workers(source, paths, chunks, 2, None, edition_id="ru")
     assert len(started) == 2
     assert all(
         p.returncode is not None and p.stdout and p.stdout.closed for p in started

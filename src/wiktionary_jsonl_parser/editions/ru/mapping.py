@@ -2,10 +2,9 @@
 
 import json
 from collections.abc import Iterator
-from typing import TypeAlias, cast
+from typing import cast
 
-Row: TypeAlias = tuple[str | int | None, ...]
-RowsByTable: TypeAlias = dict[str, list[Row]]
+from .. import Row, RowsByTable
 
 LINKAGES = (
     "anagrams",

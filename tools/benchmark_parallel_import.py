@@ -5,26 +5,22 @@ import os
 import sqlite3
 import subprocess
 import sys
-from collections.abc import Generator
 from contextlib import closing
-from itertools import islice
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import perf_counter, sleep
 
 from merge_databases import merge_databases
 
+from wiktionary_jsonl_parser.cli import report_progress
+from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
 from wiktionary_jsonl_parser.worker import (
-    INSERTS,
+    Chunk,
     ImportFailure,
-    decode_record,
-    initialize_database,
     require_unicode_collation,
-    write_batch,
+    run_chunk,
 )
-from wiktionary_jsonl_parser.mapping import RowsByTable, append_record_rows
 
-ID_STRIDE = 10_000_000
 BATCH_SIZE = 10_000
 
 
@@ -43,53 +39,6 @@ def chunk_bounds(path: Path, workers: int) -> list[int]:
             else:
                 bounds.append(bounds[-1])
         return [*bounds, size]
-
-
-def chunk_lines(path: Path, first: int, stop: int) -> Generator[bytes, None, None]:
-    """Read only the lines belonging to one chunk of the input."""
-    with path.open("rb") as source:
-        source.seek(first)
-        position = first
-        while position < stop:
-            line = source.readline()
-            if not line or position + len(line) > stop:
-                raise ImportFailure("input changed after partitioning")
-            position += len(line)
-            yield line
-
-
-def import_chunk(source: Path, output: Path, index: int, first: int, stop: int) -> None:
-    """Write a worker database whose keys are assigned in their final range."""
-    offset = index * ID_STRIDE
-    lines = chunk_lines(source, first, stop)
-    with closing(lines), closing(sqlite3.connect(output)) as db:
-        initialize_database(db)
-        number = processed = 0
-        batch_number = 0
-        while batch := list(islice(lines, BATCH_SIZE)):
-            rows: RowsByTable = {table: [] for table in INSERTS}
-            for raw in batch:
-                number += 1
-                if number > ID_STRIDE:
-                    raise ImportFailure("chunk exceeds its ID range", number)
-                if number == 1 and first and raw.startswith(b"\xef\xbb\xbf"):
-                    raise ImportFailure("unexpected UTF-8 BOM", number)
-                record = decode_record(raw, number)
-                try:
-                    append_record_rows(record, offset + number, rows)
-                except ValueError as exc:
-                    raise ImportFailure(f"invalid mapped value: {exc}", number) from exc
-            batch_number += 1
-            rows["batch_log"].append((offset + batch_number, len(batch)))
-            write_batch(db, rows, offset + batch_number)
-            processed += sum(map(len, batch))
-            tenths = processed * 1000 // (stop - first)
-            print(
-                f"[chunk {index}] {processed}/{stop - first} bytes read and processed "
-                f"({tenths // 10}.{tenths % 10}%)",
-                file=sys.stderr,
-                flush=True,
-            )
 
 
 def run_workers(source: Path, bounds: list[int], outputs: list[Path]) -> None:
@@ -182,9 +131,16 @@ def main() -> int:
     if sys.argv[1:2] == ["--worker"]:
         _, _, source, output, index, first, stop = sys.argv
         try:
-            import_chunk(Path(source), Path(output), int(index), int(first), int(stop))
+            run_chunk(
+                Path(source),
+                Path(output),
+                Chunk(int(index), int(first), int(stop)),
+                BATCH_SIZE,
+                report_progress,
+                edition=RUSSIAN_EDITION,
+            )
         except (ImportFailure, OSError, sqlite3.Error) as exc:
-            print(f"[chunk {index}] {exc}", file=sys.stderr, flush=True)
+            print(exc, file=sys.stderr, flush=True)
             return 1
         return 0
 

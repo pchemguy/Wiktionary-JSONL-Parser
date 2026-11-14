@@ -7,12 +7,9 @@ from contextlib import closing
 from pathlib import Path
 from time import perf_counter
 
-from wiktionary_jsonl_parser.importer import (
-    INSERTS,
-    ImportFailure,
-    initialize_database,
-    require_unicode_collation,
-)
+from wiktionary_jsonl_parser.editions import initialize_database
+from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
+from wiktionary_jsonl_parser.worker import ImportFailure, require_unicode_collation
 
 
 def schema_signature(db: sqlite3.Connection, schema: str) -> list[tuple[str, str, str]]:
@@ -39,7 +36,7 @@ def merge_databases(output: Path, sources: Sequence[Path]) -> dict[str, int]:
 
     try:
         with closing(sqlite3.connect(output.absolute().as_uri(), uri=True)) as db:
-            initialize_database(db)
+            initialize_database(db, RUSSIAN_EDITION)
             expected_schema = schema_signature(db, "main")
             attachments = []
             for index, uri in enumerate(source_uris, start=1):
@@ -53,7 +50,7 @@ def merge_databases(output: Path, sources: Sequence[Path]) -> dict[str, int]:
             with db:
                 db.execute("BEGIN")
                 # The importer table order puts all parent rows before dependents.
-                for table in INSERTS:
+                for table in (*RUSSIAN_EDITION.inserts, "batch_log"):
                     columns = ", ".join(
                         f'"{column[1]}"'
                         for column in db.execute(f'PRAGMA main.table_info("{table}")')
