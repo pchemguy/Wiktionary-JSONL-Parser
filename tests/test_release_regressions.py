@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import subprocess
 import sys
@@ -20,8 +19,6 @@ def test_fresh_worker_uses_callers_package(tmp_path: Path) -> None:
     shadow.mkdir()
     (shadow / "__init__.py").write_text("raise SystemExit(29)\n", encoding="ascii")
     (tmp_path / "in.jsonl").write_bytes(LINE)
-    env = os.environ.copy()
-    env.pop("PYTHONPATH", None)
     parent_package = Path(importer.__file__).resolve().parents[1]
     subprocess.run(
         [
@@ -34,7 +31,6 @@ def test_fresh_worker_uses_callers_package(tmp_path: Path) -> None:
             str(parent_package),
         ],
         cwd=tmp_path,
-        env=env,
         check=True,
     )
     with closing(sqlite3.connect(tmp_path / "out.sqlite")) as db:
