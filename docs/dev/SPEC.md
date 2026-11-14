@@ -12,7 +12,7 @@ wiktionary-jsonl-parser INPUT [--output PATH] [--batch-size N] [--no-progress]
 | --- | --- |
 | `INPUT` | Required path to a readable local UTF-8 JSONL file. |
 | `--output PATH` | Optional destination database path. When omitted, replace the final `.jsonl` suffix with `.sqlite` in the input path and keep the parent directory. For example, `data/ru-extract.jsonl` yields `data/ru-extract.sqlite`. If the input name has no final `.jsonl` suffix, supply an explicit output path. |
-| `--batch-size N` | Positive integer maximum number of source lines per batch. Defaults to 25,000. |
+| `--batch-size N` | Positive integer maximum number of source lines per batch. Defaults to 10,000. |
 | `--no-progress` | Suppress progress on stderr while retaining diagnostics. |
 
 Relative paths are interpreted from the working directory. The destination parent directory must exist. The converter refuses an existing destination without modifying it. It checks that the input can be opened and that SQLiteICUex's `UTF_CI` collation is available before creating the output. It initializes the output with the [SQLite schema](spec/schema.sql) and enforces foreign keys on the writing connection.
