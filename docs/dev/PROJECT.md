@@ -8,6 +8,8 @@ The converter reads a local UTF-8 `ru-extract.jsonl` supplied by the caller. The
 
 Workers import contiguous input ranges into independent SQLite databases using configurable batches measured in source lines. The importing process assembles the completed output in source order. The Russian edition owns its mapping and schema, and the pipeline uses that edition for the whole run.
 
+The Russian edition skips standalone redirect records while retaining their source positions in entry ID numbering. The extracted Kaikki file can be imported directly.
+
 The SQLite output preserves mapped values, duplicate records, source array order, and the relationships between entries, senses, and examples. The Wiktextract JSON Schema serves as a reference for interpreting fields. The importer decodes JSON and reports malformed input or mapping failures without running JSON Schema validation.
 
 The scope starts with an extracted file and ends with the SQLite database. Obtaining, extracting, or streaming archives is outside this scope. Additional Russian Wiktionary datasets from Wikimedia may be integrated in a later increment.

@@ -1,5 +1,7 @@
 # Standalone redirect implementation tasks
 
+Historical checklist before phase closure. See [TASKS](../../TASKS.md) for current task ownership and final completion.
+
 [Specification](FEATURE-SPEC.md) · [Delivery plan](FEATURE-PLAN.md)
 
 ## Phase 4 — Standalone redirect handling

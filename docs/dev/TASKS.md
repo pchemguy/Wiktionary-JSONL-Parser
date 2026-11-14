@@ -75,3 +75,19 @@ See the [progress milestone review](features/001_83e7d6a-import-progress/2.1.md)
 Publish the release after successful phase integration, candidate review and fixes, and verification of the rebuilt release inventory and hosted checksums.
 
 See the [Phase 3 report](features/003_24f121f-parallel-importer-redesign/PHASE-REPORT.md).
+
+## Phase 4 — Standalone redirect handling
+
+- [x] Phase 4 — Standalone redirect handling
+    - [x] Milestone 4.1 — Redirect handling and verification
+        - [x] T-023 — Skip standalone Russian redirects in the shared worker
+            Implement the edition predicate and worker dispatch. Verify the exact record boundary, source-position entry IDs and child keys, full and partial batches, redirect-only inputs, complete byte progress, and failure positions and overflow after redirects. Update usage and benchmark source-line accounting and run regressions.
+        - [x] T-024 — Verify direct import of the complete Kaikki extract
+            Depends on T-023. Build and install the distributions, verify the CLI and library, and import the pinned raw archive after extraction. Verify all entry IDs and batch counts against raw positions and mapped content against the aligned reference. Record run and SQLite checks, package and benchmark evidence, and milestone review.
+    - [x] Milestone 4.2 — Phase review
+        - [x] T-025 — Incorporate and verify Phase 4 for release
+            Depends on T-024 and verified milestone closure when tracked. Review the tested delivery, incorporate into the main governing documents, reconcile task ownership, and record phase and release readiness evidence.
+
+Integrate the verified phase into the default branch and publish the release with verified assets and checksums.
+
+See the [Phase 4 report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md).

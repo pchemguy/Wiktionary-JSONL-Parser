@@ -1,6 +1,6 @@
 # Redirect-skipping feature package review
 
-**Result — Ready for implementation.** The reviewed package comprises the [brief](FEATURE.md), reused [main architecture](ARCHITECTURE.md), [feature decomposition](FEATURE_DECOMPOSITION.md), [specification](FEATURE-SPEC.md), [delivery plan](FEATURE-PLAN.md), reused [layout](layout.md), and [implementation tasks](FEATURE-TASKS.md).
+**Result — Ready for implementation.** The reviewed package comprises the [brief](FEATURE.md), reused [main architecture](../../ARCHITECTURE.md), [feature decomposition](FEATURE_DECOMPOSITION.md), [specification](FEATURE-SPEC.md), [delivery plan](FEATURE-PLAN.md), reused [layout](../../layout.md), and [implementation tasks](FEATURE-TASKS.md).
 
 The approved source-position requirement is traceable through the edition predicate, source line and ID behavior, batch accounting, and full-extract verification. The benchmark uses source lines for its rate. The packaging and release checks remain in the delivery plan. T-023 through T-025 are uniquely owned and follow the Phase 4 dependencies.
 

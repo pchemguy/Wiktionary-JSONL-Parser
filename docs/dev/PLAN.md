@@ -1,6 +1,6 @@
 # Delivery plan
 
-Deliver the Russian Wiktionary JSONL converter in three phases. The serial converter establishes mapping and persistence, CLI progress reports committed input bytes, and the parallel importer builds on the measured worker-and-merge design. The [specification](SPEC.md), [schema](spec/schema.sql), [mapping contract](spec/mapping.md), and [decomposition](DECOMPOSITION.md) govern the work.
+Deliver the Russian Wiktionary JSONL converter in four phases. The serial converter establishes mapping and persistence, CLI progress reports committed input bytes, and the parallel importer builds on the measured worker-and-merge design. The [specification](SPEC.md), [schema](spec/schema.sql), [mapping contract](spec/mapping.md), and [decomposition](DECOMPOSITION.md) govern the work.
 
 ## Phase 1 — JSONL-to-SQLite converter
 
@@ -35,6 +35,15 @@ Phase 2 delivers byte-based CLI progress on top of the released SQLiteICUex conv
 
 See the [repository layout](layout.md), [performance evidence](reports/importer-performance.md), and [Phase 3 report](features/003_24f121f-parallel-importer-redesign/PHASE-REPORT.md).
 
+## Phase 4 — Standalone redirect handling
+
+| Milestone | Delivery and exit evidence |
+| --- | --- |
+| 4.1 — Redirect handling and verification | Add the Russian edition's classification and preserve source-line accounting through the shared worker. Verify focused and regression coverage, user documentation, installed CLI and library invocation, and the parallel benchmark's source-line rate. Run the exact unfiltered Kaikki dump through the installed importer. Verify source-position IDs, row equivalence, complete progress and SQLite integrity. |
+| 4.2 — Phase review | Review the verified phase, incorporate accepted behavior into the governing documents, and check the release candidate and package inventory. Publish the release from the verified default-branch integration. |
+
+See the [Phase 4 report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md).
+
 ## Integration and release
 
-Phase 1 corresponds to `0.1.0`. Phase 2 corresponds to `0.2.0`. Phase 3 corresponds to `0.3.0` and requires comprehensive candidate review, corrections, and re-verification before release. Finalize the version and release notes for the verified phase, integrate the reviewed implementation into the default branch, and publish a GitHub release from that verified revision. Use `wiktionary-jsonl-parser-python.zip` as the release download. It contains the wheel and source distribution with their installable filenames. Publish `SHA256SUMS` for the uploaded bundle. Before tagging or publishing, execute the naming and checksum checks against the actual release files. Repair and rebuild any failing candidate. Verify the hosted download and checksum after publishing.
+Phase 1 corresponds to `0.1.0`. Phase 2 corresponds to `0.2.0`. Phase 4 corresponds to `0.4.0`. Phase 3 corresponds to `0.3.0` and requires comprehensive candidate review, corrections, and re-verification before release. Finalize the version and release notes for the verified phase, integrate the reviewed implementation into the default branch, and publish a GitHub release from that verified revision. Use `wiktionary-jsonl-parser-python.zip` as the release download. It contains the wheel and source distribution with their installable filenames. Publish `SHA256SUMS` for the uploaded bundle. Before tagging or publishing, execute the naming and checksum checks against the actual release files. Repair and rebuild any failing candidate. Verify the hosted download and checksum after publishing.

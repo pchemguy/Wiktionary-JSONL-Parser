@@ -4,4 +4,4 @@
 
 ## Layout review
 
-**Result — Ready.** The feature uses the existing [repository layout](layout.md). The plan identifies the exact edition, worker, test, and benchmark owners. The CLI, library entry point, SQLite schema resource, and release tool stay in their established locations. An additional layout document is unnecessary.
+**Result — Ready.** The feature uses the existing [repository layout](../../layout.md). The plan identifies the exact edition, worker, test, and benchmark owners. The CLI, library entry point, SQLite schema resource, and release tool stay in their established locations. An additional layout document is unnecessary.
