@@ -104,3 +104,19 @@ The same merge script attached all ten input databases read-only, the runtime's 
 Each run copied 6,100,329 rows and produced a 640.94 MiB database. All 20 data tables matched the single-import reference, the original 37 chunk batch rows were preserved, and all three foreign-key checks passed.
 
 The ten-chunk median was 0.125 seconds above the three-chunk median, with overlapping trial times. The two runs used different chunk boundaries and different amounts of ID preparation.
+
+## Seven concurrent imports with IDs assigned during insertion
+
+Used the same 299,210-entry, 729.64 MiB sample and Debian 13 SQLiteICUex runtime. Python saw nine logical CPUs, so `os.cpu_count() - 2` started seven fresh processes. The [benchmark harness](../../../tools/benchmark_parallel_import.py) located byte-range boundaries at line breaks. Workers read their ranges directly from the source file. The chunks were about 104.24 MiB each and contained 32,499, 121,975, 38,197, 28,193, 31,451, 24,411, and 22,484 lines, respectively.
+
+Each worker assigned final entry IDs from its one-based chunk line numbers plus `10_000_000 * chunk_index`. Batch IDs used the same chunk offset with a local batch number. Each worker wrote a separate SQLite database, emitted independently labeled progress after each batch commit, and kept the 10,000-line default. The existing merge utility copied the stored IDs directly. No separate ID preparation pass was needed.
+
+| Run | Partition (s) | Concurrent imports (s) | Merge and publish (s) | Total (s) | Input MiB/s | Lines/s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 0.002 | 7.752 | 4.481 | 12.268 | 59.475 | 24,389 |
+| 2 | <0.001 | 7.572 | 4.611 | 12.218 | 59.721 | 24,490 |
+| 3 | <0.001 | 7.111 | 4.918 | 12.069 | 60.458 | 24,792 |
+
+The total includes worker startup, progress output captured to a file, merge, publication, and temporary database cleanup. Harness preflight and post-run verification are outside the timer. No cache flush was performed. The median was 12.218 seconds, about 3.51 times faster than the earlier 42.831-second serial median on the same sample. The merge and publication took 4.611 seconds in the median-total run, about 38% of that run.
+
+Verified all seven progress streams, exact entry IDs, 34 batch-log rows, and zero foreign-key violations in all three outputs. All 20 data tables matched the serial reference after translating IDs for comparison. An invalid-input test stopped the run, left no child workers or temporary databases, and published no destination. The harness uses fresh subprocesses with no fork dependency. Windows execution was unavailable for this benchmark.
