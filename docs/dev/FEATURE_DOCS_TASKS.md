@@ -13,7 +13,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
     - Depends on FDOCS-002 and required publication/issue closure.
     - Assess affected main architecture; prepare FEATURE_ARCHITECTURE and children only where required. Record evidenced reuse or review/acceptance of the necessary new proposal.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-004 — Assess and accept feature decomposition.
+- [x] FDOCS-004 — Assess and accept feature decomposition.
     - Depends on FDOCS-003 and required publication/issue closure.
     - Assess affected components, external/internal APIs and models against accepted architecture; prepare FEATURE_DECOMPOSITION and selected model/API-design artifacts where required. Include them in this task's reuse assessment or proposal/acceptance.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
