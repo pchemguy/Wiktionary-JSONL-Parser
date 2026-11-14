@@ -27,8 +27,9 @@ Interactive, one pass, with strict delivery. The first stop is the feature brief
 ## Design and specification decisions
 
 - FDOCS-003 reuses the [main architecture](ARCHITECTURE.md). Redirect classification belongs to the selected edition inside the existing worker and does not change process roles, ownership of line positions, the merger, or publication. No architecture overlay is needed.
-- FDOCS-004 accepted the [feature decomposition](FEATURE-DECOMPOSITION.md) under preapproval. The optional edition predicate keeps format knowledge out of the shared worker. Classification follows decoding and position accounting and precedes mapping. The benchmark shares this worker and must use source-line counts for its rate.
+- FDOCS-004 accepted the [feature decomposition](FEATURE_DECOMPOSITION.md) under preapproval. The optional edition predicate keeps format knowledge out of the shared worker. Classification follows decoding and position accounting and precedes mapping. The benchmark shares this worker and must use source-line counts for its rate.
 - FDOCS-005 accepted the [specification](FEATURE-SPEC.md) and its [review](FEATURE-SPEC-REVIEW-REPORT.md) under preapproval. The exact rule includes empty redirect strings and treats null entry fields as present.
 - FDOCS-006 accepted the [delivery plan](FEATURE-PLAN.md) and its [review](FEATURE-PLAN-REVIEW-REPORT.md) under preapproval. Phase 4 tests the original unfiltered archive with original-position accounting and row equivalence.
 - FDOCS-007 verified the [existing layout](layout.md) against the plan and recorded [layout readiness](FEATURE-PLAN-REVIEW-REPORT.md#layout-review).
 - FDOCS-008 accepted the [implementation tasks](FEATURE-TASKS.md) and their [review](FEATURE-TASKS-REVIEW-REPORT.md) under preapproval. T-023 through T-025 own Phase 4. The next preparation checkpoint is whole-package QC.
+- FDOCS-009 verified the [complete feature package](FEATURE-QC-REPORT.md) and the handoff for Phase 4.
