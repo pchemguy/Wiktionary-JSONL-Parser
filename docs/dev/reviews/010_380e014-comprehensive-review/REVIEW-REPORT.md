@@ -26,3 +26,13 @@ Medium priority, reproduced with an instrumented schema initializer. `tools/merg
 ### R-003 — A benchmark cleanup error can strand other workers
 
 Medium priority, reproduced with controlled child-process doubles. In `tools/benchmark_parallel_import.py`, a termination error stops the cleanup loops, masks an already detected failing chunk, and leaves another child unterminated and unreaped. Reuse the importer's cancellation logic and preserve the primary diagnostic. Recheck a simulated signalling race and a real malformed-input run.
+
+## U-003 — Distribution and hosted release
+
+The baseline built the wheel and source distribution without isolation. The two staged assets passed the executed name gate and checksum, and the gate passed its 38 public contract vectors. The downloaded v0.4.1 assets matched their hosted digests and the checksum file. The release tag resolves to `5c39fe13108f13f17b5d96c5590a7012583fdeaf`. The locally rebuilt wheel and the wheel rebuilt from the hosted source archive both matched the downloaded wheel byte for byte.
+
+The wheel contains the Russian schema, CLI entry point, and license. Package inventories excluded development plugin files, AI logs and local credential files. The built source distribution includes the new Windows launcher, which makes R-001 part of the next source-package release check. Installed the downloaded wheel with SQLiteICUex Python using `uv pip`, ran its command and verified the fixture against the source-tree CLI. There is no release workflow to exercise. No additional distribution defect was found.
+
+## Revision handoff
+
+Three medium-priority tool defects are accepted for correction under the request to review and fix. The repair requires no change to the import contract or edition mapping. Since the affected tools ship in the source archive, publish v0.4.2 after the corrected campaign is integrated and verified. Native Windows remains an evidence limit.
