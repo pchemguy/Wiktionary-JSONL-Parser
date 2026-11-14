@@ -18,4 +18,4 @@ Phase 4 is complete and integrated into `main`. See the [phase report](features/
 
 ## Phase 5 — CLI processing time
 
-The feature reports total elapsed processing time on successful CLI imports. See the [phase report](features/009_a09aaf4-cli-processing-time/PHASE-REPORT.md) and [current tasks](TASKS.md). The integrated release version is 0.4.1.
+The feature reports total elapsed processing time on successful CLI imports. See the [phase report](features/009_a09aaf4-cli-processing-time/PHASE-REPORT.md) and [current tasks](TASKS.md). The [v0.4.1 release](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/tag/v0.4.1) is tagged at `5c39fe13108f13f17b5d96c5590a7012583fdeaf`. The tagged and latest release download checksums match the staged artifacts. Phase 5 task issues and milestones are closed.
