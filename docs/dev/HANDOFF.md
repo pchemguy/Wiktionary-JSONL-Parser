@@ -14,4 +14,4 @@ A-005 fixed the schema check for worktrees that already contain a CRLF copy. The
 
 ## Phase 4 — Standalone redirect handling
 
-Phase 4 is complete on the feature branch. See the [phase report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md), [full-extract verification](features/008_984ad61-skip-redirect-records/full-extract.md), and [current tasks](TASKS.md). The integrated release version is 0.4.0.
+Phase 4 is complete and integrated into `main`. See the [phase report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md), [full-extract verification](features/008_984ad61-skip-redirect-records/full-extract.md), and [current tasks](TASKS.md). The integrated release version is 0.4.0.
