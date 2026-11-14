@@ -23,3 +23,5 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - For a multi-worker request with `L = 0`, ask for explicit confirmation to use one worker and abort before starting any worker if the user declines or confirmation is unavailable. For `L >= 1`, the staged destination opens as `main`, giving each merge group all `L` slots. Keep `W` when `W <= L`, reduce to `L` when `L < W < 1.5 * L`, and keep `W` with groups of at most `L` databases otherwise. Equality at the 1.5 threshold selects grouped merging.
 - Exceeding a worker's ID range fails the whole run.
 - FDOCS-002 accepted the [feature brief](FEATURE.md) at Git blob `a2fda32dfb97b953f32876a24c3357962fee72f0` on 2026-11-14. The user's acceptance selects architecture review next.
+
+- FDOCS-003 presents the [feature architecture](FEATURE_ARCHITECTURE.md) at Git blob `50eb121d54fd5211aef3b779a9dcf0abf9f1b75e` for first acceptance. The proposal gives worker processes independent source ranges and SQLite connections, with shared mapping and separate staged publication. It follows the accepted worker limits, ID policy, and failure boundary.
