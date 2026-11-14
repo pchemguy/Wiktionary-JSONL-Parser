@@ -15,3 +15,5 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - The user's benchmark directions supply the starting scheme: byte-balanced chunks, fresh Windows-compatible worker processes, `os.cpu_count() - 2` workers, chunk-local progress, IDs assigned before merge, and run-wide abort on failure. The 10,000-line default is confirmed for this feature.
 - FDOCS-006 and FDOCS-008 must schedule comprehensive review on the exact release candidate, repair of confirmed in-scope findings, and re-verification before final release. The user requested this release gate. Execution belongs to the eventual implementation and release range.
 - FDOCS-001 establishes the campaign context. FDOCS-002 covers the brief and its first acceptance.
+
+FDOCS-002 presents the [feature brief](FEATURE.md) at Git blob `1f0553dc1c264e42ec9204f589fe7c34eee6b626` for review. The brief maps the benchmarked scheme to the proposed import path, identifies the compatibility decisions, and records the required prerelease sequence. Acceptance is pending.
