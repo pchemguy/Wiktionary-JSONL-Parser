@@ -4,6 +4,7 @@ import argparse
 import sys
 from collections.abc import Sequence
 from pathlib import Path
+from time import perf_counter
 
 from .importer import ImportFailure, import_jsonl
 
@@ -58,7 +59,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="maximum source lines per worker batch (default: %(default)s)",
     )
     parser.add_argument(
-        "--no-progress", action="store_true", help="suppress batch progress on stderr"
+        "--no-progress",
+        action="store_true",
+        help="suppress batch progress and total processing time on stderr",
     )
     args = parser.parse_args(argv)
     source = args.input
@@ -67,6 +70,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         if source.suffix != ".jsonl":
             parser.error("--output is required when INPUT has no final .jsonl suffix")
         destination = source.with_suffix(".sqlite")
+    started = perf_counter() if not args.no_progress else None
     try:
         import_jsonl(
             source,
@@ -84,6 +88,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     except KeyboardInterrupt:
         print(f"{parser.prog}: interrupted", file=sys.stderr)
         return 1
+    if started is not None:
+        elapsed = perf_counter() - started
+        print(f"Total processing time: {elapsed:.3f} s", file=sys.stderr, flush=True)
     return 0
 
 
