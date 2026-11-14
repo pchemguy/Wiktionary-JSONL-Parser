@@ -49,3 +49,26 @@ Each trial started a fresh CLI process and wrote a new on-disk database. The CLI
 | **Median** | **42.831** | **17.035** | **6,986** |
 
 All three runs had 299,210 database entries, 29 batches of 10,000 lines and one of 9,210 lines, zero foreign-key violations, and a final progress update of 100.0%. Throughput uses the uncompressed JSONL input size and the number of imported lines.
+
+## Three pre-keyed databases merged with UNION ALL
+
+Split the 299,210-entry sample above into contiguous chunks at the first complete line at or beyond each byte boundary. Each chunk was imported separately with the 10,000-line default, in sequence on the same Debian 13 and SQLiteICUex runtime. Import times cover separate CLI invocations and exclude splitting and verification.
+
+| Chunk | Input MiB | Lines | Import time (s) | Prepared entry IDs | Prepared batch IDs |
+| --- | ---: | ---: | ---: | --- | --- |
+| 1 | 243.22 | 168,183 | 14.910 | 1–168,183 | 1–17 |
+| 2 | 243.21 | 73,149 | 14.581 | 168,184–241,332 | 18–25 |
+| 3 | 243.21 | 57,878 | 15.041 | 241,333–299,210 | 26–31 |
+
+The sequential imports took 44.532 seconds in total. Before timing the merge, assigned globally disjoint ranges by adding cumulative prior entry and batch counts to each later source database. Applied the same entry offset to dependent `entry_id` and `examples.sense_entry_id` columns, leaving child indices unchanged. Preparation of chunks 2 and 3 took 4.548 and 4.502 seconds, including a foreign-key check and each database's update transaction. Chunk 1 retained its original IDs.
+
+[The merge utility](../../../tools/merge_databases.py) created a fresh destination for each trial, attached the three databases read-only, and ran one `INSERT ... SELECT ... UNION ALL ...` per table inside one transaction with foreign keys enabled. The timer includes schema creation, attachment and schema checks, inserts, and commit. It excludes pre-keying and post-merge verification. The prepared source databases totaled 641.31 MiB. No cache flush was performed.
+
+| Run | Merge time (s) | Source DB MiB/s | DB rows/s |
+| --- | ---: | ---: | ---: |
+| 1 | 4.879 | 131.44 | 1,250,322 |
+| 2 | 4.660 | 137.62 | 1,309,082 |
+| 3 | 4.398 | 145.82 | 1,387,068 |
+| **Median** | **4.660** | **137.62** | **1,309,082** |
+
+Each destination held 6,100,323 rows across 21 tables and was 640.94 MiB. A key-based comparison with binary text comparison found identical rows in all 20 data tables from a single import of the same sample. The merged `batch_log` preserved the 31 chunk-level batch rows in order. Each merged database passed the foreign-key check.
