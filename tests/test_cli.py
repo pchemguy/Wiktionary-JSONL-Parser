@@ -84,7 +84,7 @@ def test_missing_input_and_existing_destination(
     dest = source.with_suffix(".sqlite")
     assert main([str(source)]) == 1
     assert not dest.exists()
-    assert str(source) in capsys.readouterr().err
+    assert repr(str(source)) in capsys.readouterr().err
     write_entries(source, "a")
     dest.write_bytes(b"existing")
     assert main([str(source)]) == 1

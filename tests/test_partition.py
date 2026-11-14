@@ -13,8 +13,18 @@ from wiktionary_jsonl_parser.importer import Chunk, partition_source
         (b"a\n" * 4, 4, [0, 2, 4, 6, 8]),
         (b"abc\r\ndef", 2, [0, 5, 8]),
         (b"\xef\xbb\xbf{}\r\n{}\n{}", 5, [0, 7, 7, 7, 10, 12]),
-        (b"a" * 300_000 + b"\nlast", 4, [0, 300_001, 300_001, 300_001, 300_005]),
-        (b"a" * 300_000, 4, [0, 300_000, 300_000, 300_000, 300_000]),
+        pytest.param(
+            b"a" * 300_000 + b"\nlast",
+            4,
+            [0, 300_001, 300_001, 300_001, 300_005],
+            id="long-line-then-final-record",
+        ),
+        pytest.param(
+            b"a" * 300_000,
+            4,
+            [0, 300_000, 300_000, 300_000, 300_000],
+            id="long-unterminated-line",
+        ),
     ],
 )
 def test_partition(data: bytes, workers: int, boundaries: list[int]) -> None:

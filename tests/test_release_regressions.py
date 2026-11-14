@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import subprocess
 import sys
@@ -20,8 +19,6 @@ def test_fresh_worker_uses_callers_package(tmp_path: Path) -> None:
     shadow.mkdir()
     (shadow / "__init__.py").write_text("raise SystemExit(29)\n", encoding="ascii")
     (tmp_path / "in.jsonl").write_bytes(LINE)
-    env = os.environ.copy()
-    env.pop("PYTHONPATH", None)
     parent_package = Path(importer.__file__).resolve().parents[1]
     subprocess.run(
         [
@@ -34,7 +31,6 @@ def test_fresh_worker_uses_callers_package(tmp_path: Path) -> None:
             str(parent_package),
         ],
         cwd=tmp_path,
-        env=env,
         check=True,
     )
     with closing(sqlite3.connect(tmp_path / "out.sqlite")) as db:
@@ -86,9 +82,26 @@ def test_cleanup_error_after_publication_preserves_success(
         assert db.execute("SELECT word FROM entries").fetchall() == [("one",)]
 
 
+@pytest.mark.parametrize(
+    ("relative_parent", "expected_parent"),
+    [
+        pytest.param("a/sym", "b/inside", id="symlinked-parent"),
+        pytest.param(
+            "a/sym/../write",
+            "b/write",
+            marks=pytest.mark.skipif(
+                sys.platform == "win32",
+                reason="this traversal regression uses POSIX symlink semantics",
+            ),
+            id="parent-after-symlink",
+        ),
+    ],
+)
 def test_stage_is_created_under_resolved_destination_parent(
     tmp_path: Path,
     single_worker: None,
+    relative_parent: str,
+    expected_parent: str,
 ) -> None:
     for name in ("a/write", "b/write", "b/inside"):
         (tmp_path / name).mkdir(parents=True)
@@ -98,9 +111,10 @@ def test_stage_is_created_under_resolved_destination_parent(
         pytest.skip(f"cannot create test symlink: {exc}")
     source = tmp_path / "in.jsonl"
     source.write_bytes(LINE)
-    importer.import_jsonl(source, tmp_path / "a/sym/../write/out.sqlite")
-    assert [p.name for p in (tmp_path / "b/write").iterdir()] == ["out.sqlite"]
+    importer.import_jsonl(source, tmp_path / relative_parent / "out.sqlite")
+    assert [p.name for p in (tmp_path / expected_parent).iterdir()] == ["out.sqlite"]
     assert list((tmp_path / "a/write").iterdir()) == []
+    assert not list(tmp_path.rglob(".wiktionary-import-*"))
 
 
 def test_unbounded_library_batch_size_can_process_a_small_file(

@@ -5,3 +5,7 @@ Phase 3 is complete and integrated into `main`. See the [current tasks](TASKS.md
 The [v0.3.0 release](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/tag/v0.3.0) is tagged at `f95015483bd8eec8c3445aa9982ff429c32458d5`. The tagged and latest release downloads matched the staged ZIP and checksums byte for byte. All Phase 3 task issues and milestones are closed.
 
 The [performance report](reports/importer-performance.md) retains the serial baseline and early worker and merge measurements. The [batch-size revision](reviews/002_0c74da1-default-batch-size/REVISION-REPORT.md) records the 10,000-line default. The [SQLite build revision](reviews/004_1c1297a-sqlite-attachment-limit/REVISION-REPORT.md) verifies the optional 100-slot build.
+
+## Windows test portability revision
+
+Campaign `007_13c6351` addressed oversized pytest IDs, redundant subprocess environment setup, Windows path diagnostics, symlink semantics, and schema checkout line endings. See the [revision report](reviews/007_13c6351-windows-test-portability/REVISION-REPORT.md) for verified Linux results and the native Windows verification limit.
