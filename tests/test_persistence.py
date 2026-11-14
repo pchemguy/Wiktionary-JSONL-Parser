@@ -6,6 +6,8 @@ from pathlib import Path
 import pytest
 
 from wiktionary_jsonl_parser import worker as importer
+from wiktionary_jsonl_parser.editions import Edition
+from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
 
 FIXTURE = Path(__file__).with_name("fixtures") / "all-tables.jsonl"
 
@@ -29,7 +31,13 @@ def test_all_tables_bound_and_written_in_parent_order(
 
     monkeypatch.setattr(importer.sqlite3, "connect", connect)
     dest = tmp_path / "all.sqlite"
-    importer.run_chunk(FIXTURE, dest, importer.Chunk(0, 0, FIXTURE.stat().st_size), 2)
+    importer.run_chunk(
+        FIXTURE,
+        dest,
+        importer.Chunk(0, 0, FIXTURE.stat().st_size),
+        2,
+        edition=RUSSIAN_EDITION,
+    )
     expected = {
         "entries": [
             (
@@ -112,8 +120,8 @@ def test_failed_batch_keeps_committed_prefix(
 ) -> None:
     original = importer.initialize_database
 
-    def initialize(db: sqlite3.Connection) -> None:
-        original(db)
+    def initialize(db: sqlite3.Connection, edition: Edition) -> None:
+        original(db, edition)
         if failure == "child insert":
             db.execute("""CREATE TRIGGER reject_write BEFORE INSERT ON examples
                 WHEN NEW.sense_entry_id = 4 BEGIN SELECT RAISE(ABORT, 'child failure'); END""")
@@ -138,7 +146,11 @@ def test_failed_batch_keeps_committed_prefix(
     }[failure]
     with pytest.raises(importer.ImportFailure, match=diagnostic):
         importer.run_chunk(
-            source, output, importer.Chunk(0, 0, source.stat().st_size), 2
+            source,
+            output,
+            importer.Chunk(0, 0, source.stat().st_size),
+            2,
+            edition=RUSSIAN_EDITION,
         )
     with closing(sqlite3.connect(output)) as db:
         assert db.execute("SELECT id FROM entries ORDER BY id").fetchall() == [

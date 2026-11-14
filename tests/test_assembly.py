@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 
 from wiktionary_jsonl_parser import importer, merge, worker
+from wiktionary_jsonl_parser.editions import Edition
+from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
 
 FIXTURE = Path(__file__).with_name("fixtures") / "all-tables.jsonl"
 
@@ -21,9 +23,10 @@ def test_assemble(
     merge_calls = []
     attach = importer.merge_databases
 
-    def observe(paths: list[Path], dest: Path, group: int) -> None:
+    def observe(paths: list[Path], dest: Path, group: int, *, edition: Edition) -> None:
         merge_calls.append(group)
-        attach(paths, dest, group)
+        assert edition is RUSSIAN_EDITION
+        attach(paths, dest, group, edition=edition)
 
     monkeypatch.setattr(importer, "merge_databases", observe)
     importer.import_jsonl(source, output, 2)
@@ -48,14 +51,16 @@ def test_merge_uses_read_only_attachments_and_switches_groups(tmp_path: Path) ->
     size = source.stat().st_size
     paths = [tmp_path / f"source ?#{i}.sqlite" for i in range(3)]
     for i, path in enumerate(paths):
-        worker.run_chunk(source, path, worker.Chunk(i, 0, size), 2)
+        worker.run_chunk(
+            source, path, worker.Chunk(i, 0, size), 2, edition=RUSSIAN_EDITION
+        )
     before = [(p.stat().st_mtime_ns, p.read_bytes()) for p in paths]
     with closing(sqlite3.connect((tmp_path / "probe").as_uri(), uri=True)) as db:
         db.execute("ATTACH DATABASE ? AS source", (paths[0].as_uri() + "?mode=ro",))
         with pytest.raises(sqlite3.OperationalError, match="readonly"):
             db.execute("DELETE FROM source.entries")
     output = tmp_path / "merged"
-    merge.merge_databases(paths, output, 2)
+    merge.merge_databases(paths, output, 2, edition=RUSSIAN_EDITION)
     assert before == [(p.stat().st_mtime_ns, p.read_bytes()) for p in paths]
     with closing(sqlite3.connect(output)) as db:
         assert db.execute("SELECT count(*) FROM entries").fetchone() == (9,)
@@ -71,7 +76,9 @@ def test_discard_staging_on_failure(
     data = FIXTURE.read_bytes()
     source.write_bytes(data if failure != "worker" else data + b"\ninvalid")
 
-    def fail_merge(paths: list[Path], destination: Path, group: int) -> None:
+    def fail_merge(
+        paths: list[Path], destination: Path, group: int, *, edition: Edition
+    ) -> None:
         raise sqlite3.OperationalError("forced merge failure")
 
     def fail_link(staged: Path, destination: Path) -> None:

@@ -4,14 +4,16 @@ import sqlite3
 from contextlib import closing
 from pathlib import Path
 
-from .worker import INSERTS, initialize_database
+from .editions import Edition, initialize_database
 
 
-def merge_databases(sources: list[Path], output: Path, group_size: int) -> None:
+def merge_databases(
+    sources: list[Path], output: Path, group_size: int, *, edition: Edition
+) -> None:
     """Copy one group at a time into the staged output database."""
 
     with closing(sqlite3.connect(output.as_uri(), uri=True)) as db:
-        initialize_database(db)
+        initialize_database(db, edition)
         for offset in range(0, len(sources), group_size):
             group = sources[offset : offset + group_size]
             aliases = [f"worker_{i}" for i in range(len(group))]
@@ -21,7 +23,7 @@ def merge_databases(sources: list[Path], output: Path, group_size: int) -> None:
                 )
             with db:
                 db.execute("BEGIN")
-                for table in INSERTS:
+                for table in (*edition.inserts, "batch_log"):
                     copies = " UNION ALL ".join(
                         f"SELECT * FROM {alias}.{table}" for alias in aliases
                     )

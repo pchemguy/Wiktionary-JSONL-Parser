@@ -5,13 +5,18 @@ import sqlite3
 from collections.abc import Callable, Iterable, Iterator
 from contextlib import closing
 from dataclasses import dataclass
-from importlib.resources import files
 from itertools import islice
 from pathlib import Path
 from sys import maxsize
 from typing import BinaryIO, NoReturn
 
-from .mapping import LINKAGES, RowsByTable, append_record_rows
+from .editions import (
+    BATCH_LOG_INSERT,
+    Edition,
+    RowsByTable,
+    get_edition,
+    initialize_database,
+)
 
 
 class ImportFailure(Exception):
@@ -46,12 +51,6 @@ class Chunk:
     stop: int
 
 
-def schema_sql() -> str:
-    """Read the packaged SQLite DDL."""
-
-    return files(__package__).joinpath("schema.sql").read_text(encoding="utf-8")
-
-
 def require_unicode_collation(db: sqlite3.Connection) -> None:
     """Check that the connection provides the required SQLiteICUex collation."""
 
@@ -59,13 +58,6 @@ def require_unicode_collation(db: sqlite3.Connection) -> None:
         db.execute("SELECT 'a' = 'A' COLLATE UTF_CI").fetchone()
     except sqlite3.OperationalError as exc:
         raise ImportFailure("SQLiteICUex must provide the UTF_CI collation") from exc
-
-
-def initialize_database(db: sqlite3.Connection) -> None:
-    """Enable foreign keys and create the converter schema."""
-
-    db.execute("PRAGMA foreign_keys = ON")
-    db.executescript(schema_sql())
 
 
 def read_batches(source: Iterable[bytes], batch_size: int) -> Iterator[list[bytes]]:
@@ -97,50 +89,21 @@ def decode_record(
     return data
 
 
-INSERTS = {
-    "entries": (
-        "INSERT INTO entries (id, word, lang_code, lang, pos, pos_title, literal_meaning, "
-        "etymology_texts, categories, raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    **{
-        table: f"INSERT INTO {table} (entry_id, idx, word, sense, sense_index, raw_tags, tags) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?)"
-        for table in LINKAGES
-    },
-    "forms": "INSERT INTO forms (entry_id, idx, form, raw_tags, tags) VALUES (?, ?, ?, ?, ?)",
-    "translations": (
-        "INSERT INTO translations (entry_id, idx, word, lang, lang_code, roman, sense, other, "
-        "raw_tags, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "hyphenations": (
-        "INSERT INTO hyphenations (entry_id, idx, parts, raw_tags, tags) VALUES (?, ?, ?, ?, ?)"
-    ),
-    "senses": (
-        "INSERT INTO senses (entry_id, idx, glosses, form_of, categories, topics, raw_tags, tags) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "examples": (
-        "INSERT INTO examples (sense_entry_id, sense_idx, idx, text, translation, ref, "
-        "bold_text_offsets, bold_translation_offsets) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "sounds": (
-        "INSERT INTO sounds (entry_id, idx, audio, ipa, rhymes, homophones, urls, raw_tags, tags) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    ),
-    "batch_log": "INSERT INTO batch_log (batch_id, line_count) VALUES (?, ?)",
-}
-
-
 def write_batch(
-    db: sqlite3.Connection, rows_by_table: RowsByTable, batch_id: int
+    db: sqlite3.Connection,
+    edition: Edition,
+    rows_by_table: RowsByTable,
+    batch_id: int,
+    line_count: int,
 ) -> None:
     """Commit one batch atomically, including its log row."""
 
     try:
         db.execute("BEGIN")
-        for table, sql in INSERTS.items():
+        for table, sql in edition.inserts.items():
             if rows_by_table[table]:
                 db.executemany(sql, rows_by_table[table])
+        db.executemany(BATCH_LOG_INSERT, [(batch_id, line_count)])
         db.commit()
     except sqlite3.Error as exc:
         if db.in_transaction:
@@ -181,6 +144,8 @@ def run_chunk(
     chunk: Chunk,
     batch_size: int,
     on_progress: Progress | None = None,
+    *,
+    edition: Edition,
 ) -> None:
     """Write a staged worker database and report only committed byte counts."""
 
@@ -189,12 +154,12 @@ def run_chunk(
             input_path.open("rb") as source,
             closing(sqlite3.connect(output_path)) as db,
         ):
-            initialize_database(db)
+            initialize_database(db, edition)
             line_number = 0
             processed = 0
             batches = read_batches(read_chunk(source, chunk), batch_size)
             for batch_number, batch in enumerate(batches, 1):
-                rows: RowsByTable = {table: [] for table in INSERTS}
+                rows: RowsByTable = {table: [] for table in edition.inserts}
                 for raw in batch:
                     line_number += 1
                     entry_id = chunk_key(chunk.index, line_number)
@@ -202,14 +167,13 @@ def run_chunk(
                         raw, line_number, bom_allowed=chunk.start == 0
                     )
                     try:
-                        append_record_rows(record, entry_id, rows)
+                        edition.map_record(record, entry_id, rows)
                     except ValueError as exc:
                         raise ImportFailure(
                             f"invalid mapped value: {exc}", line_number
                         ) from exc
                 batch_id = chunk_key(chunk.index, batch_number)
-                rows["batch_log"].append((batch_id, len(batch)))
-                write_batch(db, rows, batch_id)
+                write_batch(db, edition, rows, batch_id, len(batch))
                 if on_progress is not None:
                     processed += sum(map(len, batch))
                     on_progress(chunk.index, processed, chunk.stop - chunk.start)
@@ -226,7 +190,7 @@ def main() -> int:
 
     import sys
 
-    source, output, index, start, stop, batch_size, progress = sys.argv[1:]
+    source, output, index, start, stop, batch_size, identifier, progress = sys.argv[1:]
     chunk = Chunk(int(index), int(start), int(stop))
 
     def report(chunk_index: int, processed: int, total: int) -> None:
@@ -239,6 +203,7 @@ def main() -> int:
             chunk,
             int(batch_size),
             report if progress == "1" else None,
+            edition=get_edition(identifier),
         )
     except ImportFailure as exc:
         print(json.dumps(["failure", exc.detail, exc.line_number]), flush=True)

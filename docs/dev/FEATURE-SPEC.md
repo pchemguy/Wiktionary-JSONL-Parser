@@ -1,6 +1,6 @@
 # Parallel importer specification
 
-Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [feature brief](FEATURE.md) defines the worker policy, the [architecture](FEATURE_ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](FEATURE_DECOMPOSITION.md) defines the components. The [DDL](spec/schema.sql) and [mapping rules](spec/mapping.md) govern the output. The input must remain unchanged throughout the run.
+Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [feature brief](FEATURE.md) defines the worker policy, the [architecture](FEATURE_ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](FEATURE_DECOMPOSITION.md) defines the components. The public CLI and library import the Russian Wiktionary edition. The [DDL](spec/schema.sql) and [mapping rules](spec/mapping.md) govern its output. The input must remain unchanged throughout the run.
 
 ## Entry points
 

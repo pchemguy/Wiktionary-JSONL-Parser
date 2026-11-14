@@ -14,6 +14,7 @@ from tempfile import TemporaryDirectory
 from threading import Thread
 from typing import BinaryIO
 
+from .editions import get_edition
 from .merge import merge_databases
 from .worker import (
     Chunk,
@@ -129,6 +130,8 @@ def run_workers(
     chunks: list[Chunk],
     batch_size: int,
     on_progress: Progress | None,
+    *,
+    edition_id: str,
 ) -> None:
     """Start fresh Python interpreters and reap them before returning."""
 
@@ -149,6 +152,7 @@ def run_workers(
                         str(chunk.start),
                         str(chunk.stop),
                         str(batch_size),
+                        edition_id,
                         "1" if on_progress is not None else "0",
                     ],
                     stdout=subprocess.PIPE,
@@ -226,6 +230,7 @@ def import_jsonl(
     stage = "bootstrap"
     staging: TemporaryDirectory[str] | None = None
     try:
+        edition = get_edition("ru")
         source_path = Path(input_path).absolute()
         destination = Path(output_path).absolute()
         with source_path.open("rb") as source:
@@ -249,13 +254,22 @@ def import_jsonl(
         outputs = [root / f"worker-{chunk.index}.sqlite" for chunk in chunks]
 
         stage = "workers"
-        run_workers(source_path, outputs, chunks, batch_size, on_progress)
+        run_workers(
+            source_path,
+            outputs,
+            chunks,
+            batch_size,
+            on_progress,
+            edition_id=edition.identifier,
+        )
 
         staged_output = outputs[0]
         if plan.worker_count > 1:
             stage = "merge"
             staged_output = root / "merged.sqlite"
-            merge_databases(outputs, staged_output, plan.merge_group_size)
+            merge_databases(
+                outputs, staged_output, plan.merge_group_size, edition=edition
+            )
 
         stage = "publication"
         publish_database(staged_output, destination)
