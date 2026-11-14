@@ -9,3 +9,7 @@ R-001 is corrected. The launcher uses its checkout, preserves the adjacent-file 
 ## V-002 — Manual merge publication
 
 R-002 is verified. The manual merge prepares the closed database in same-filesystem staging before calling the importer's no-overwrite publication. The regression failed in all three baseline cases because the output was already visible. On the corrected tool, success preserved keys and source bytes, a duplicate key left no destination, and a simulated competitor retained its contents. All 11 manual merge and importer assembly tests passed.
+
+## V-003 — Benchmark worker cleanup
+
+R-003 is verified. The benchmark delegates cancellation and reaping to the importer's shared routine, preserving the first exception and attaching cleanup errors as diagnostic notes. Both regressions failed on the baseline with a masked primary exception. Both passed after the fix. The affected supervision and release regression suite passed. A real seven-worker benchmark succeeded on the fixture. A malformed input failed with the chunk diagnostic and left neither a destination nor an owned staging directory.
