@@ -7,3 +7,7 @@ T-011 and T-012 are complete. Campaign `001_83e7d6a` is integrated into `main`. 
 See the [current tasks](TASKS.md), [archived feature evidence](features/001_83e7d6a-import-progress/README.md), and [benchmark and pipeline profile](reports/importer-performance.md). The full authorized feature and measurement work is complete.
 
 Revision `002_0c74da1` set the default batch size to 10,000 source lines. The [revision report](reviews/002_0c74da1-default-batch-size/REVISION-REPORT.md) records the verified change.
+
+## Active feature preparation
+
+Campaign `003_24f121f` opens the parallel importer redesign from `main` at `24f121f3f328aa575d52121acaf079f83d5a7a5c`. Preparation runs on `design-docs/003_24f121f-parallel-importer-redesign` and returns to `main`. See the [preparation record](FEATURE_PREPARATION.md), [checklist](FEATURE_DOCS_TASKS.md), and [GitHub milestone](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9). The opening scope stops at first brief review.
