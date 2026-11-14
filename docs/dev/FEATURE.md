@@ -1,20 +1,35 @@
-# Parallel importer redesign
+# Parallel importer
 
-Import a local, extracted Wiktionary JSONL file into one SQLite database using the worker-and-merge scheme measured in the [parallel benchmark](reports/importer-performance.md#seven-concurrent-imports-with-ids-assigned-during-insertion). The new execution path preserves the [mapping rules](spec/mapping.md), [SQLite schema](spec/schema.sql), and SQLiteICUex requirement.
+The importer converts a local, extracted Wiktionary JSONL file into one SQLite database. It uses the [mapping rules](spec/mapping.md), the [SQLite schema](spec/schema.sql), and SQLiteICUex.
+
+## Development phases
+
+Develop the single-process importer first to establish the mapping, persistence, and progress behavior. Then [benchmark](reports/importer-performance.md) partitioning, independent imports, and SQLite merges. The multiprocessing phase follows the measured [worker-and-merge design](reports/importer-performance.md#seven-concurrent-imports-with-ids-assigned-during-insertion).
 
 ## Import pipeline
 
-Divide the input into contiguous, roughly byte-balanced chunks at complete line boundaries. Fresh Windows-compatible Python processes read their assigned ranges directly and write independent temporary SQLite databases. The worker count is `os.cpu_count() - 2`. Each worker uses **10,000 source lines per batch by default** and reports its own byte progress with its zero-based chunk ID after each successful batch commit.
+Divide the input into contiguous, roughly byte-balanced chunks at complete line boundaries. Start one fresh Windows-compatible Python process per chunk. Each worker reads its range directly and writes an independent temporary SQLite database. Workers default to **10,000 source lines per batch** and report byte progress with their zero-based chunk ID after each successful batch commit.
 
-Assign each entry's final ID at insertion as `10_000_000 * chunk_index + chunk_line_number`. The chunk index is zero-based and the local line number is one-based. Dependent rows use that final entry ID. Batch log IDs use the same chunk offset with the local batch number. IDs preserve source order when sorted, with gaps between chunks.
+### Worker count and attachment limit
 
-After all workers succeed, merge the schema-compatible databases in source chunk order. Use one `INSERT ... SELECT ... UNION ALL ...` per table in each merge group, keeping foreign keys enabled and inserting parent tables first. Publish the destination only after a successful merge. A worker or merge failure aborts the run, cleans up its owned temporary files, and leaves no partial destination. This replaces the current published-prefix behavior for the parallel path.
+At bootstrap, read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)`. Reserve one attachment slot, giving a capacity of `L - 1` worker databases per merge group. Let `W = os.cpu_count() - 2` when Python reports more than two logical CPUs. Use one worker when the CPU count is unavailable or at most two so the same worker pipeline applies on smaller systems.
 
-## Design decisions to resolve
+Apply the rules in this order:
 
-- Define the public entry point and compatibility behavior for existing CLI and library callers, including quiet mode and diagnostics when only the chunk-local line number is known.
-- Define behavior when Python cannot report a CPU count, reports two or fewer CPUs, or the resulting worker count exceeds the SQLite attachment limit. Define how the importer handles a chunk that would exceed its ID range.
+| Condition | Workers | Merge groups |
+| --- | ---: | --- |
+| `L >= W + 1` | `W` | One group |
+| `L < W + 1` and `W + 1 < 1.5 * L` | `L - 1` | One group |
+| `W + 1 >= 1.5 * L` after the first two checks | `W` | Groups of at most `L - 1` databases |
+
+For `L = 10`, a requested 7 workers stays at 7, a requested 10 is reduced to 9, and a requested 14 stays at 14 with merge groups of 9 and 5. A bootstrap limit below two leaves no usable worker attachment slots under this policy. The proposed handling is to fail during bootstrap with a diagnostic.
+
+### IDs and destination
+
+Assign each entry's ID at insertion as `10_000_000 * chunk_index + chunk_line_number`, using a zero-based chunk index and a one-based line number. Dependent rows use the assigned entry ID. Batch log IDs use the same chunk offset with the one-based local batch number. Sorting by ID preserves source order. If any worker exceeds its ID range, abort the entire run.
+
+After all workers succeed, merge their databases into one staged destination in source chunk order. Use one `INSERT ... SELECT ... UNION ALL ...` per table per merge group. Keep foreign keys enabled and insert parent tables before child tables. Publish the destination only after every merge group succeeds. A worker or merge failure aborts the run, cleans up its owned temporary files, and leaves the requested destination unpublished. Identify the chunk and chunk-local line in diagnostics where available.
 
 ## Campaign release gate
 
-Implement the redesigned pipeline, then comprehensively review the exact release candidate. Review Windows-compatible process startup and cancellation, chunk framing, ID ranges and source order, transaction and merge integrity, failure cleanup and destination publication, CLI and library compatibility, throughput, documentation, and packaging. Fix confirmed in-scope findings and repeat the affected checks, regression suite, and release checks on the corrected candidate before tagging or publishing the final campaign release.
+Comprehensively review the exact release candidate after implementation. Cover Windows-compatible process startup and cancellation, chunk framing, worker and attachment-limit boundaries, ID ranges and source order, transaction and merge integrity, failure cleanup and destination publication, CLI and library behavior, throughput, documentation, and packaging. Fix confirmed in-scope findings and rerun the affected checks, regression suite, and release checks before tagging or publishing the final campaign release.

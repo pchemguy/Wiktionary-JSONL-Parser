@@ -16,4 +16,9 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - FDOCS-006 and FDOCS-008 must schedule comprehensive review on the exact release candidate, repair of confirmed in-scope findings, and re-verification before final release. The user requested this release gate. Execution belongs to the eventual implementation and release range.
 - FDOCS-001 establishes the campaign context. FDOCS-002 covers the brief and its first acceptance.
 
-FDOCS-002 presents the [feature brief](FEATURE.md) at Git blob `1f0553dc1c264e42ec9204f589fe7c34eee6b626` for review. The brief maps the benchmarked scheme to the proposed import path, identifies the compatibility decisions, and records the required prerelease sequence. Acceptance is pending.
+## Brief revision
+
+- Present single-process development, benchmarking, and multiprocessing as successive phases of the project. Design the multiprocessing product contract directly, without a compatibility workstream.
+- Use one worker when the reported logical CPU count is unavailable or at most two. Read the effective SQLite attachment limit at bootstrap and reserve one slot. When the requested workers do not fit, use the user's strict 1.5 threshold to choose between reducing the worker count and merging the full worker set in groups. Equality at the 1.5 threshold selects grouped merging.
+- Exceeding a worker's ID range fails the whole run. The proposed bootstrap behavior for an attachment limit below two is a diagnostic and early failure because the slot reservation leaves no worker capacity.
+- FDOCS-002 presents the revised [feature brief](FEATURE.md) at Git blob `b290d689189c76248e3b1ea0a929728ca1fe414f` for first acceptance. Architecture and decomposition follow acceptance.
