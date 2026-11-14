@@ -10,3 +10,4 @@ The workflow uses one preparation pass under the user's delegated design authori
 
 - FDOCS-001 verified campaign context, tracking, branches and scope.
 - FDOCS-002 accepted the [brief](FEATURE.md) under the user delegation.
+- FDOCS-003 reused [architecture](ARCHITECTURE.md). The CLI reports after the synchronous importer call; no process boundary changes.
