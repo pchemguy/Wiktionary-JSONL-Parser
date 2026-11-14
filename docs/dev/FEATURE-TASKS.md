@@ -6,7 +6,7 @@
 
 - [ ] Phase 3 — Parallel import
     - [ ] Milestone 3.1 — Run planning and worker execution
-        - [ ] T-013 — Plan the worker count and attachment groups
+        - [x] T-013 — Plan the worker count and attachment groups
             Implement bootstrap, probing, warning and confirmation policy. Verify exact fits, reduction, equality at 1.5, one-slot groups, zero-limit confirmation, and the one-worker CPU fallback.
         - [ ] T-014 — Partition the source at complete record boundaries
             Depends on T-013. Use ordered byte ranges and verify exact coverage for small files, very long records, coincident ranges, CRLF, and an unterminated final line.

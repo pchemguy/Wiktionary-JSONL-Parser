@@ -4,6 +4,7 @@ import json
 import sqlite3
 from collections.abc import Callable, Iterator
 from contextlib import closing
+from dataclasses import dataclass
 from importlib.resources import files
 from itertools import islice
 from os import fstat
@@ -22,6 +23,42 @@ class ImportFailure(Exception):
         super().__init__(
             message if line_number is None else f"line {line_number}: {message}"
         )
+
+
+@dataclass(frozen=True)
+class RunPlan:
+    worker_count: int
+    merge_group_size: int
+
+
+def plan_run(
+    cpu_count: int | None,
+    attachment_limit: int,
+    on_warning: Callable[[str], None] | None,
+    confirm_single_worker: Callable[[], bool] | None,
+) -> RunPlan:
+    """Choose the process count and number of attachments per merge group."""
+
+    requested = cpu_count - 2 if cpu_count is not None and cpu_count > 2 else 1
+    if requested > attachment_limit and on_warning is not None:
+        on_warning(
+            f"requested {requested} workers but SQLite allows {attachment_limit} attachments"
+        )
+    if requested == 1:
+        return RunPlan(1, 0)
+    if attachment_limit == 0:
+        if confirm_single_worker is not None and confirm_single_worker() is True:
+            return RunPlan(1, 0)
+        raise ImportFailure("running with one worker requires explicit confirmation")
+    if attachment_limit < requested and 2 * requested < 3 * attachment_limit:
+        return RunPlan(attachment_limit, attachment_limit)
+    return RunPlan(requested, min(requested, attachment_limit))
+
+
+def probe_attachment_limit() -> int:
+    with closing(sqlite3.connect(":memory:")) as probe:
+        require_unicode_collation(probe)
+        return probe.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)
 
 
 def schema_sql() -> str:
@@ -145,8 +182,7 @@ def import_jsonl(
                 fstat(source.fileno()).st_size if on_progress is not None else 0
             )
             bytes_processed = 0
-            with closing(sqlite3.connect(":memory:")) as probe:
-                require_unicode_collation(probe)
+            probe_attachment_limit()
             # Claim the destination exclusively before SQLite opens it.
             with output_path.open("xb"):
                 pass
