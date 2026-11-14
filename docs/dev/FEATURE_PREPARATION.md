@@ -16,3 +16,4 @@ The workflow uses one preparation pass under the user's delegated design authori
 - FDOCS-006 accepted the [plan](FEATURE-PLAN.md) and [plan review](FEATURE-PLAN-REVIEW-REPORT.md).
 - FDOCS-007 verified the existing [layout](layout.md) through the [layout review](FEATURE-PLAN-REVIEW-REPORT.md#layout-review).
 - FDOCS-008 accepted the [tasks](FEATURE-TASKS.md) and [task review](FEATURE-TASKS-REVIEW-REPORT.md).
+- FDOCS-009 passed [package QC](FEATURE-QC-REPORT.md) and prepared the implementation handoff.

@@ -19,3 +19,5 @@ Phase 4 is complete and integrated into `main`. See the [phase report](features/
 ## CLI processing time feature
 
 Campaign `009_a09aaf4` prepares the CLI completion duration for patch release `0.4.1`. See the [preparation record](FEATURE_PREPARATION.md) and [checklist](FEATURE_DOCS_TASKS.md).
+
+Preparation is complete. See the [package review](FEATURE-QC-REPORT.md) and [Phase 5 tasks](FEATURE-TASKS.md). Continue at T-026 from the published preparation merge.
