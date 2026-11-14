@@ -15,3 +15,5 @@ Campaign `003_24f121f` completed feature preparation. The [feature package revie
 Phase 3 covers T-013 through T-022. Start implementation on `feature/003_24f121f-parallel-importer-redesign` from the verified preparation merge after selecting the execution range and verifying hosted Phase 3 tracking. The final release follows comprehensive candidate review, corrections, and re-verification.
 
 Nested revision `004_1c1297a` verified the optional `SQLITE_MAX_ATTACHED=100` build flag. See the [revision report](reviews/004_1c1297a-sqlite-attachment-limit/REVISION-REPORT.md).
+
+Milestone 3.1 delivered and verified run planning, byte partitioning, and independent worker writes. See the [milestone report](features/003_24f121f-parallel-importer-redesign/milestone-3.1.md). Continue at T-016 on the same feature branch.
