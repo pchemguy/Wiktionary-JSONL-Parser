@@ -12,7 +12,9 @@ Divide the input into contiguous, roughly byte-balanced chunks at complete line 
 
 ### Worker count and attachment limit
 
-At bootstrap, read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)`. Reserve one attachment slot, giving a capacity of `L - 1` worker databases per merge group. Let `W = os.cpu_count() - 2` when Python reports more than two logical CPUs. Use one worker when the CPU count is unavailable or at most two so the same worker pipeline applies on smaller systems.
+Let `W = os.cpu_count() - 2` when Python reports more than two logical CPUs. Use one worker when the CPU count is unavailable or at most two. Whenever the worker count is one, the worker processes the whole input and writes the complete database to a staging path. After the worker succeeds and closes the database, publish that file directly. This path requires zero SQLite attachments.
+
+When `W > 1`, read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)` at bootstrap. Reserve one attachment slot, giving a capacity of `L - 1` worker databases per merge group.
 
 Apply the rules in this order:
 
@@ -22,13 +24,13 @@ Apply the rules in this order:
 | `L < W + 1` and `W + 1 < 1.5 * L` | `L - 1` | One group |
 | `W + 1 >= 1.5 * L` after the first two checks | `W` | Groups of at most `L - 1` databases |
 
-For `L = 10`, a requested 7 workers stays at 7, a requested 10 is reduced to 9, and a requested 14 stays at 14 with merge groups of 9 and 5. A bootstrap limit below two leaves no usable worker attachment slots under this policy. The proposed handling is to fail during bootstrap with a diagnostic.
+For `L = 10`, a requested 7 workers stays at 7, a requested 10 is reduced to 9, and a requested 14 stays at 14 with merge groups of 9 and 5. For a multi-worker run, a bootstrap limit below two leaves no usable merge slots under this policy. The proposed handling is to fail during bootstrap with a diagnostic.
 
 ### IDs and destination
 
 Assign each entry's ID at insertion as `10_000_000 * chunk_index + chunk_line_number`, using a zero-based chunk index and a one-based line number. Dependent rows use the assigned entry ID. Batch log IDs use the same chunk offset with the one-based local batch number. Sorting by ID preserves source order. If any worker exceeds its ID range, abort the entire run.
 
-After all workers succeed, merge their databases into one staged destination in source chunk order. Use one `INSERT ... SELECT ... UNION ALL ...` per table per merge group. Keep foreign keys enabled and insert parent tables before child tables. Publish the destination only after every merge group succeeds. A worker or merge failure aborts the run, cleans up its owned temporary files, and leaves the requested destination unpublished. Identify the chunk and chunk-local line in diagnostics where available.
+When multiple workers are used, wait for all to succeed and merge their databases into one staged destination in source chunk order. Use one `INSERT ... SELECT ... UNION ALL ...` per table per merge group. Keep foreign keys enabled and insert parent tables before child tables. Publish the destination only after every merge group succeeds. A worker or merge failure aborts the run, cleans up its owned temporary files, and leaves the requested destination unpublished. Identify the chunk and chunk-local line in diagnostics where available.
 
 ## Campaign release gate
 
