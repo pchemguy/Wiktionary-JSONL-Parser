@@ -11,3 +11,7 @@ The [performance report](reports/importer-performance.md) retains the serial bas
 Campaign `007_13c6351` addressed oversized pytest IDs, redundant subprocess environment setup, Windows path diagnostics, symlink semantics, and schema checkout line endings. See the [revision report](reviews/007_13c6351-windows-test-portability/REVISION-REPORT.md) for verified Linux results and the native Windows verification limit.
 
 A-005 fixed the schema check for worktrees that already contain a CRLF copy. The [amendment results](reviews/007_13c6351-windows-test-portability/REVISION-REPORT.md#a-005--retained-crlf-after-reopening) record verification with LF, retained CRLF and a deliberate SQL mismatch.
+
+## Active feature preparation
+
+Campaign `008_984ad61` prepares redirect skipping while preserving source-position IDs. It starts from `main` at `984ad61` and returns to `main` after preparation verification. See the [preparation record](FEATURE_PREPARATION.md), [checklist](FEATURE_DOCS_TASKS.md), and [GitHub milestone](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/14). The next checkpoint is the feature brief.
