@@ -18,3 +18,9 @@ A disposable checkout with `core.autocrlf=true` reproduced the schema assertion 
 | A-004 | Pin LF checkout endings for the canonical and packaged schema files with path-specific Git attributes, preserving the exact-byte schema check. Verify a fresh checkout with `core.autocrlf=true` and confirm the installed schema still matches the canonical DDL. |
 
 Run the Linux SQLiteICUex suite and both standard-SQLite rejection checks. Confirm collection and sequential execution of the affected tests on Windows with Python 3.14.5 and pytest 9.0.3 when that host is available, and record native and simulated checks separately. Keep the revision scoped to the tests and the two schema checkout paths.
+
+## A-005 — Schema check with an existing CRLF checkout
+
+The user reopened this campaign at the prior integration commit `8ea86508a70e1775f7241bf8e3a4f8d6b08112f4` after reporting the same assertion on Windows. The original LF checkout rule prevented the failure in a fresh checkout. A checkout can still contain a canonical SQL file written with CRLF, as reproduced by placing CRLF bytes in that file in a disposable checkout of the integrated revision.
+
+Read the canonical DDL as UTF-8 text with universal newline handling and compare it directly to the assembled runtime DDL. Keep the LF checkout attributes and the byte-for-byte packaging check. Verify LF and retained CRLF worktree files, and confirm that an actual SQL change still fails the assertion. Rerun the full suite and integrate back into `main` on the same campaign.

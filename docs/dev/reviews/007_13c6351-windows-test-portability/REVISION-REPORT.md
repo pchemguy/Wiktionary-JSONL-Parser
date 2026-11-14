@@ -23,3 +23,11 @@ In a disposable checkout with `core.autocrlf=true`, both SQL files checked out a
 ## Verification
 
 On Linux, CPython 3.12.14 with SQLiteICUex and pytest 9.0.3 passed 112 tests with two standard-SQLite-specific skips. Both skipped checks passed separately with standard SQLite. Ruff lint and formatting and mypy passed. The Windows environment-variable limit and CRLF checkout were reproduced separately. A native Windows rerun of the revision remains unverified.
+
+## A-005 — Retained CRLF after reopening
+
+Reopened at `8ea86508a70e1775f7241bf8e3a4f8d6b08112f4` after the user reported a CRLF mismatch on Windows. A disposable checkout at that commit reproduced the failure with CRLF written into the canonical SQL file even though Git already reported `eol=lf`. The earlier check covered fresh checkout conversion.
+
+The test now reads the canonical SQL in text mode, matching the runtime loader's newline handling. The same test passed with LF and retained CRLF bytes on disk. Changing a table name in the CRLF copy still failed the test. Both checkout attributes remain in force, and a freshly built wheel's assembled DDL matched the canonical bytes exactly.
+
+Linux verification with pytest 9.0.3 passed 112 tests with two standard-SQLite-specific skips. Both skipped checks passed separately. Ruff lint and formatting passed. Native Windows rerun remains unverified.

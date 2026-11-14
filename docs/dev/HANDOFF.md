@@ -9,3 +9,5 @@ The [performance report](reports/importer-performance.md) retains the serial bas
 ## Windows test portability revision
 
 Campaign `007_13c6351` addressed oversized pytest IDs, redundant subprocess environment setup, Windows path diagnostics, symlink semantics, and schema checkout line endings. See the [revision report](reviews/007_13c6351-windows-test-portability/REVISION-REPORT.md) for verified Linux results and the native Windows verification limit.
+
+A-005 fixed the schema check for worktrees that already contain a CRLF copy. The [amendment results](reviews/007_13c6351-windows-test-portability/REVISION-REPORT.md#a-005--retained-crlf-after-reopening) record verification with LF, retained CRLF and a deliberate SQL mismatch.
