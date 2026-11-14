@@ -72,3 +72,35 @@ The sequential imports took 44.532 seconds in total. Before timing the merge, as
 | **Median** | **4.660** | **137.62** | **1,309,082** |
 
 Each destination held 6,100,323 rows across 21 tables and was 640.94 MiB. A key-based comparison with binary text comparison found identical rows in all 20 data tables from a single import of the same sample. The merged `batch_log` preserved the 31 chunk-level batch rows in order. Each merged database passed the foreign-key check.
+
+## Ten pre-keyed databases merged with UNION ALL
+
+Repeated the experiment at commit `b70f078174b6c73e078bcb85d8046a2923fb81e3` with the same 299,210-entry sample and runtime. Split at the first complete line at or beyond each tenth of the input bytes. The ten imports ran sequentially with the 10,000-line default.
+
+| Chunk | Input MiB | Lines | Import time (s) | ID preparation (s) | Entry IDs | Batch IDs |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| 1 | 72.967 | 20,383 | 4.448 | 0.000 | 1–20,383 | 1–3 |
+| 2 | 72.962 | 62,314 | 4.128 | 2.626 | 20,384–82,697 | 4–10 |
+| 3 | 72.964 | 76,994 | 4.499 | 1.103 | 82,698–159,691 | 11–18 |
+| 4 | 72.964 | 26,171 | 4.091 | 1.283 | 159,692–185,862 | 19–21 |
+| 5 | 72.965 | 20,457 | 4.234 | 1.199 | 185,863–206,319 | 22–24 |
+| 6 | 72.979 | 20,392 | 4.658 | 1.180 | 206,320–226,711 | 25–27 |
+| 7 | 72.967 | 22,178 | 4.644 | 1.127 | 226,712–248,889 | 28–30 |
+| 8 | 72.951 | 20,052 | 5.245 | 1.252 | 248,890–268,941 | 31–33 |
+| 9 | 72.962 | 14,545 | 5.046 | 1.278 | 268,942–283,486 | 34–35 |
+| 10 | 72.962 | 15,724 | 4.759 | 1.134 | 283,487–299,210 | 36–37 |
+
+The imports took 45.751 seconds in total. Disjoint ID preparation took 12.183 seconds separately, including the per-database foreign-key checks. Chunk 2's new key ranges overlapped its local ranges, so its keys passed through unused negative values inside the preparation transaction. Other shifted chunks used one update per table. Prepared database files totaled 687.27 MiB.
+
+The same merge script attached all ten input databases read-only, the runtime's attachment limit. It wrote a fresh destination in each run with one `INSERT ... SELECT ... UNION ALL ...` per table. The same timing boundaries apply as in the three-chunk experiment.
+
+| Run | Merge time (s) | Source DB MiB/s | DB rows/s |
+| --- | ---: | ---: | ---: |
+| 1 | 4.840 | 142.00 | 1,260,399 |
+| 2 | 4.193 | 163.91 | 1,454,884 |
+| 3 | 4.785 | 143.63 | 1,274,886 |
+| **Median** | **4.785** | **143.63** | **1,274,886** |
+
+Each run copied 6,100,329 rows and produced a 640.94 MiB database. All 20 data tables matched the single-import reference, the original 37 chunk batch rows were preserved, and all three foreign-key checks passed.
+
+The ten-chunk median was 0.125 seconds above the three-chunk median, with overlapping trial times. The two runs used different chunk boundaries and different amounts of ID preparation.
