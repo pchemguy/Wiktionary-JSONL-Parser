@@ -32,3 +32,20 @@ After benchmarking, measured the existing CLI stages using monotonic wall-clock 
 Mapping and serialization took the most time. A separate `cProfile` run identified flat child mapping, retained JSON serialization, and text field validation within that stage. It observed 620,197 calls to `json.dumps()`, with 2.406 seconds of cumulative time in the profiler run. That cumulative time includes descendants and is separate from the stage timings above.
 
 SQLite took 1.955 seconds. Its 40 `executemany()` calls accounted for 1.913 seconds, and two commits accounted for 0.041 seconds. The two progress output calls together took roughly 0.11 ms. These measurements identify the bottleneck for this entry sample and runner. Full-dump, cold-storage, and Windows performance remain unmeasured.
+
+## Larger sample at the 10,000-line default
+
+Benchmarked [commit `a3311d4`](https://github.com/pchemguy/Wiktionary-JSONL-Parser/commit/a3311d48addf6556be3a16a58e97f81bb87f0d3b) using the same Debian 13, CPython 3.12.14, SQLite 3.54.1 with SQLiteICUex, and overlayfs setup.
+
+The sample contains the first 299,210 entries from the [Kaikki Russian extract](https://kaikki.org/dictionary/downloads/ru/ru-extract.jsonl.gz), in source order with the original bytes preserved. It excludes 7,454 redirect-only records from the selected prefix. The download ETag was `"6ae5037e-1269eeb2"`. The first 29,921 entries match the smaller sample byte for byte. The larger input is 765,085,586 bytes (729.64 MiB), ten times the lines and 7.18 times the bytes. Its SHA-256 is `cc47e808281d98ab17585d0b4409aded52da3f49f160c8530f81a4d5606e6557`.
+
+Each trial started a fresh CLI process and wrote a new on-disk database. The CLI used its default batch size and progress logging. Total time includes CLI startup, progress output, and database writes, with input preparation and database verification outside timing. The input was prepared on the same host immediately before the runs. No cache flush was performed.
+
+| Run | Total time (s) | Input throughput (MiB/s) | Lines/s |
+| --- | ---: | ---: | ---: |
+| 1 | 42.831 | 17.035 | 6,986 |
+| 2 | 43.577 | 16.744 | 6,866 |
+| 3 | 42.549 | 17.148 | 7,032 |
+| **Median** | **42.831** | **17.035** | **6,986** |
+
+All three runs had 299,210 database entries, 29 batches of 10,000 lines and one of 9,210 lines, zero foreign-key violations, and a final progress update of 100.0%. Throughput uses the uncompressed JSONL input size and the number of imported lines.
