@@ -45,6 +45,7 @@ dpkg-deb -x downloads/libicu-dev.deb icu-dev
 sqlite_src="$build_root/sqlite-amalgamation-3540100"
 cc -std=c99 -O2 -fPIC \
   -DSQLITE_EXTRA_AUTOEXT=sqlite3IcuexInit \
+  -DSQLITE_MAX_ATTACHED=100 \
   -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_ENABLE_FTS3 \
   -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_FTS4 \
   -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE -DSQLITE_ENABLE_MATH_FUNCTIONS \
@@ -69,6 +70,8 @@ make altinstall
 
 `SQLITE_EXTRA_AUTOEXT` registers SQLiteICUex when each connection opens. CPython's `LIBSQLITE3_CFLAGS` and `LIBSQLITE3_LIBS` bind its `_sqlite3` module to the custom library. The private install leaves the system Python and SQLite untouched.
 
+`-DSQLITE_MAX_ATTACHED=100` sets the maximum number of attached databases for this build. Keep the flag when merging many worker databases. With the destination opened as `main`, a fresh connection can attach up to 100 worker databases. To use SQLite's default, omit this flag. The setting belongs to the `sqlite3.c` compilation.
+
 ## Verify the linked runtime
 
 ```bash
@@ -91,6 +94,20 @@ with sqlite3.connect(":memory:") as conn:
 print("SQLite 3.54.1, ICUex collations, and the project schema are available.")
 PY
 printf 'Use this interpreter for the project: %s\n' "$python_icu"
+```
+
+If you built SQLite with `-DSQLITE_MAX_ATTACHED=100`, verify the effective limit with the same interpreter.
+
+```bash
+env -u LD_LIBRARY_PATH -u PYTHONHOME "$python_icu" -I - <<'PY'
+import sqlite3
+from contextlib import closing
+
+with closing(sqlite3.connect(":memory:")) as conn:
+    limit = conn.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)
+assert limit == 100, limit
+print(f"SQLite attachment limit: {limit}")
+PY
 ```
 
 If the linker cannot find `libicui18n.so.76`, verify that Debian's `libicu76` runtime is installed. If the collation check fails, run `ldd` on the installed `_sqlite3` extension and check that it resolves `libsqlite3.so.0` from the private build directory.
