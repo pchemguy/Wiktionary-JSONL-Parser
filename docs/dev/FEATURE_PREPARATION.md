@@ -21,3 +21,5 @@ Interactive, one pass, with strict delivery. The first stop is the feature brief
 - FDOCS-002 published [the feature brief](FEATURE.md) at Git blob `a918c00e1b220942e1dc96bc2b3ecc8a657662ac` for approval. The user confirmed source-position ID numbering, including skipped lines.
 - The proposal uses the classification already exercised on the full extract: a top-level string `redirect` and none of the three entry keys. Mixed or malformed records continue under normal validation. Redirects count toward source-line batching, the chunk line limit, and byte progress. Redirect-only batches keep the batch log.
 - Validate the feature on mixed records, redirect-only batches and files, valid and invalid edge cases, and the original unfiltered full extract. Architecture and implementation decisions follow brief acceptance.
+
+- FDOCS-002 accepted the published brief (blob `a918c00e1b220942e1dc96bc2b3ecc8a657662ac`). The user approved all remaining checkpoints. Continue the interactive preparation workflow under that preapproval through package QC and preparation integration.
