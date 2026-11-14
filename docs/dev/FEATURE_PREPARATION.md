@@ -14,3 +14,4 @@ The workflow uses one preparation pass under the user's delegated design authori
 - FDOCS-004 reused [decomposition](DECOMPOSITION.md). Clock reads and formatting belong to the existing CLI component, with no worker or public API changes.
 - FDOCS-005 accepted the [specification](FEATURE-SPEC.md) and verified [contract coverage](FEATURE-SPEC-REVIEW-REPORT.md).
 - FDOCS-006 accepted the [plan](FEATURE-PLAN.md) and [plan review](FEATURE-PLAN-REVIEW-REPORT.md).
+- FDOCS-007 verified the existing [layout](layout.md) through the [layout review](FEATURE-PLAN-REVIEW-REPORT.md#layout-review).
