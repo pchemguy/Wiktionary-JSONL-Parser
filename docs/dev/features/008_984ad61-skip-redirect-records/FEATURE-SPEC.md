@@ -1,6 +1,6 @@
 # Skip standalone redirect records specification
 
-The [import specification](SPEC.md) governs framing, decoding, mapping, and failure behavior. These requirements add standalone redirect handling for the Russian Wiktionary edition.
+The [import specification](../../SPEC.md) governs framing, decoding, mapping, and failure behavior. These requirements add standalone redirect handling for the Russian Wiktionary edition.
 
 ## Record classification
 

@@ -27,11 +27,11 @@ The tool attaches the inputs read-only and inserts each table with a single `INS
 Run `benchmark_parallel_import.py` with the parser installed in Python 3.11 or later with SQLiteICUex. The command below also works in Windows CMD:
 
 ```text
-python tools/benchmark_parallel_import.py ru-entry.jsonl parallel.sqlite
+python tools/benchmark_parallel_import.py ru-extract.jsonl parallel.sqlite
 ```
 
-Supply an unchanged, uncompressed, entry-only local JSONL file and a new output path. This benchmark splits the file by bytes at complete line boundaries and starts `os.cpu_count() - 2` fresh Python processes. Each reads its part of the original file directly and uses the importer's worker to write a temporary SQLite database beside the destination. The SQLite attachment limit must accommodate all workers. Workers retain the 10,000-line batch size and report local progress on stderr, labeled `[chunk N]`.
+Supply an unchanged, uncompressed local Russian Wiktionary JSONL file and a new output path. This benchmark splits the file by bytes at complete line boundaries and starts `os.cpu_count() - 2` fresh Python processes. Each reads its part of the original file directly and uses the importer's worker to write a temporary SQLite database beside the destination. The SQLite attachment limit must accommodate all workers. Workers retain the 10,000-line batch size and report local progress on stderr, labeled `[chunk N]`.
 
 Entry IDs are the one-based line number within the chunk plus `10_000_000 * chunk_index`, with a zero-based chunk index. Batch IDs use the same offset and a one-based local batch number. The mapper writes related foreign keys using the final IDs. A chunk can contain up to 10,000,000 lines. The merge copies the stored IDs in source chunk order.
 
-A worker failure stops the run, terminates remaining workers, and discards the temporary databases. The destination appears only after all chunks and the final merge succeed. Publication uses rename on Windows and a hard link on POSIX, so the output filesystem must support the corresponding operation. The benchmark prints partition, worker wall time, merge and publication, cleanup, total time, and throughput. The timer starts after runtime and output-path preflight and creation of the temporary directory.
+A worker failure stops the run, terminates remaining workers, and discards the temporary databases. The destination appears only after all chunks and the final merge succeed. Publication uses rename on Windows and a hard link on POSIX, so the output filesystem must support the corresponding operation. The benchmark prints partition, worker wall time, merge and publication, cleanup, total time, and throughput. Input lines per second include skipped redirects, while imported entries per second count mapped entries. The timer starts after runtime and output-path preflight and creation of the temporary directory.

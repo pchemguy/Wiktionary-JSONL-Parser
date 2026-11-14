@@ -12,6 +12,6 @@ Campaign `007_13c6351` addressed oversized pytest IDs, redundant subprocess envi
 
 A-005 fixed the schema check for worktrees that already contain a CRLF copy. The [amendment results](reviews/007_13c6351-windows-test-portability/REVISION-REPORT.md#a-005--retained-crlf-after-reopening) record verification with LF, retained CRLF and a deliberate SQL mismatch.
 
-## Redirect-skipping implementation handoff
+## Phase 4 — Standalone redirect handling
 
-Campaign `008_984ad61` completed feature preparation and package QC. See the [preparation record](FEATURE_PREPARATION.md), [package review](FEATURE-QC-REPORT.md), and [Phase 4 tasks](FEATURE-TASKS.md). The next task is T-023 after activation on `feature/008_984ad61-skip-redirect-records` from the published preparation merge. Run T-024 against the original unfiltered Kaikki extract.
+Phase 4 is complete on the feature branch. See the [phase report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md), [full-extract verification](features/008_984ad61-skip-redirect-records/full-extract.md), and [current tasks](TASKS.md). The integrated release version is 0.4.0.

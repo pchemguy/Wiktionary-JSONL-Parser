@@ -122,7 +122,14 @@ def benchmark(source: Path, output: Path) -> None:
     print(f"Cleanup: {finished - merged:.6f} s")
     print(f"Total: {elapsed:.6f} s")
     print(f"Input MiB/s: {bounds[-1] / 2**20 / elapsed:.3f}")
-    print(f"Input lines/s: {counts['entries'] / elapsed:.2f}")
+    with closing(
+        sqlite3.connect(output.resolve().as_uri() + "?mode=ro", uri=True)
+    ) as db:
+        (source_lines,) = db.execute(
+            "SELECT coalesce(sum(line_count), 0) FROM batch_log"
+        ).fetchone()
+    print(f"Input lines/s: {source_lines / elapsed:.2f}")
+    print(f"Imported entries/s: {counts['entries'] / elapsed:.2f}")
     print(f"Merged rows: {sum(counts.values())}")
 
 
@@ -145,7 +152,9 @@ def main() -> int:
         return 0
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("source", type=Path, help="local uncompressed entry-only JSONL")
+    parser.add_argument(
+        "source", type=Path, help="local uncompressed Russian Wiktionary JSONL"
+    )
     parser.add_argument("output", type=Path, help="new destination SQLite database")
     args = parser.parse_args()
     try:

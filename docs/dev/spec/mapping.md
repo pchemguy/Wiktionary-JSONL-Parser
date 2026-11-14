@@ -2,7 +2,7 @@
 
 ## Relational normalization
 
-Create one `entries` row per record. The importer assigns unique entry IDs in source order before insertion. Each element of an expanded array creates one child row. Use the element's zero-based position in its immediate array as `idx`. Preserve duplicate entries, duplicate array elements, and array order. Copy mapped strings without trimming, case folding, Unicode normalization, or transliteration. Use the [SQLite schema](schema.sql) for column types, keys, and collations.
+Create one `entries` row per mapped record. Standalone redirects are skipped before mapping under the [import specification](../SPEC.md#russian-record-handling). The importer assigns unique entry IDs in source order before insertion. Each element of an expanded array creates one child row. Use the element's zero-based position in its immediate array as `idx`. Preserve duplicate entries, duplicate array elements, and array order. Copy mapped strings without trimming, case folding, Unicode normalization, or transliteration. Use the [SQLite schema](schema.sql) for column types, keys, and collations.
 
 Child tables use the enclosing entry's ID. An example uses the enclosing sense's `entry_id` and `idx` as `sense_entry_id` and `sense_idx`. Its own `idx` is its position within that sense's `examples` array.
 

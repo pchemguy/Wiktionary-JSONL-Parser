@@ -17,6 +17,7 @@ class Edition:
     schema_sql: Callable[[], str]
     map_record: Callable[[dict[str, object], int, RowsByTable], None]
     inserts: Mapping[str, str]
+    skip_record: Callable[[dict[str, object]], bool] | None = None
 
 
 def get_edition(identifier: str) -> Edition:

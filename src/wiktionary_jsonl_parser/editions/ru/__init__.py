@@ -43,4 +43,14 @@ INSERTS = {
 }
 
 
-RUSSIAN_EDITION = Edition("ru", schema_sql, append_record_rows, INSERTS)
+def is_standalone_redirect(record: dict[str, object]) -> bool:
+    """Recognize a redirect object without any of the required entry keys."""
+
+    return isinstance(record.get("redirect"), str) and not (
+        "word" in record or "lang" in record or "lang_code" in record
+    )
+
+
+RUSSIAN_EDITION = Edition(
+    "ru", schema_sql, append_record_rows, INSERTS, skip_record=is_standalone_redirect
+)

@@ -1,6 +1,6 @@
 # Redirect-skipping decomposition
 
-The [main architecture](ARCHITECTURE.md) supplies the process and publication boundaries. The [main decomposition](DECOMPOSITION.md) supplies the existing edition, worker, and merger interfaces.
+The [main architecture](../../ARCHITECTURE.md) supplies the process and publication boundaries. The [main decomposition](../../DECOMPOSITION.md) supplies the existing edition, worker, and merger interfaces.
 
 The Russian edition owns the standalone-redirect predicate. The edition definition may provide a predicate over a decoded object. Editions without one process every decoded object through their mapper. Each worker uses its selected edition's predicate after successful JSON decoding and before mapping. The worker advances its local source position and checks the ID range for every line, including a redirect.
 
