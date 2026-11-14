@@ -15,3 +15,9 @@ A-005 fixed the schema check for worktrees that already contain a CRLF copy. The
 ## Phase 4 — Standalone redirect handling
 
 Phase 4 is complete and integrated into `main`. See the [phase report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md), [full-extract verification](features/008_984ad61-skip-redirect-records/full-extract.md), and [current tasks](TASKS.md). The [v0.4.0 release](https://github.com/pchemguy/Wiktionary-JSONL-Parser/releases/tag/v0.4.0) is tagged at `27ef94650ff530848d6000cf785113af28ef85b7`. Tagged and latest download checksums match the staged artifacts. Phase 4 issues and milestones are closed.
+
+## CLI processing time feature
+
+Campaign `009_a09aaf4` prepares the CLI completion duration for patch release `0.4.1`. See the [preparation record](FEATURE_PREPARATION.md) and [checklist](FEATURE_DOCS_TASKS.md).
+
+Preparation is complete. See the [package review](FEATURE-QC-REPORT.md) and [Phase 5 tasks](FEATURE-TASKS.md). Continue at T-026 from the published preparation merge.
