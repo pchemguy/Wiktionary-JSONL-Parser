@@ -219,3 +219,32 @@ def run_chunk(
         ) from exc
     except (OSError, sqlite3.Error) as exc:
         raise ImportFailure(str(exc), stage="worker", chunk_index=chunk.index) from exc
+
+
+def main() -> int:
+    """Run the private child-process entry point."""
+
+    import sys
+
+    source, output, index, start, stop, batch_size, progress = sys.argv[1:]
+    chunk = Chunk(int(index), int(start), int(stop))
+
+    def report(chunk_index: int, processed: int, total: int) -> None:
+        print(json.dumps(["progress", processed, total]), flush=True)
+
+    try:
+        run_chunk(
+            Path(source),
+            Path(output),
+            chunk,
+            int(batch_size),
+            report if progress == "1" else None,
+        )
+    except ImportFailure as exc:
+        print(json.dumps(["failure", exc.detail, exc.line_number]), flush=True)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

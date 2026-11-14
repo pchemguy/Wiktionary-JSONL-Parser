@@ -1,11 +1,16 @@
 """Read Wiktionary JSONL and persist source-line batches to SQLite."""
 
+import json
 import sqlite3
+import subprocess
+import sys
 from collections.abc import Callable
 from contextlib import closing
 from dataclasses import dataclass
 from os import fstat
 from pathlib import Path
+from queue import Queue
+from threading import Thread
 from typing import BinaryIO
 
 from .mapping import RowsByTable, append_record_rows
@@ -13,6 +18,7 @@ from .worker import (
     INSERTS,
     Chunk as Chunk,
     ImportFailure as ImportFailure,
+    Progress,
     decode_record as decode_record,
     initialize_database as initialize_database,
     read_batches as read_batches,
@@ -83,6 +89,126 @@ def partition_source(source: BinaryIO, size: int, worker_count: int) -> list[Chu
         start = stop
     chunks.append(Chunk(worker_count - 1, start, size))
     return chunks
+
+
+WorkerEvents = Queue[tuple[int, str | int | ImportFailure]]
+
+
+def drain_worker(
+    index: int, child: subprocess.Popen[str], events: WorkerEvents
+) -> None:
+    """Forward child output while the importing thread handles callbacks."""
+
+    assert child.stdout is not None
+    try:
+        with child.stdout:
+            for line in child.stdout:
+                events.put((index, line))
+        events.put((index, child.wait()))
+    except Exception as exc:
+        events.put((index, ImportFailure(str(exc), stage="worker", chunk_index=index)))
+
+
+def cancel_workers(
+    children: dict[int, subprocess.Popen[str]], readers: list[Thread]
+) -> None:
+    for child in children.values():
+        if child.poll() is None:
+            child.terminate()
+    for child in children.values():
+        try:
+            child.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            child.kill()
+            child.wait()
+    for reader in readers:
+        reader.join()
+    for child in children.values():
+        if child.stdout is not None:
+            child.stdout.close()
+
+
+def run_workers(
+    source: Path,
+    outputs: list[Path],
+    chunks: list[Chunk],
+    batch_size: int,
+    on_progress: Progress | None,
+) -> None:
+    """Start fresh Python interpreters and reap them before returning."""
+
+    children: dict[int, subprocess.Popen[str]] = {}
+    readers: list[Thread] = []
+    events: WorkerEvents = Queue()
+    try:
+        for chunk, output in zip(chunks, outputs, strict=True):
+            try:
+                child = subprocess.Popen(
+                    [
+                        sys.executable,
+                        "-m",
+                        "wiktionary_jsonl_parser.worker",
+                        str(source),
+                        str(output),
+                        str(chunk.index),
+                        str(chunk.start),
+                        str(chunk.stop),
+                        str(batch_size),
+                        "1" if on_progress is not None else "0",
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    encoding="utf-8",
+                    errors="replace",
+                )
+                children[chunk.index] = child
+                reader = Thread(target=drain_worker, args=(chunk.index, child, events))
+                reader.start()
+                readers.append(reader)
+            except (OSError, RuntimeError) as exc:
+                raise ImportFailure(
+                    f"cannot start worker: {exc}",
+                    stage="worker",
+                    chunk_index=chunk.index,
+                ) from exc
+
+        remaining = len(children)
+        diagnostics: dict[int, str] = {}
+        while remaining:
+            index, event = events.get()
+            if isinstance(event, ImportFailure):
+                raise event
+            if isinstance(event, int):
+                if event:
+                    details = diagnostics.get(index)
+                    message = f"exited with status {event}"
+                    if details:
+                        message += f": {details}"
+                    raise ImportFailure(message, stage="worker", chunk_index=index)
+                remaining -= 1
+                continue
+            try:
+                message = json.loads(event)
+            except (ValueError, RecursionError):
+                diagnostics[index] = event.strip()[-1000:]
+                continue
+            match message:
+                case ["progress", int(processed), int(total)]:
+                    if on_progress is not None:
+                        on_progress(index, processed, total)
+                case ["failure", str(detail), line]:
+                    raise ImportFailure(detail, line, stage="worker", chunk_index=index)
+                case _:
+                    diagnostics[index] = event.strip()[-1000:]
+    except BaseException as exc:
+        try:
+            cancel_workers(children, readers)
+        except Exception as cleanup:
+            exc.add_note(f"worker cleanup: {cleanup}")
+        raise
+    else:
+        for reader in readers:
+            reader.join()
 
 
 def import_jsonl(

@@ -13,7 +13,7 @@
         - [x] T-015 — Write complete worker databases with final IDs
             Depends on T-014. Implement bounded decoding and mapping, final entry and batch IDs, batch transactions, and committed byte-progress messages. Verify ID range overflow, parent relationships, duplicate preservation, and batch rollback. Review milestone 3.1 and record the result and handoff.
     - [ ] Milestone 3.2 — End-to-end parallel import
-        - [ ] T-016 — Supervise independent worker processes
+        - [x] T-016 — Supervise independent worker processes
             Depends on T-015. Start fresh Python workers using a Windows-compatible process mechanism. Drain progress and diagnostics and verify cancellation, exit reporting, and child cleanup.
         - [ ] T-017 — Assemble and publish the staged database
             Depends on T-016. Implement group-by-group read-only attachment, parent-first inserts, direct single-worker publication, and no-overwrite publication. Verify staged cleanup and failure injection for writes, merging, and publication.
