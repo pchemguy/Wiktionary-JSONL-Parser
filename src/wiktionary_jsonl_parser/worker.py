@@ -157,6 +157,7 @@ def run_chunk(
             initialize_database(db, edition)
             line_number = 0
             processed = 0
+            skip_record = edition.skip_record
             batches = read_batches(read_chunk(source, chunk), batch_size)
             for batch_number, batch in enumerate(batches, 1):
                 rows: RowsByTable = {table: [] for table in edition.inserts}
@@ -166,6 +167,8 @@ def run_chunk(
                     record = decode_record(
                         raw, line_number, bom_allowed=chunk.start == 0
                     )
+                    if skip_record is not None and skip_record(record):
+                        continue
                     try:
                         edition.map_record(record, entry_id, rows)
                     except ValueError as exc:

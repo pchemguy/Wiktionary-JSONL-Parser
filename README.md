@@ -27,7 +27,7 @@ The installed `wiktionary-jsonl-parser` command accepts the same arguments. Work
 
 The importer requests the logical CPU count minus two workers, with one worker when that calculation would be less than one or the CPU count is unknown. It warns when the requested count exceeds SQLite's attachment limit and adjusts the worker count or merges in groups. If the limit is zero and multiple workers were requested, an interactive CLI caller must explicitly confirm a one-worker import. Keep the input file unchanged while the import runs.
 
-Every input line must contain a mappable entry. In particular, a Kaikki redirect record containing `title` and `redirect` but lacking the required entry fields fails at its source line. Prepare an entry-only JSONL file before import if your dump includes those records.
+Import the extracted Kaikki dump directly. The Russian edition skips objects with a top-level string `redirect` and none of the keys `word`, `lang`, or `lang_code`. Skipped lines still count toward source-position IDs, batch line counts, and byte progress. Entry IDs therefore have gaps where redirects appeared. Other records go through normal decoding and mapping.
 
 ## Query and inspect failures
 
