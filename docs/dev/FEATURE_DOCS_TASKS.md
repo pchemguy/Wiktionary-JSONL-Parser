@@ -5,7 +5,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
 - [x] FDOCS-001 — Establish feature preparation context.
     - Confirm the accepted main baseline, delta scope, campaign/branches, active source ownership, selected mode/tracking and applicable provenance setup. Initialize these task-only records, FEATURE_PREPARATION and HANDOFF after enabled projection. Do not replay main root initialization.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-002 — Prepare and accept FEATURE.
+- [x] FDOCS-002 — Prepare and accept FEATURE.
     - Depends on FDOCS-001 and required publication/issue closure.
     - Define intended outcome, included/non-goal delta, retained behavior, compatibility/constraints and material decisions. Present first brief approval unless explicitly preapproved; retain decision provenance.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.

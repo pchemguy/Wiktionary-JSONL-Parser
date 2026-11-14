@@ -8,7 +8,7 @@
 
 ## Current control
 
-Interactive, one pass, with strict delivery. The request opens the campaign and schedules the release gate. The first stop is feature brief acceptance. All nine issues and their association with [milestone 9](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9) were verified before the branch or documents were created. The repository already has the manual provenance scaffolding under `docs/ai-logs/`.
+Interactive, one pass, with strict delivery. The request opens the campaign and schedules the release gate. The current stop is feature architecture acceptance. All nine issues and their association with [milestone 9](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9) were verified before the branch or documents were created. The repository already has the manual provenance scaffolding under `docs/ai-logs/`.
 
 ## Decisions and evidence
 
@@ -22,4 +22,4 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - Use one worker when the reported logical CPU count is unavailable or at most two. A single worker writes the complete staged database, which is published directly after success and close. Read the effective SQLite attachment limit `L` at bootstrap and warn whenever the requested count `W` exceeds `L`. A single requested worker proceeds even at `L = 0`.
 - For a multi-worker request with `L = 0`, ask for explicit confirmation to use one worker and abort before starting any worker if the user declines or confirmation is unavailable. For `L >= 1`, the staged destination opens as `main`, giving each merge group all `L` slots. Keep `W` when `W <= L`, reduce to `L` when `L < W < 1.5 * L`, and keep `W` with groups of at most `L` databases otherwise. Equality at the 1.5 threshold selects grouped merging.
 - Exceeding a worker's ID range fails the whole run.
-- FDOCS-002 presents the revised [feature brief](FEATURE.md) at Git blob `a2fda32dfb97b953f32876a24c3357962fee72f0` for first acceptance. Architecture and decomposition follow acceptance.
+- FDOCS-002 accepted the [feature brief](FEATURE.md) at Git blob `a2fda32dfb97b953f32876a24c3357962fee72f0` on 2026-11-14. The user's acceptance selects architecture review next.
