@@ -14,7 +14,7 @@ from time import perf_counter, sleep
 
 from merge_databases import merge_databases
 
-from wiktionary_jsonl_parser.importer import (
+from wiktionary_jsonl_parser.worker import (
     INSERTS,
     ImportFailure,
     decode_record,

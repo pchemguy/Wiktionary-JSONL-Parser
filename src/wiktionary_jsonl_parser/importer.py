@@ -16,14 +16,10 @@ from typing import BinaryIO
 
 from .merge import merge_databases
 from .worker import (
-    Chunk as Chunk,
+    Chunk,
     ImportFailure as ImportFailure,
     Progress,
-    decode_record as decode_record,
-    initialize_database as initialize_database,
-    read_batches as read_batches,
-    require_unicode_collation as require_unicode_collation,
-    schema_sql as schema_sql,
+    require_unicode_collation,
 )
 
 
@@ -211,8 +207,8 @@ def run_workers(
 
 
 def import_jsonl(
-    input_path: Path,
-    output_path: Path,
+    input_path: str | Path,
+    output_path: str | Path,
     batch_size: int = 10_000,
     *,
     on_warning: Callable[[str], None] | None = None,

@@ -23,12 +23,22 @@ def positive_batch_size(value: str) -> int:
 def report_progress(chunk: int, processed: int, total: int) -> None:
     """Print a byte-based progress update to standard error."""
 
-    if total:
-        tenths = processed * 1000 // total
-        line = f"{processed}/{total} bytes read and processed ({tenths // 10}.{tenths % 10}%)"
-    else:
-        line = f"{processed} bytes read and processed"
+    tenths = processed * 1000 // total
+    line = (
+        f"{processed}/{total} bytes read and processed ({tenths // 10}.{tenths % 10}%)"
+    )
     print(f"[chunk {chunk}] {line}", file=sys.stderr, flush=True)
+
+
+def report_warning(message: str) -> None:
+    print(f"warning: {message}", file=sys.stderr, flush=True)
+
+
+def confirm_one_worker() -> bool:
+    if sys.stdin is None or not sys.stdin.isatty():
+        return False
+    print("Run with one worker? [y/N]", file=sys.stderr, flush=True)
+    return sys.stdin.readline().strip().casefold() in {"y", "yes"}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -45,7 +55,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         type=positive_batch_size,
         default=10_000,
         metavar="N",
-        help="maximum source lines per batch (default: %(default)s)",
+        help="maximum source lines per worker batch (default: %(default)s)",
     )
     parser.add_argument(
         "--no-progress", action="store_true", help="suppress batch progress on stderr"
@@ -62,10 +72,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             source,
             destination,
             args.batch_size,
+            on_warning=report_warning,
+            confirm_single_worker=confirm_one_worker,
             on_progress=None if args.no_progress else report_progress,
         )
     except ImportFailure as exc:
         print(f"{parser.prog}: {exc}", file=sys.stderr)
+        for note in getattr(exc, "__notes__", ()):
+            print(note, file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        print(f"{parser.prog}: interrupted", file=sys.stderr)
         return 1
     return 0
 

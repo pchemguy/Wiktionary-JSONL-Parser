@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from wiktionary_jsonl_parser import importer
 from wiktionary_jsonl_parser.cli import main
 
 pytestmark = pytest.mark.usefixtures("single_worker")
@@ -64,6 +65,8 @@ def test_default_batch_size(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
         batch_size: int,
         *,
         on_progress: Callable[[int, int, int], None] | None,
+        on_warning: Callable[[str], None],
+        confirm_single_worker: Callable[[], bool],
     ) -> None:
         assert on_progress is not None
         assert input_path == tmp_path / "in.jsonl"
@@ -126,3 +129,63 @@ def test_literal_memory_filename_is_on_disk(
     write_entries(source, "on disk")
     assert main([str(source), "--output", ":memory:"]) == 0
     assert rows(tmp_path / ":memory:", "SELECT word FROM entries") == [("on disk",)]
+
+
+@pytest.mark.parametrize("answer", ["yes", "no", "eof", "noninteractive"])
+def test_zero_limit_cli_confirmation(
+    answer: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    import sys
+    from io import StringIO
+
+    class Input(StringIO):
+        def isatty(self) -> bool:
+            return answer != "noninteractive"
+
+    monkeypatch.setattr(importer.os, "cpu_count", lambda: 5)
+    monkeypatch.setattr(importer, "probe_attachment_limit", lambda: 0)
+    monkeypatch.setattr(sys, "stdin", Input("" if answer == "eof" else answer + "\n"))
+    source = tmp_path / "words.jsonl"
+    write_entries(source, "a")
+    output = source.with_suffix(".sqlite")
+    assert main([str(source), "--no-progress"]) == (0 if answer == "yes" else 1)
+    assert output.exists() == (answer == "yes")
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert "requested 3 workers but SQLite allows 0 attachments" in err
+    assert ("Run with one worker?" in err) == (answer != "noninteractive")
+    assert "bytes read and processed" not in err
+    if answer == "yes":
+        assert rows(output, "SELECT id, word FROM entries") == [(1, "a")]
+    else:
+        assert "requires explicit confirmation" in err
+
+
+@pytest.mark.parametrize("callback", ["warning", "confirmation", "progress"])
+def test_library_callback_failure_aborts(
+    callback: str,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(importer.os, "cpu_count", lambda: 5)
+    monkeypatch.setattr(
+        importer, "probe_attachment_limit", lambda: 0 if callback != "progress" else 10
+    )
+    source, destination = tmp_path / "input", tmp_path / "output"
+    write_entries(source, "a", "b", "c")
+
+    def fail(*args: object) -> None:
+        raise RuntimeError("consumer failed")
+
+    callbacks = {
+        "warning": {"on_warning": fail},
+        "confirmation": {"confirm_single_worker": fail},
+        "progress": {"on_progress": fail},
+    }
+    with pytest.raises(importer.ImportFailure, match="consumer failed"):
+        importer.import_jsonl(source, destination, **callbacks[callback])  # type: ignore[arg-type]
+    assert not destination.exists()
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["input"]

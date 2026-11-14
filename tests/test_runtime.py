@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from wiktionary_jsonl_parser import importer
+from wiktionary_jsonl_parser import worker as importer
 
 
 def test_schema_matches_contract() -> None:

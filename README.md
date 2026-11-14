@@ -23,7 +23,9 @@ Supply an already extracted, local UTF-8 JSONL file. The first command writes `d
 "$python_icu" -m wiktionary_jsonl_parser.cli data/ru-extract.jsonl --output data/words.db --batch-size 5000
 ```
 
-The installed `wiktionary-jsonl-parser` command accepts the same arguments. The default batch size is 10,000 source lines. After each successful batch write, the CLI prints the cumulative input bytes read and processed and their percentage of the input file size on stderr. Use `--no-progress` to suppress updates while retaining error diagnostics. Supply `--output` when the input name lacks a final `.jsonl` suffix. The destination's parent directory must exist, and the destination must be new.
+The installed `wiktionary-jsonl-parser` command accepts the same arguments. Workers read separate byte ranges from the input and write their own SQLite databases. The default batch size is 10,000 source lines per worker. After each batch commit, the CLI reports `[chunk N] P/T bytes read and processed (X.Y%)` on stderr, based on that worker's assigned byte range. Use `--no-progress` to suppress progress while retaining warnings and diagnostics. Supply `--output` when the input name lacks a final `.jsonl` suffix. The destination's parent directory must exist, and the destination must be new.
+
+The importer requests the logical CPU count minus two workers, with one worker when that calculation would be less than one or the CPU count is unknown. It warns when the requested count exceeds SQLite's attachment limit and adjusts the worker count or merges in groups. If the limit is zero and multiple workers were requested, an interactive CLI caller must explicitly confirm a one-worker import. Keep the input file unchanged while the import runs.
 
 Every input line must contain a mappable entry. In particular, a Kaikki redirect record containing `title` and `redirect` but lacking the required entry fields fails at its source line. Prepare an entry-only JSONL file before import if your dump includes those records.
 
@@ -43,7 +45,17 @@ with closing(sqlite3.connect(sys.argv[1])) as db:
 PY
 ```
 
-Each batch commits all of its mapped rows and one `batch_log` row together. On failure, the command writes a diagnostic to standard error and reports the one-based source line when available. Earlier committed batches remain queryable. To retry, use a fresh output path. Exit status is 0 on success, 1 on import failure, or 2 on command-line usage errors.
+Each batch commits all its mapped rows and one `batch_log` row together. Entry and batch IDs equal 10,000,000 times the zero-based chunk index plus the one-based local line or batch number. Each chunk can contain up to 10,000,000 lines. A failure discards the import staging files and leaves the destination unpublished. Diagnostics identify the stage and, where available, the chunk and its one-based local line. Exit status is 0 on success, 1 on import failure, or 2 on command-line usage errors.
+
+## Library usage
+
+```python
+from wiktionary_jsonl_parser.importer import import_jsonl
+
+import_jsonl("data/ru-extract.jsonl", "data/words.db", batch_size=10_000)
+```
+
+Optional keyword-only callbacks report warnings (`on_warning(message)`) and progress (`on_progress(chunk_index, processed_bytes, chunk_bytes)`). Supply `confirm_single_worker()` to authorize the zero-attachment fallback by returning `True`. The callbacks run synchronously in the calling process. Import failures raise `ImportFailure` from the same module.
 
 See the [mapping contract](docs/dev/spec/mapping.md), [schema](docs/dev/spec/schema.sql), and [import specification](docs/dev/SPEC.md) for the stored columns and value rules.
 

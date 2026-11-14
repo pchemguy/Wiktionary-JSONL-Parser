@@ -17,3 +17,5 @@ Phase 3 covers T-013 through T-022. Start implementation on `feature/003_24f121f
 Nested revision `004_1c1297a` verified the optional `SQLITE_MAX_ATTACHED=100` build flag. See the [revision report](reviews/004_1c1297a-sqlite-attachment-limit/REVISION-REPORT.md).
 
 Milestone 3.1 delivered and verified run planning, byte partitioning, and independent worker writes. See the [milestone report](features/003_24f121f-parallel-importer-redesign/milestone-3.1.md). Continue at T-016 on the same feature branch.
+
+Milestone 3.2 delivered and verified the staged parallel CLI and library importer. See the [milestone report](features/003_24f121f-parallel-importer-redesign/milestone-3.2.md). Continue at T-019 for the release candidate and benchmark.
