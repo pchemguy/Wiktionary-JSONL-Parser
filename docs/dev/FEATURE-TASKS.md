@@ -20,7 +20,7 @@
         - [x] T-018 — Expose the parallel CLI and library interfaces
             Depends on T-017. Connect arguments, callbacks, worker failure diagnostics, quiet mode and usage docs. Verify the 10,000-line default, installed interfaces, zero-limit fallback, and valid and failing imports. Review milestone 3.2 and record the result and handoff.
     - [ ] Milestone 3.3 — Release candidate review and correction
-        - [ ] T-019 — Build and benchmark the release candidate
+        - [x] T-019 — Build and benchmark the release candidate
             Depends on T-018. Build the wheel and source distribution. Verify schema and entry points, compare the resulting database with the serial reference after translating IDs, and measure elapsed time and throughput on the shared sample.
         - [ ] T-020 — Comprehensively review the pinned release candidate
             Depends on T-019. Review the actual candidate source and assets under the plan's release gate. Record findings, platform and performance evidence, and the corrections required for release.

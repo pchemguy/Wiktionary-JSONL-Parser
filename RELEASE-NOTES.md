@@ -1,7 +1,7 @@
-# Wiktionary JSONL Parser 0.2.0
+# Wiktionary JSONL Parser 0.3.0
 
-The CLI reports cumulative input bytes read and processed after each successful SQLite batch write. The percentage uses the opened file's size, so a preliminary line-counting pass is unnecessary. Progress is flushed to stderr. Use `--no-progress` for quiet runs.
+- Convert one local extract using fresh Python workers that write independent SQLite databases. The importer merges completed chunks within the available attachment slots and publishes the result in one operation.
+- Use 10,000 source lines per worker batch by default. Progress reports committed bytes separately for each chunk. Warnings identify when the requested worker count exceeds SQLite's effective attachment capacity.
+- Entry and batch IDs are allocated within each chunk and remain fixed during merge. The SQLite schema and JSON mapping are unchanged. Failed imports leave the destination unpublished.
 
-Library callers may supply `on_progress(processed_bytes, total_bytes)` as a keyword argument. The callback runs after each successful batch write. A failed batch produces no progress update.
-
-Download `wiktionary-jsonl-parser-python.zip` for the installable wheel and source distribution, and use `SHA256SUMS` to verify it. The [README](https://github.com/pchemguy/Wiktionary-JSONL-Parser/blob/v0.2.0/README.md) has installation and usage instructions. Python 3.11 or later and SQLiteICUex remain required.
+Download `wiktionary-jsonl-parser-python.zip` for the installable wheel and source distribution. Verify the bundle with `SHA256SUMS`. Use Python 3.11 or later with SQLiteICUex. See the [installation and usage guide](https://github.com/pchemguy/Wiktionary-JSONL-Parser#install).
