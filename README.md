@@ -23,7 +23,7 @@ Supply an already extracted, local UTF-8 JSONL file. The first command writes `d
 "$python_icu" -m wiktionary_jsonl_parser.cli data/ru-extract.jsonl --output data/words.db --batch-size 5000
 ```
 
-The installed `wiktionary-jsonl-parser` command accepts the same arguments. The default batch size is 25,000 source lines. After each successful batch write, the CLI prints the cumulative input bytes read and processed and their percentage of the input file size on stderr. Use `--no-progress` to suppress updates while retaining error diagnostics. Supply `--output` when the input name lacks a final `.jsonl` suffix. The destination's parent directory must exist, and the destination must be new.
+The installed `wiktionary-jsonl-parser` command accepts the same arguments. The default batch size is 10,000 source lines. After each successful batch write, the CLI prints the cumulative input bytes read and processed and their percentage of the input file size on stderr. Use `--no-progress` to suppress updates while retaining error diagnostics. Supply `--output` when the input name lacks a final `.jsonl` suffix. The destination's parent directory must exist, and the destination must be new.
 
 Every input line must contain a mappable entry. In particular, a Kaikki redirect record containing `title` and `redirect` but lacking the required entry fields fails at its source line. Prepare an entry-only JSONL file before import if your dump includes those records.
 

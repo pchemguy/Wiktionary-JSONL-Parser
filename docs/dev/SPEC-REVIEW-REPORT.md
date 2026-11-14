@@ -34,3 +34,7 @@ Checked the documented field sets against all 20 data tables using the SQLite sc
 ## Revision 1 — Import progress
 
 **Result — Ready.** Checked byte progress, the quiet CLI flag, and failure and empty-input reporting against the accepted design and tests. See the [archived package review](features/001_83e7d6a-import-progress/FEATURE-QC-REPORT.md).
+
+## Revision 2 — Default batch size
+
+**Result — Ready.** [SPEC.md](SPEC.md) at blob `e99c28109a2fa2cacfe841cfae0bd5e024837991` defines a default of 10,000 source lines. The CLI default, generated help, README, and tests agree. Existing positive-integer limits and explicit overrides still apply. The [revision report](reviews/002_0c74da1-default-batch-size/REVISION-REPORT.md) records the import checks.

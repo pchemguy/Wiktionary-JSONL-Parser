@@ -67,7 +67,7 @@ def test_default_batch_size(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
         assert on_progress is not None
         assert input_path == tmp_path / "in.jsonl"
         assert output_path == tmp_path / "in.sqlite"
-        assert batch_size == 25000
+        assert batch_size == 10_000
 
     monkeypatch.setattr("wiktionary_jsonl_parser.cli.import_jsonl", invoke)
     assert main([str(tmp_path / "in.jsonl")]) == 0

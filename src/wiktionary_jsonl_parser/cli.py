@@ -43,9 +43,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--batch-size",
         type=positive_batch_size,
-        default=25_000,
+        default=10_000,
         metavar="N",
-        help="maximum source lines per batch (default: 25000)",
+        help="maximum source lines per batch (default: %(default)s)",
     )
     parser.add_argument(
         "--no-progress", action="store_true", help="suppress batch progress on stderr"
