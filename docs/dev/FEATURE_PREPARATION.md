@@ -9,3 +9,4 @@ The workflow uses one preparation pass under the user's delegated design authori
 ## Checkpoints
 
 - FDOCS-001 verified campaign context, tracking, branches and scope.
+- FDOCS-002 accepted the [brief](FEATURE.md) under the user delegation.
