@@ -11,3 +11,5 @@ Revision `002_0c74da1` set the default batch size to 10,000 source lines. The [r
 ## Active feature preparation
 
 Campaign `003_24f121f` opens the parallel importer redesign from `main` at `24f121f3f328aa575d52121acaf079f83d5a7a5c`. Preparation runs on `design-docs/003_24f121f-parallel-importer-redesign` and returns to `main`. See the [preparation record](FEATURE_PREPARATION.md), [checklist](FEATURE_DOCS_TASKS.md), and [GitHub milestone](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9). The [feature brief](FEATURE.md) is ready for first review.
+
+Nested revision `004_1c1297a` temporarily suspends feature preparation at first brief acceptance. See the [revision plan](reviews/004_1c1297a-sqlite-attachment-limit/REVISION-PLAN.md). The nested revision returns to the active feature preparation branch.
