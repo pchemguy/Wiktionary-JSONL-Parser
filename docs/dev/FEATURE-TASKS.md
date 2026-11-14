@@ -15,7 +15,7 @@
     - [ ] Milestone 3.2 — End-to-end parallel import
         - [x] T-016 — Supervise independent worker processes
             Depends on T-015. Start fresh Python workers using a Windows-compatible process mechanism. Drain progress and diagnostics and verify cancellation, exit reporting, and child cleanup.
-        - [ ] T-017 — Assemble and publish the staged database
+        - [x] T-017 — Assemble and publish the staged database
             Depends on T-016. Implement group-by-group read-only attachment, parent-first inserts, direct single-worker publication, and no-overwrite publication. Verify staged cleanup and failure injection for writes, merging, and publication.
         - [ ] T-018 — Expose the parallel CLI and library interfaces
             Depends on T-017. Connect arguments, callbacks, worker failure diagnostics, quiet mode and usage docs. Verify the 10,000-line default, installed interfaces, zero-limit fallback, and valid and failing imports. Review milestone 3.2 and record the result and handoff.

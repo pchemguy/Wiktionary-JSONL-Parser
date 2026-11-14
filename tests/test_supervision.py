@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import subprocess
 import sys
@@ -11,12 +10,6 @@ import pytest
 from wiktionary_jsonl_parser import importer
 
 LINE = b'{"word":"a","lang":"Russian","lang_code":"ru"}\n'
-
-
-@pytest.fixture(autouse=True)
-def child_import_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    src = str(Path(importer.__file__).resolve().parents[1])
-    monkeypatch.setenv("PYTHONPATH", src, prepend=os.pathsep)
 
 
 def test_fresh_workers_report_progress_to_the_importing_thread(tmp_path: Path) -> None:

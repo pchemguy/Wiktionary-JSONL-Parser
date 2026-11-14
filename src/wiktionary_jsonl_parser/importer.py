@@ -1,21 +1,21 @@
 """Read Wiktionary JSONL and persist source-line batches to SQLite."""
 
 import json
+import os
 import sqlite3
 import subprocess
 import sys
 from collections.abc import Callable
 from contextlib import closing
 from dataclasses import dataclass
-from os import fstat
 from pathlib import Path
 from queue import Queue
+from tempfile import TemporaryDirectory
 from threading import Thread
 from typing import BinaryIO
 
-from .mapping import RowsByTable, append_record_rows
+from .merge import merge_databases
 from .worker import (
-    INSERTS,
     Chunk as Chunk,
     ImportFailure as ImportFailure,
     Progress,
@@ -24,7 +24,6 @@ from .worker import (
     read_batches as read_batches,
     require_unicode_collation as require_unicode_collation,
     schema_sql as schema_sql,
-    write_batch,
 )
 
 
@@ -214,47 +213,79 @@ def run_workers(
 def import_jsonl(
     input_path: Path,
     output_path: Path,
-    batch_size: int,
+    batch_size: int = 10_000,
     *,
-    on_progress: Callable[[int, int], None] | None = None,
+    on_warning: Callable[[str], None] | None = None,
+    confirm_single_worker: Callable[[], bool] | None = None,
+    on_progress: Progress | None = None,
 ) -> None:
-    """Import a local JSONL file into a fresh SQLite database.
+    """Import local JSONL through staged worker databases into a new file."""
 
-    After a successful batch, on_progress receives the processed raw bytes and
-    initial input size. The callback runs after the database commit.
-    """
-
-    if batch_size < 1:
-        raise ImportFailure("batch size must be positive")
-
+    if (
+        not isinstance(batch_size, int)
+        or isinstance(batch_size, bool)
+        or batch_size < 1
+    ):
+        raise ImportFailure("batch size must be a positive integer", stage="bootstrap")
+    stage = "bootstrap"
+    staging: TemporaryDirectory[str] | None = None
     try:
-        with input_path.open("rb") as source:
-            bytes_total = (
-                fstat(source.fileno()).st_size if on_progress is not None else 0
+        source_path = Path(input_path).absolute()
+        destination = Path(output_path).absolute()
+        with source_path.open("rb") as source:
+            if os.path.lexists(destination):
+                raise FileExistsError(f"output already exists: {destination}")
+            if not destination.parent.is_dir():
+                raise NotADirectoryError(
+                    f"output directory does not exist: {destination.parent}"
+                )
+            limit = probe_attachment_limit()
+            plan = plan_run(os.cpu_count(), limit, on_warning, confirm_single_worker)
+            stage = "partition"
+            chunks = partition_source(
+                source, os.fstat(source.fileno()).st_size, plan.worker_count
             )
-            bytes_processed = 0
-            probe_attachment_limit()
-            # Claim the destination exclusively before SQLite opens it.
-            with output_path.open("xb"):
-                pass
-            with closing(sqlite3.connect(output_path.absolute())) as db:
-                initialize_database(db)
-                line_number = 0
-                for batch_id, batch in enumerate(read_batches(source, batch_size), 1):
-                    rows: RowsByTable = {table: [] for table in INSERTS}
-                    for raw in batch:
-                        line_number += 1
-                        record = decode_record(raw, line_number)
-                        try:
-                            append_record_rows(record, line_number, rows)
-                        except ValueError as exc:
-                            raise ImportFailure(
-                                f"invalid mapped value: {exc}", line_number
-                            ) from exc
-                    rows["batch_log"].append((batch_id, len(batch)))
-                    write_batch(db, rows, batch_id)
-                    if on_progress is not None:
-                        bytes_processed += sum(map(len, batch))
-                        on_progress(bytes_processed, bytes_total)
-    except (OSError, sqlite3.Error) as exc:
-        raise ImportFailure(str(exc)) from exc
+        stage = "staging"
+        staging = TemporaryDirectory(
+            prefix=".wiktionary-import-", dir=destination.parent
+        )
+        root = Path(staging.name)
+        outputs = [root / f"worker-{chunk.index}.sqlite" for chunk in chunks]
+
+        stage = "workers"
+        run_workers(source_path, outputs, chunks, batch_size, on_progress)
+
+        staged_output = outputs[0]
+        if plan.worker_count > 1:
+            stage = "merge"
+            staged_output = root / "merged.sqlite"
+            merge_databases(outputs, staged_output, plan.merge_group_size)
+
+        stage = "publication"
+        publish_database(staged_output, destination)
+    except BaseException as exc:
+        if staging is not None:
+            try:
+                staging.cleanup()
+            except OSError as cleanup:
+                exc.add_note(f"staging cleanup: {cleanup}")
+        if isinstance(exc, ImportFailure) and exc.stage is not None:
+            raise
+        if isinstance(exc, Exception):
+            failure = ImportFailure(str(exc), stage=stage)
+            for note in getattr(exc, "__notes__", ()):
+                failure.add_note(note)
+            raise failure from exc
+        raise
+    else:
+        assert staging is not None
+        staging.cleanup()
+
+
+def publish_database(staged: Path, destination: Path) -> None:
+    """Make a closed database visible atomically without replacing a destination."""
+
+    if os.name == "nt":
+        os.rename(staged, destination)
+    else:
+        os.link(staged, destination)

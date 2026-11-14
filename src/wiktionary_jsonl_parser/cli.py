@@ -20,7 +20,7 @@ def positive_batch_size(value: str) -> int:
     return size
 
 
-def report_progress(processed: int, total: int) -> None:
+def report_progress(chunk: int, processed: int, total: int) -> None:
     """Print a byte-based progress update to standard error."""
 
     if total:
@@ -28,7 +28,7 @@ def report_progress(processed: int, total: int) -> None:
         line = f"{processed}/{total} bytes read and processed ({tenths // 10}.{tenths % 10}%)"
     else:
         line = f"{processed} bytes read and processed"
-    print(line, file=sys.stderr, flush=True)
+    print(f"[chunk {chunk}] {line}", file=sys.stderr, flush=True)
 
 
 def main(argv: Sequence[str] | None = None) -> int:

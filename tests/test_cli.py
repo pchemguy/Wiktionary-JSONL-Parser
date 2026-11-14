@@ -5,8 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from wiktionary_jsonl_parser import importer
 from wiktionary_jsonl_parser.cli import main
+
+pytestmark = pytest.mark.usefixtures("single_worker")
 
 
 def write_entries(path: Path, *words: str) -> None:
@@ -62,7 +63,7 @@ def test_default_batch_size(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
         output_path: Path,
         batch_size: int,
         *,
-        on_progress: Callable[[int, int], None] | None,
+        on_progress: Callable[[int, int, int], None] | None,
     ) -> None:
         assert on_progress is not None
         assert input_path == tmp_path / "in.jsonl"
@@ -101,7 +102,7 @@ def test_missing_collation_leaves_no_destination(
     assert "SQLiteICUex" in capsys.readouterr().err
 
 
-def test_decode_failure_keeps_only_committed_batches(
+def test_decode_failure_leaves_no_destination(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     source = tmp_path / "in.jsonl"
@@ -110,29 +111,7 @@ def test_decode_failure_keeps_only_committed_batches(
         stream.write(b"invalid\n")
     assert main([str(source), "--batch-size", "2"]) == 1
     assert "line 4" in capsys.readouterr().err
-    dest = source.with_suffix(".sqlite")
-    assert rows(dest, "SELECT word FROM entries ORDER BY id") == [("a",), ("b",)]
-    assert rows(dest, "SELECT * FROM batch_log") == [(1, 2)]
-
-
-def test_write_failure_keeps_only_committed_batches(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
-) -> None:
-    initialize = importer.initialize_database
-
-    def initialize_with_trigger(db: sqlite3.Connection) -> None:
-        initialize(db)
-        db.execute("""CREATE TRIGGER reject_entry BEFORE INSERT ON entries
-            WHEN NEW.word = 'reject' BEGIN SELECT RAISE(ABORT, 'test failure'); END""")
-
-    monkeypatch.setattr(importer, "initialize_database", initialize_with_trigger)
-    source = tmp_path / "in.jsonl"
-    write_entries(source, "a", "b", "c", "reject")
-    assert main([str(source), "--batch-size", "2"]) == 1
-    assert "batch 2" in capsys.readouterr().err
-    dest = source.with_suffix(".sqlite")
-    assert rows(dest, "SELECT word FROM entries ORDER BY id") == [("a",), ("b",)]
-    assert rows(dest, "SELECT * FROM batch_log") == [(1, 2)]
+    assert not source.with_suffix(".sqlite").exists()
 
 
 def test_literal_memory_filename_is_on_disk(

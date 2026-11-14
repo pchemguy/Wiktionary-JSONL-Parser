@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from wiktionary_jsonl_parser import importer
+from wiktionary_jsonl_parser import worker as importer
 
 FIXTURE = Path(__file__).with_name("fixtures") / "all-tables.jsonl"
 
@@ -29,7 +29,7 @@ def test_all_tables_bound_and_written_in_parent_order(
 
     monkeypatch.setattr(importer.sqlite3, "connect", connect)
     dest = tmp_path / "all.sqlite"
-    importer.import_jsonl(FIXTURE, dest, 2)
+    importer.run_chunk(FIXTURE, dest, importer.Chunk(0, 0, FIXTURE.stat().st_size), 2)
     expected = {
         "entries": [
             (
@@ -137,7 +137,9 @@ def test_failed_batch_keeps_committed_prefix(
         "log insert": "batch 2.*log failure",
     }[failure]
     with pytest.raises(importer.ImportFailure, match=diagnostic):
-        importer.import_jsonl(source, output, 2)
+        importer.run_chunk(
+            source, output, importer.Chunk(0, 0, source.stat().st_size), 2
+        )
     with closing(sqlite3.connect(output)) as db:
         assert db.execute("SELECT id FROM entries ORDER BY id").fetchall() == [
             (1,),
