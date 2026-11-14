@@ -35,3 +35,13 @@ Supply an unchanged, uncompressed local Russian Wiktionary JSONL file and a new 
 Entry IDs are the one-based line number within the chunk plus `10_000_000 * chunk_index`, with a zero-based chunk index. Batch IDs use the same offset and a one-based local batch number. The mapper writes related foreign keys using the final IDs. A chunk can contain up to 10,000,000 lines. The merge copies the stored IDs in source chunk order.
 
 A worker failure stops the run, terminates remaining workers, and discards the temporary databases. The destination appears only after all chunks and the final merge succeed. Publication uses rename on Windows and a hard link on POSIX, so the output filesystem must support the corresponding operation. The benchmark prints partition, worker wall time, merge and publication, cleanup, total time, and throughput. Input lines per second include skipped redirects, while imported entries per second count mapped entries. The timer starts after runtime and output-path preflight and creation of the temporary directory.
+
+## Run from a Windows checkout
+
+Use `tools\ru-extract.bat` in Windows CMD with a SQLiteICUex-enabled `python` on `PATH`. The launcher uses the checkout's `src` directory, so the package can be imported without installation.
+
+```text
+tools\ru-extract.bat "C:\Data\ru-extract.jsonl" --no-progress
+```
+
+With no arguments, the launcher reads the same-named JSONL file beside the batch file. If you copy the launcher outside the checkout, set `WIKTIONARY_JSONL_PARSER_ROOT` to the checkout path before running it. The launcher scopes its `PYTHONPATH` changes to the command and returns the parser's exit status. The parser writes the SQLite database next to the JSONL by default. Use `--output` to choose a different new destination.
