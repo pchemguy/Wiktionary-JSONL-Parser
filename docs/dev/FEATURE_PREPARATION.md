@@ -25,3 +25,4 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - FDOCS-002 accepted the [feature brief](FEATURE.md) at Git blob `a2fda32dfb97b953f32876a24c3357962fee72f0` on 2026-11-14. The user's acceptance selects architecture review next.
 
 - FDOCS-003 accepted the [feature architecture](FEATURE_ARCHITECTURE.md) at Git blob `50eb121d54fd5211aef3b779a9dcf0abf9f1b75e` on 2026-11-14. The user's approval selects decomposition review next.
+- FDOCS-004 presents the [feature decomposition](FEATURE_DECOMPOSITION.md) at Git blob `618a3eec4717879fff4c58964eaf619c7bada81c` for first acceptance. The proposed importer API exposes warning, confirmation, and chunk progress callbacks. Process ownership, batch persistence, and merge-group boundaries align with the accepted architecture.
