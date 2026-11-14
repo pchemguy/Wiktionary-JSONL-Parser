@@ -8,7 +8,7 @@
 
 ## Current control
 
-Interactive, one pass, with strict delivery. The request opens the campaign and schedules the release gate. The user preapproved the remaining checkpoints on 2026-11-14, starting with FDOCS-004. Complete specification, planning, task derivation, package review, and preparation integration in this pass. All nine issues and their association with [milestone 9](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9) were verified before the branch or documents were created. The repository already has the manual provenance scaffolding under `docs/ai-logs/`.
+Interactive, one pass, with strict delivery. The request opens the campaign and schedules the release gate. The user preapproved the remaining checkpoints on 2026-11-14, starting with FDOCS-004. The approved specification, plan, layout, and task list are complete. Preparation integration follows package review. All nine issues and their association with [milestone 9](https://github.com/pchemguy/Wiktionary-JSONL-Parser/milestone/9) were verified before the branch or documents were created. The repository already has the manual provenance scaffolding under `docs/ai-logs/`.
 
 ## Decisions and evidence
 
@@ -30,3 +30,4 @@ Interactive, one pass, with strict delivery. The request opens the campaign and 
 - FDOCS-006 completed under the user's preapproval. Three delivery milestones and a final phase review cover implementation, the pinned candidate review, repairs, and final verification. Reviewed [FEATURE-PLAN.md](FEATURE-PLAN.md) at blob `bcc95c12ddf882ccd06640bbc63ca33b5e7d6e10`.
 - FDOCS-007 completed under the user's preapproval. The file ownership table in FEATURE-PLAN covers the importer, worker and merger, tests, benchmarks, and evidence. The current layout supports those placements. Reviewed [FEATURE-PLAN-REVIEW-REPORT.md](FEATURE-PLAN-REVIEW-REPORT.md) at blob `fba6f836b3335ca9ac8b5ac005d61c7dd3746bd7`.
 - FDOCS-008 completed under the user's preapproval. Tasks T-013 through T-022 cover the complete Phase 3 range. Candidate build, comprehensive review, corrections, and re-verification precede final release. Reviewed [FEATURE-TASKS.md](FEATURE-TASKS.md) at blob `04142d2bbbd788e29269c51b7644746ad10d7014`.
+- FDOCS-009 completed under the user's preapproval. The whole package passed source identity, contract consistency, schema, link, task, and release-gate checks. Preparation integration follows. Reviewed [FEATURE-QC-REPORT.md](FEATURE-QC-REPORT.md) at blob `cbeea83777e3f919dbf592f7cf5212169ed40075`.

@@ -33,7 +33,7 @@ Task definitions/checkoffs only. Control, decisions, applicability/reuse and evi
     - Depends on FDOCS-007 and required publication/issue closure.
     - Derive scoped product T tasks/reviews, including API consumers and contract checks against selected artifact owners, with global IDs and single executable ownership. Complete task QC/report and applicable approval. Include HANDOFF at the mapped pass stop; do not activate implementation solely from this completion.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
-- [ ] FDOCS-009 — Pass feature documentation package QC.
+- [x] FDOCS-009 — Pass feature documentation package QC.
     - Depends on FDOCS-008 and required publication/issue closure.
     - Assess the whole feature set, selected model/API-design/contract artifacts and affected accepted main context, preparation/decision/QC evidence and task readiness; resolve/recheck blockers. Persist passing FEATURE-QC-REPORT, preparation evidence, HANDOFF and this checked entry. Keep merge/milestone effects pending until verified.
     - Commit the accepted source or assessed reusable inputs, required QC, FEATURE_PREPARATION evidence and initial checked task together; publish/read back before enabled issue closure or dependent work.
