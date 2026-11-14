@@ -10,9 +10,9 @@ from wiktionary_jsonl_parser.editions.ru import RUSSIAN_EDITION
 
 def test_schema_matches_contract() -> None:
     specified = Path(__file__).resolve().parents[1] / "docs/dev/spec/schema.sql"
-    assert (BATCH_LOG_SCHEMA + RUSSIAN_EDITION.schema_sql()).encode(
-        "utf-8"
-    ) == specified.read_bytes()
+    assert BATCH_LOG_SCHEMA + RUSSIAN_EDITION.schema_sql() == specified.read_text(
+        encoding="utf-8"
+    )
 
 
 def test_initialize_schema_from_any_working_directory(
