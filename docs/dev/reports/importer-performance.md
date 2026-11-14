@@ -120,3 +120,18 @@ Each worker assigned final entry IDs from its one-based chunk line numbers plus 
 The total includes worker startup, progress output captured to a file, merge, publication, and temporary database cleanup. Harness preflight and post-run verification are outside the timer. No cache flush was performed. The median was 12.218 seconds, about 3.51 times faster than the earlier 42.831-second serial median on the same sample. The merge and publication took 4.611 seconds in the median-total run, about 38% of that run.
 
 Verified all seven progress streams, exact entry IDs, 34 batch-log rows, and zero foreign-key violations in all three outputs. All 20 data tables matched the serial reference after translating IDs for comparison. An invalid-input test stopped the run, left no child workers or temporary databases, and published no destination. The harness uses fresh subprocesses with no fork dependency. Windows execution was unavailable for this benchmark.
+
+## Batch-size sweep with seven concurrent workers
+
+Used commit `232c7d335c6106fba2f6a9a3d50a8e9b80bcc299` and the same 299,210-line, 729.64 MiB sample, chunk boundaries, ID allocation, and SQLiteICUex environment as the seven-worker benchmark above. Each local harness copy changed only the worker `BATCH_SIZE` constant. Three trials per setting were interleaved in rotating order, each writing a fresh database with progress enabled. Sample hashing and output verification were outside the timed interval. No cache flush was performed. The earlier 10,000-line runs are shown for reference.
+
+| Batch size (lines) | Batch log rows | Total trials (s) | Median worker time (s) | Median merge and publish (s) | Median total (s) | Input MiB/s | Lines/s |
+| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: |
+| 1,000 | 303 | 13.867, 13.516, 13.503 | 7.622 | 5.853 | 13.516 | 53.99 | 22,138 |
+| 2,000 | 154 | 13.076, 13.165, 12.505 | 7.654 | 5.465 | 13.076 | 55.80 | 22,882 |
+| 5,000 | 63 | 12.082, 12.522, 13.549 | 7.848 | 4.638 | 12.522 | 58.27 | 23,894 |
+| 10,000 | 34 | 12.268, 12.218, 12.069 | 7.572 | 4.611 | 12.218 | 59.72 | 24,490 |
+
+Worker and merge medians are calculated independently. Throughput uses the median total time per setting. The 5,000-line runs had the fastest median of the new settings, 12.522 seconds, and overlapped the earlier 10,000-line runs. Most of the median difference between the 1,000-line and 5,000-line settings appeared in merge and publication time. The timings establish no cause for that difference.
+
+Each trial preserved the expected chunk IDs, independent progress streams, and batch log. All nine databases matched the serial reference across all 20 data tables after ID translation and had zero foreign-key violations.
