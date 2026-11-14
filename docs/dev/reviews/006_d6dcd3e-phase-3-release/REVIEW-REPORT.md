@@ -1,0 +1,18 @@
+# Phase 3 prerelease review
+
+The [review plan](REVIEW-PLAN.md) covers product tree `d3e1ceba4b866f9f08c987b8588316e84b682074` and the packages built from it. The review included an independent pass over the same runtime code and archives. Baseline Linux tests passed 105 checks with two standard-SQLite-specific skips. Wheel, sdist, nested artifact bytes, hashes, mapped schema, and both standalone tools were inspected or exercised. The source diff from the pinned tree to the campaign tip contains only the candidate evidence and handoff records.
+
+## Findings
+
+| ID | Priority | Observation and consequence | Required recheck |
+| --- | --- | --- | --- |
+| R-001 | High | Worker startup independently resolves its package through `python -m`. A working directory with a same-named package took precedence over the imported wheel and ran the wrong worker. A wheel accessible only through the caller's `sys.path` also failed to load in a fresh worker. | Pin the package directory selected by the caller and verify a real fresh child with a conflicting package in the working directory. |
+| R-002 | High | An exception from `terminate()` in the cancellation loop can prevent every later child from being terminated or reaped. The original failure is reported while staging cleanup proceeds. Injection reproduced the early exit. | Attempt termination, reaping and pipe cleanup for every owned child. Inject an exit race and another cancellation error, and verify sibling cleanup and retained diagnostics. |
+| R-003 | High | Failure to remove staging after successful publication raises a raw exception even though the destination already exists. Injected `PermissionError` reproduced this contradictory result. | Treat successful publication as completion and report any remaining staging cleanup problem as a warning. Inject cleanup failure and verify the complete published database and CLI success. |
+| R-004 | High | When an output path contains a symlink followed by `..`, staging creation and the temporary path returned by Python can use different directories. This was reproduced on Python 3.12, leaving staging behind. | Resolve the parent before creating staging, preserving the final filename and destination collision check. Test real symlink and parent traversal on Linux. |
+| R-005 | Low | A positive library batch size of `10**4301` fails at integer-to-string conversion while starting workers. | Bound the serialized worker batch at the maximum possible successful chunk size and retain overflow failure for larger chunks. |
+| R-006 | Medium | The README points to the single-process canonical specification until T-022 incorporates accepted Phase 3 behavior. Production publication needs hard-link support on POSIX, as already documented for the benchmark. | Incorporate architecture, decomposition, specification, task ownership and plan at T-022. Document the filesystem prerequisite and check active links. |
+
+## Coverage
+
+The worker policy, byte framing, alternate edition definition, stable keys, atomic batch writes, progress and merged row equivalence were traced through source and exercised by the existing suite. The build inventory and unchanged Russian output matched the pinned [candidate and benchmark](../../features/003_24f121f-parallel-importer-redesign/candidate.md). The independent check also verified regular archive members and both packaged schema components. The Linux build recipe and Windows-compatible process and local-file paths were assessed through source. Windows-native and network-share execution were unavailable. The supported contract covers local files. The findings must be resolved and affected tests rerun before release.
