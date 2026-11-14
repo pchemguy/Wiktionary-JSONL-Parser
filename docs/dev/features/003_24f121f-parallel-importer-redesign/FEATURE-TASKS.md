@@ -1,5 +1,7 @@
 # Parallel importer implementation tasks
 
+Historical checkpoint before phase closure. See [TASKS](../../TASKS.md) for the owning checklist and final completion state.
+
 [Specification](FEATURE-SPEC.md) · [Delivery plan and layout](FEATURE-PLAN.md)
 
 ## Phase 3 — Parallel import

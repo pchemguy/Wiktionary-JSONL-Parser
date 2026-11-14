@@ -1,54 +1,58 @@
 # Importer specification
 
-The converter imports the Kaikki Russian Wiktionary extract from a local UTF-8 JSONL file into a fresh SQLite database. It reads in source order and processes all supported records regardless of `lang_code`. Downloading, archive extraction, JSON Schema validation, multiprocessing, and resumption are outside the importer scope. See the [project brief](PROJECT.md), [architecture](ARCHITECTURE.md), and [decomposition](DECOMPOSITION.md).
+Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [project brief](PROJECT.md) defines the worker policy, the [architecture](ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](DECOMPOSITION.md) defines the components. The public CLI and library import the Russian Wiktionary edition. The [DDL](spec/schema.sql) and [mapping rules](spec/mapping.md) govern its output. The input must remain unchanged throughout the run. Downloading, archive extraction or streaming, JSON Schema validation, and resumption are outside this import contract.
 
-## Command line and output
+## Entry points
 
 ```text
 wiktionary-jsonl-parser INPUT [--output PATH] [--batch-size N] [--no-progress]
 ```
 
-| Argument | Behavior |
+Input is a readable local JSONL file. Resolve relative paths from the caller's working directory. Keep the output on a filesystem that supports no-overwrite publication via a hard link on POSIX or a rename on Windows. If output is omitted, replace a final `.jsonl` suffix with `.sqlite` in the input's directory. For other input names require an explicit output. The output parent directory must exist and the destination must be new. Batch size is a positive integer and defaults to 10,000 source lines per worker transaction. CLI status is 0 for success, 1 for import failure, and 2 for argument errors.
+
+The library operation is `import_jsonl(input_path, output_path, batch_size=10_000, *, on_warning=None, confirm_single_worker=None, on_progress=None) -> None`. Resolve the input and output path arguments relative to the caller’s working directory. The call runs synchronously and raises an import error with the failure stage and chunk/local line where available. The callbacks run in the importing process:
+
+| Callback | Contract |
 | --- | --- |
-| `INPUT` | Required path to a readable local UTF-8 JSONL file. |
-| `--output PATH` | Optional destination database path. When omitted, replace the final `.jsonl` suffix with `.sqlite` in the input path and keep the parent directory. For example, `data/ru-extract.jsonl` yields `data/ru-extract.sqlite`. If the input name has no final `.jsonl` suffix, supply an explicit output path. |
-| `--batch-size N` | Positive integer maximum number of source lines per batch. Defaults to 10,000. |
-| `--no-progress` | Suppress progress on stderr while retaining diagnostics. |
+| `on_warning(message: str) -> None` | When supplied, receives the requested worker count and effective attachment limit if the count exceeds that limit. |
+| `confirm_single_worker() -> bool` | Invoked only for multiple requested workers and zero attachment capacity. Only an explicit affirmative result authorizes one worker. Without a handler or with unavailable or negative confirmation, fail before launching any worker. |
+| `on_progress(chunk_index: int, processed_bytes: int, chunk_bytes: int) -> None` | When supplied, receives each worker's cumulative bytes after that worker commits a batch. |
 
-Relative paths are interpreted from the working directory. The destination parent directory must exist. The converter refuses an existing destination without modifying it. It checks that the input can be opened and that SQLiteICUex's `UTF_CI` collation is available before creating the output. It initializes the output with the [SQLite schema](spec/schema.sql) and enforces foreign keys on the writing connection.
+An exception from a callback invoked before publication aborts the import. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty. `--no-progress` suppresses progress messages. Diagnostic and confirmation handling still applies.
 
-## JSONL decoding and mapping
+## Bootstrap and partitioning
 
-Read UTF-8 in source order. An initial UTF-8 BOM is allowed at the beginning of the file. LF and CRLF terminate records, and EOF may terminate the final record. Each line must decode to one complete JSON object. Blank or whitespace-only lines, invalid UTF-8, malformed JSON, non-object values, and the bare tokens `NaN`, `Infinity`, and `-Infinity` fail the import. Within an object, the last value wins when a property name occurs more than once.
+Before starting workers, open the input, verify destination eligibility and SQLiteICUex's `UTF_CI`, and read `L = con.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)`. Compute the requested count `W = cpu_count - 2` if the reported logical CPU count exceeds two. Otherwise request one worker. Warn when `W > L`, including the direct single-worker case with `L = 0`.
 
-The importer decodes and maps every record in a batch before writing it. The [mapping contract](spec/mapping.md) defines required mapped fields, accepted value shapes, relational normalization, and JSON text storage. Apply those rules and SQLite constraints without running a JSON Schema validator. A decode or mapping failure aborts the batch without skipping the record.
+| Condition | Run plan |
+| --- | --- |
+| `W = 1` | Use one worker for the whole input. Publish its completed database directly. |
+| `W > 1` and `L = 0` | Confirm one worker or abort before launch. |
+| `1 < W <= L` | Use `W` workers and merge once. |
+| `1 <= L < W` and `2 * W < 3 * L` | Use `L` workers and merge once. |
+| `1 <= L < W` and `2 * W >= 3 * L` | Use `W` workers and merge consecutive groups of at most `L` databases. |
 
-## Batch persistence and errors
+The staged merge database opens as `main`. Every attachment slot is available for a worker database. At `L = 1` and `W > 1`, use all requested workers and attach their databases one at a time.
 
-The importer reads up to the configured number of source lines per batch. For each nonempty batch, the importer commits all mapped rows and one `batch_log` row in one transaction. Batch IDs start at one and increase in commit order. The log records the actual number of input lines in that batch, including a shorter final batch. A readable empty file creates the schema with zero entries and zero batch log rows.
+Split the file into ordered half-open byte ranges. Place the nominal boundaries at integer divisions of the input size across workers, advancing any interior boundary to the first complete-line boundary at or beyond it. Treat the end of the file as a boundary, including when the last record has no terminator. Coincident boundaries yield empty ranges. The ranges cover the full input exactly once in source order, and workers read them directly. Only an initial UTF-8 BOM at source byte zero is accepted. LF and CRLF end records. Blank lines, invalid UTF-8, invalid JSON, bare nonfinite tokens, and non-object lines fail the import. Duplicate object keys retain the last value. A readable empty file produces the initialized schema without rows or progress updates.
 
-The converter stops at the first input, mapping, or persistence error. If a transaction is active, it rolls back the entire batch, including its log row. Earlier committed batches remain available. A retry requires a fresh output database. Diagnostics go to standard error and identify the error and the one-based source line where it can be determined. CLI exit status is 0 on successful completion, 1 on import failure, and 2 on command-line usage errors.
+## Worker writes and publication
 
-## Progress reporting
+Use a zero-based chunk index `i` and a one-based chunk-local source line number `n`. Assign `entries.id = 10_000_000 * i + n`. Each chunk supports local line numbers 1 through 10,000,000 inclusive. An attempt to exceed that range or the SQLite integer key range fails the run. Child foreign keys use the final entry ID. Child indices preserve the [mapping rules](spec/mapping.md). Batch IDs use the same chunk offset plus the one-based local batch number. Batch-log line counts record the actual lines committed, including a shorter last batch.
 
-The CLI writes one flushed progress line to stderr after each successful batch write. A progress update reports the cumulative bytes read, decoded, and mapped for batches whose SQLite write is complete. The numerator counts the original bytes, including a BOM, CRLF, LF, and a final line without a terminator. The denominator is the byte size of the opened input file captured at the start. Progress requires no preliminary scan.
+Each worker opens its own file handle and SQLite connection. It fully decodes and maps each batch, then uses one transaction and one parameterized `executemany()` per populated table. It writes parent tables before dependents and commits the batch log with the data. Foreign keys are enforced. CLI progress reports `[chunk N] P/T bytes read and processed (X.Y%)` after each successful batch commit. `P` counts original bytes committed by that worker and `T` is the byte length of its range. Round percentages down to one decimal place, reaching 100.0% at that chunk's end. Progress is independent for each chunk. The final destination is ready after successful publication.
 
-For a positive total, use the format `52428800/209715200 bytes read and processed (25.0%)`. Round down to one decimal place so that 100.0% is reached at the full size for an unchanged file. If the initial size is zero but data is encountered, report just the byte count. Percentage semantics assume the input file stays unchanged during import. Empty input emits no progress line.
+Wait for all worker databases to close successfully. For multiple workers, attach each merge group read-only, insert parent tables before dependents with foreign keys enabled, copy IDs directly, and release each group before the next. Use one `INSERT ... SELECT ... UNION ALL ...` per table and group, with an ordinary `INSERT ... SELECT ...` for single-source groups. One worker publishes its closed staged database directly. Publish the result with a no-overwrite file operation on the destination filesystem after all work succeeds.
 
-Decode, mapping, or persistence failure leaves the last reported count at the preceding successful batch and emits the existing diagnostic. `--no-progress` suppresses only progress lines. Stdout stays empty. Library imports remain silent unless the caller supplies a keyword-only `on_progress` callback accepting two integers.
+On failure cancel and reap owned workers, close connections and remove owned staging files. Leave the requested destination unpublished and preserve any preexisting destination. Retain the original diagnostic if cleanup also fails. The CLI identifies the failing chunk and local line where known. Restart after a failure uses a fresh import. If staging cleanup fails after publication, keep the completed destination and send a warning through the configured handler. The import remains successful.
 
 ## Acceptance
 
-| Scenario | Required result |
+| Scenario | Expected evidence |
 | --- | --- |
-| Three valid lines with batch size two | Three entries in source order and two log rows with line counts 2 and 1. An omitted output path creates the expected sibling `.sqlite` file. |
-| Input framing and JSON decoding | An initial BOM, CRLF, and an unterminated final record are accepted. A blank line, invalid UTF-8, malformed JSON, a non-object record, or a bare nonfinite constant fails at the offending line. |
-| Related rows and duplicate data | Repeated values appear at their original indices, example keys identify the enclosing sense, linkage `sense_index` retains its supplied value, and the database has zero foreign-key violations. |
-| Retained and omitted fields | `etymology_texts`, example offsets, compacted `form_of`, and sound URLs match the [mapping contract](spec/mapping.md). `etymology_links` contributes no rows or columns. Missing, explicit null, and empty values follow the contract for the field's destination. |
-| Mapping failure after a committed batch | A missing required mapped field or an invalid mapped container reports the offending source line. No rows or log entry from the failed batch remain. |
-| Existing destination or missing `UTF_CI` | Failure preserves the existing destination or leaves the proposed destination absent, respectively. |
-| Malformed line after a committed batch | The diagnostic gives the source line, the CLI reports failure, and the database contains only the previously committed entries, children, and log rows. |
-| A database write fails within a batch | The batch contributes zero data or log rows, and all earlier commits remain intact. |
-| Empty input | Success produces the initialized schema with no entries or batch log rows. |
-| Successful batch with progress enabled | A flushed stderr line reports cumulative raw bytes after the database write. The final update for an unchanged nonempty input reaches 100.0%. |
-| Quiet, empty or failing import | Quiet mode suppresses progress while retaining errors. Empty input emits no progress. A failed batch emits only its diagnostic. |
+| Bootstrap limits | Exact fit, reduction, equality at the 1.5 threshold, grouped merges, one-worker fallback for small or unknown CPU counts, and positive/negative/unavailable zero-limit confirmation. Warnings follow `W > L`. |
+| Input framing | Byte-boundary, CRLF, beginning BOM, later BOM rejection, long line spanning multiple nominal partitions, coincident empty ranges, unterminated record, and empty file. |
+| Keys and batch writes | Entries, child relationships, and batch IDs match the chunk formulas. Both ID-range edges are tested. Parent ordering and one transaction per batch hold for short and full batches. |
+| Worker and merge failure | Cancel and reap children, discard staged results, and preserve the destination on decode, mapping, worker-exit, merge, or publication failure. |
+| Successful publication and progress | Direct one-worker publication and grouped merge both produce the expected data. Progress follows committed batches, quiet mode suppresses progress, and every completed nonempty chunk reaches 100.0%. |
+| Runtime and installation | Fresh worker startup, CLI and library operation, and the packaged schema work with SQLiteICUex. Exercise Linux and Windows-compatible process paths. Record target-native execution separately. |

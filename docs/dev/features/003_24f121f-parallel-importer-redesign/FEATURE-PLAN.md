@@ -1,6 +1,6 @@
 # Parallel importer delivery plan
 
-The single-process importer established mapping, persistence, and progress. The [benchmarks](reports/importer-performance.md) measured partitioning, independent worker writes, and database merging. Phase 3 delivers the production multiprocessing path specified in the [feature specification](FEATURE-SPEC.md), building on the benchmarked design.
+The single-process importer established mapping, persistence, and progress. The [benchmarks](../../reports/importer-performance.md) measured partitioning, independent worker writes, and database merging. Phase 3 delivers the production multiprocessing path specified in the [feature specification](FEATURE-SPEC.md), building on the benchmarked design.
 
 ## Phase 3 — Parallel import
 

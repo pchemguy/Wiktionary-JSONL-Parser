@@ -1,6 +1,6 @@
 # Parallel importer specification
 
-Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [feature brief](FEATURE.md) defines the worker policy, the [architecture](FEATURE_ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](FEATURE_DECOMPOSITION.md) defines the components. The public CLI and library import the Russian Wiktionary edition. The [DDL](spec/schema.sql) and [mapping rules](spec/mapping.md) govern its output. The input must remain unchanged throughout the run.
+Convert one local, extracted UTF-8 Wiktionary JSONL file into one new SQLite database using Windows-compatible worker processes. The [feature brief](FEATURE.md) defines the worker policy, the [architecture](FEATURE_ARCHITECTURE.md) defines process and publication ownership, and the [decomposition](FEATURE_DECOMPOSITION.md) defines the components. The public CLI and library import the Russian Wiktionary edition. The [DDL](../../spec/schema.sql) and [mapping rules](../../spec/mapping.md) govern its output. The input must remain unchanged throughout the run.
 
 ## Entry points
 
@@ -38,7 +38,7 @@ Split the file into ordered half-open byte ranges. Place the nominal boundaries 
 
 ## Worker writes and publication
 
-Use a zero-based chunk index `i` and a one-based chunk-local source line number `n`. Assign `entries.id = 10_000_000 * i + n`. Each chunk supports local line numbers 1 through 10,000,000 inclusive. An attempt to exceed that range or the SQLite integer key range fails the run. Child foreign keys use the final entry ID. Child indices preserve the [mapping rules](spec/mapping.md). Batch IDs use the same chunk offset plus the one-based local batch number. Batch-log line counts record the actual lines committed, including a shorter last batch.
+Use a zero-based chunk index `i` and a one-based chunk-local source line number `n`. Assign `entries.id = 10_000_000 * i + n`. Each chunk supports local line numbers 1 through 10,000,000 inclusive. An attempt to exceed that range or the SQLite integer key range fails the run. Child foreign keys use the final entry ID. Child indices preserve the [mapping rules](../../spec/mapping.md). Batch IDs use the same chunk offset plus the one-based local batch number. Batch-log line counts record the actual lines committed, including a shorter last batch.
 
 Each worker opens its own file handle and SQLite connection. It fully decodes and maps each batch, then uses one transaction and one parameterized `executemany()` per populated table. It writes parent tables before dependents and commits the batch log with the data. Foreign keys are enforced. CLI progress reports `[chunk N] P/T bytes read and processed (X.Y%)` after each successful batch commit. `P` counts original bytes committed by that worker and `T` is the byte length of its range. Round percentages down to one decimal place, reaching 100.0% at that chunk's end. Progress is independent for each chunk. The final destination is ready after successful publication.
 

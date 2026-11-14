@@ -1,10 +1,10 @@
 # Parallel importer
 
-The importer converts a local, extracted Wiktionary JSONL file into one SQLite database. It uses the [mapping rules](spec/mapping.md), the [SQLite schema](spec/schema.sql), and SQLiteICUex.
+The importer converts a local, extracted Wiktionary JSONL file into one SQLite database. It uses the [mapping rules](../../spec/mapping.md), the [SQLite schema](../../spec/schema.sql), and SQLiteICUex.
 
 ## Development phases
 
-Develop the single-process importer first to establish the mapping, persistence, and progress behavior. Then [benchmark](reports/importer-performance.md) partitioning, independent imports, and SQLite merges. The multiprocessing phase follows the measured [worker-and-merge design](reports/importer-performance.md#seven-concurrent-imports-with-ids-assigned-during-insertion).
+Develop the single-process importer first to establish the mapping, persistence, and progress behavior. Then [benchmark](../../reports/importer-performance.md) partitioning, independent imports, and SQLite merges. The multiprocessing phase follows the measured [worker-and-merge design](../../reports/importer-performance.md#seven-concurrent-imports-with-ids-assigned-during-insertion).
 
 ## Import pipeline
 
