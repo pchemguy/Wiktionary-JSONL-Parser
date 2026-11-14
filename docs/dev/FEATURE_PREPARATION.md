@@ -12,3 +12,4 @@ The workflow uses one preparation pass under the user's delegated design authori
 - FDOCS-002 accepted the [brief](FEATURE.md) under the user delegation.
 - FDOCS-003 reused [architecture](ARCHITECTURE.md). The CLI reports after the synchronous importer call; no process boundary changes.
 - FDOCS-004 reused [decomposition](DECOMPOSITION.md). Clock reads and formatting belong to the existing CLI component, with no worker or public API changes.
+- FDOCS-005 accepted the [specification](FEATURE-SPEC.md) and verified [contract coverage](FEATURE-SPEC-REVIEW-REPORT.md).
