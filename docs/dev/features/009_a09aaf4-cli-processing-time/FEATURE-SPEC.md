@@ -1,6 +1,6 @@
 # CLI total processing time specification
 
-The [existing CLI contract](SPEC.md) defines import invocation, warnings, diagnostics and exit status.
+The [existing CLI contract](../../SPEC.md) defines import invocation, warnings, diagnostics and exit status.
 
 Use a monotonic elapsed clock immediately before and after the synchronous import call. Measure wall-clock duration across the whole call, including planning, workers, assembly, publication and staging cleanup. Argument parsing and printing the timing message are outside the interval.
 

@@ -18,7 +18,7 @@ The library operation is `import_jsonl(input_path, output_path, batch_size=10_00
 | `confirm_single_worker() -> bool` | Invoked only for multiple requested workers and zero attachment capacity. Only an explicit affirmative result authorizes one worker. Without a handler or with unavailable or negative confirmation, fail before launching any worker. |
 | `on_progress(chunk_index: int, processed_bytes: int, chunk_bytes: int) -> None` | When supplied, receives each worker's cumulative bytes after that worker commits a batch. |
 
-An exception from a callback invoked before publication aborts the import. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty. `--no-progress` suppresses progress messages. Diagnostic and confirmation handling still applies.
+An exception from a callback invoked before publication aborts the import. The CLI sends warnings and diagnostics to stderr and prompts for confirmation only when interactive input is available. Decline, noninteractive input, or end of input leaves the import unstarted. Stdout stays empty during import. The CLI measures elapsed wall-clock time with a monotonic clock around the synchronous import call, including planning, workers, assembly, publication and staging cleanup. After successful return, it writes and flushes one stderr line, for example `Total processing time: 12.345 s`. Empty and redirect-only imports also report the duration. Failures, interruptions, argument errors and help requests emit no completion summary. `--no-progress` suppresses batch progress and the duration while retaining warnings, diagnostics and confirmation.
 
 ## Bootstrap and partitioning
 
@@ -59,5 +59,6 @@ On failure cancel and reap owned workers, close connections and remove owned sta
 | Input framing | Byte-boundary, CRLF, beginning BOM, later BOM rejection, long line spanning multiple nominal partitions, coincident empty ranges, unterminated record, and empty file. |
 | Keys and batch writes | Entries, child relationships, and batch IDs match the chunk formulas. Both ID-range edges are tested. Parent ordering and one transaction per batch hold for short and full batches. |
 | Worker and merge failure | Cancel and reap children, discard staged results, and preserve the destination on decode, mapping, worker-exit, merge, or publication failure. |
+| CLI completion time | After success, stderr ends with one elapsed duration in seconds to three decimal places. Quiet mode, failures, and help omit it. |
 | Successful publication and progress | Direct one-worker publication and grouped merge both produce the expected data. Progress follows committed batches, quiet mode suppresses progress, and every completed nonempty chunk reaches 100.0%. |
 | Runtime and installation | Fresh worker startup, CLI and library operation, and the packaged schema work with SQLiteICUex. Exercise Linux and Windows-compatible process paths. Record target-native execution separately. |

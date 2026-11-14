@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from wiktionary_jsonl_parser import importer
+from wiktionary_jsonl_parser import cli, importer
 from wiktionary_jsonl_parser.cli import main, report_progress
 
 pytestmark = pytest.mark.usefixtures("single_worker")
@@ -39,8 +39,10 @@ def test_raw_counts_after_visible_writes(tmp_path: Path) -> None:
 
 
 def test_cli_progress_and_quiet(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    ticks = iter((10.0, 11.25))
+    monkeypatch.setattr(cli, "perf_counter", lambda: next(ticks), raising=False)
     source = tmp_path / "words.jsonl"
     line = entry("\u0410") + b"\n"
     size = len(line)
@@ -52,18 +54,56 @@ def test_cli_progress_and_quiet(
     assert err.splitlines() == [
         f"[chunk 0] {size * 2}/{size * 3} bytes read and processed (66.6%)",
         f"[chunk 0] {size * 3}/{size * 3} bytes read and processed (100.0%)",
+        "Total processing time: 1.250 s",
     ]
     assert main([*args, "--output", str(tmp_path / "quiet.db"), "--no-progress"]) == 0
     assert capsys.readouterr() == ("", "")
 
 
-def test_empty_import_is_silent(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+@pytest.mark.parametrize("content", [b"", b'{"redirect":"target"}\n'])
+def test_success_reports_time_after_publication(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+    content: bytes,
 ) -> None:
-    source = tmp_path / "empty.jsonl"
-    source.touch()
+    source = tmp_path / "input.jsonl"
+    source.write_bytes(content)
+    output = source.with_suffix(".sqlite")
+    ticks = iter((5.0, 5.125))
+
+    def clock() -> float:
+        tick = next(ticks)
+        assert output.exists() is (tick == 5.125)
+        return tick
+
+    monkeypatch.setattr(cli, "perf_counter", clock, raising=False)
     assert main([str(source)]) == 0
-    assert capsys.readouterr() == ("", "")
+    out, err = capsys.readouterr()
+    lines = err.splitlines()
+    assert out == ""
+    assert lines[-1] == "Total processing time: 0.125 s"
+    assert len(lines) == (2 if content else 1)
+
+
+def test_interrupted_import_has_no_completion_time(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def interrupt(*args: object, **kwargs: object) -> None:
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(cli, "import_jsonl", interrupt)
+    assert main([str(tmp_path / "input.jsonl")]) == 1
+    assert capsys.readouterr() == ("", "wiktionary-jsonl-parser: interrupted\n")
+
+
+def test_help_has_no_completion_time(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as exit_info:
+        main(["--help"])
+    assert exit_info.value.code == 0
+    out, err = capsys.readouterr()
+    assert "usage:" in out and "Total processing time:" not in out
+    assert err == ""
 
 
 @pytest.mark.parametrize("failure", ["decode", "mapping"])

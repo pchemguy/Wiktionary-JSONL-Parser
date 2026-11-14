@@ -1,6 +1,6 @@
 # Delivery plan
 
-Deliver the Russian Wiktionary JSONL converter in four phases. The serial converter establishes mapping and persistence, CLI progress reports committed input bytes, and the parallel importer builds on the measured worker-and-merge design. The [specification](SPEC.md), [schema](spec/schema.sql), [mapping contract](spec/mapping.md), and [decomposition](DECOMPOSITION.md) govern the work.
+Deliver the Russian Wiktionary JSONL converter in five phases. The serial converter establishes mapping and persistence, CLI progress reports committed input bytes, and the parallel importer builds on the measured worker-and-merge design. The [specification](SPEC.md), [schema](spec/schema.sql), [mapping contract](spec/mapping.md), and [decomposition](DECOMPOSITION.md) govern the work.
 
 ## Phase 1 — JSONL-to-SQLite converter
 
@@ -44,6 +44,15 @@ See the [repository layout](layout.md), [performance evidence](reports/importer-
 
 See the [Phase 4 report](features/008_984ad61-skip-redirect-records/PHASE-REPORT.md).
 
+## Phase 5 — CLI processing time
+
+| Milestone | Delivery and exit evidence |
+| --- | --- |
+| 5.1 — CLI timing and verification | Instrument the CLI around the existing synchronous import call. Verify the exact format and order, successful empty input, quiet mode, failure, interruption, and CLI help. Update usage documentation. |
+| 5.2 — Phase review | Reconcile governing documents, verify regressions and installed CLI behavior, and check the package inventory. Publish patch release `0.4.1` from the verified default-branch revision. |
+
+See the [Phase 5 report](features/009_a09aaf4-cli-processing-time/PHASE-REPORT.md).
+
 ## Integration and release
 
-Phase 1 corresponds to `0.1.0`. Phase 2 corresponds to `0.2.0`. Phase 4 corresponds to `0.4.0`. Phase 3 corresponds to `0.3.0` and requires comprehensive candidate review, corrections, and re-verification before release. Finalize the version and release notes for the verified phase, integrate the reviewed implementation into the default branch, and publish a GitHub release from that verified revision. Use `wiktionary-jsonl-parser-python.zip` as the release download. It contains the wheel and source distribution with their installable filenames. Publish `SHA256SUMS` for the uploaded bundle. Before tagging or publishing, execute the naming and checksum checks against the actual release files. Repair and rebuild any failing candidate. Verify the hosted download and checksum after publishing.
+Phase 1 corresponds to `0.1.0`. Phase 2 corresponds to `0.2.0`. Phase 4 corresponds to `0.4.0`. Phase 3 corresponds to `0.3.0` and requires comprehensive candidate review, corrections, and re-verification before release. Phase 5 corresponds to `0.4.1`. Finalize the version and release notes for the verified phase, integrate the reviewed implementation into the default branch, and publish a GitHub release from that verified revision. Use `wiktionary-jsonl-parser-python.zip` as the release download. It contains the wheel and source distribution with their installable filenames. Publish `SHA256SUMS` for the uploaded bundle. Before tagging or publishing, execute the naming and checksum checks against the actual release files. Repair and rebuild any failing candidate. Verify the hosted download and checksum after publishing.

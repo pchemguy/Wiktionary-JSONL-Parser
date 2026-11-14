@@ -4,4 +4,4 @@
 
 ## Layout review
 
-**Result — Ready.** The existing [layout](layout.md) fits the CLI, tests, and release artifacts. There are no new source or test locations.
+**Result — Ready.** The existing [layout](../../layout.md) fits the CLI, tests, and release artifacts. There are no new source or test locations.

@@ -1,12 +1,14 @@
 # CLI total processing time tasks
 
+Historical checklist before phase closure. See [TASKS](../../TASKS.md) for current task ownership and final completion.
+
 [Specification](FEATURE-SPEC.md) · [Delivery plan](FEATURE-PLAN.md)
 
 ## Phase 5 — CLI processing time
 
 - [ ] Phase 5 — CLI processing time
-    - [ ] Milestone 5.1 — CLI timing and verification
-        - [ ] T-026 — Report total elapsed processing time after CLI import
+    - [x] Milestone 5.1 — CLI timing and verification
+        - [x] T-026 — Report total elapsed processing time after CLI import
             Add one completion summary on stderr. Verify elapsed measurement and order, empty input, quiet mode, errors, interruption, and help. Update usage and run regression checks.
     - [ ] Milestone 5.2 — Phase review
         - [ ] T-027 — Verify and package the CLI timing patch release
