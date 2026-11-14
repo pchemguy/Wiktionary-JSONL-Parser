@@ -61,6 +61,40 @@ def probe_attachment_limit() -> int:
         return probe.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED)
 
 
+@dataclass(frozen=True)
+class Chunk:
+    index: int
+    start: int
+    stop: int
+
+
+def partition_source(source: BinaryIO, size: int, worker_count: int) -> list[Chunk]:
+    """Divide the source at LF boundaries, reading each crossed line at most once."""
+
+    chunks = []
+    start = 0
+    for index in range(worker_count - 1):
+        stop = size * (index + 1) // worker_count
+        if stop <= start:
+            stop = start
+        else:
+            source.seek(stop - 1)
+            if source.read(1) != b"\n":
+                while stop < size:
+                    block = source.readline(min(size - stop, 128 * 1024))
+                    if not block:
+                        raise ImportFailure(
+                            "input ended while finding a chunk boundary"
+                        )
+                    stop += len(block)
+                    if block.endswith(b"\n"):
+                        break
+        chunks.append(Chunk(index, start, stop))
+        start = stop
+    chunks.append(Chunk(worker_count - 1, start, size))
+    return chunks
+
+
 def schema_sql() -> str:
     """Read the packaged SQLite DDL."""
 

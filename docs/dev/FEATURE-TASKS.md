@@ -8,7 +8,7 @@
     - [ ] Milestone 3.1 — Run planning and worker execution
         - [x] T-013 — Plan the worker count and attachment groups
             Implement bootstrap, probing, warning and confirmation policy. Verify exact fits, reduction, equality at 1.5, one-slot groups, zero-limit confirmation, and the one-worker CPU fallback.
-        - [ ] T-014 — Partition the source at complete record boundaries
+        - [x] T-014 — Partition the source at complete record boundaries
             Depends on T-013. Use ordered byte ranges and verify exact coverage for small files, very long records, coincident ranges, CRLF, and an unterminated final line.
         - [ ] T-015 — Write complete worker databases with final IDs
             Depends on T-014. Implement bounded decoding and mapping, final entry and batch IDs, batch transactions, and committed byte-progress messages. Verify ID range overflow, parent relationships, duplicate preservation, and batch rollback. Review milestone 3.1 and record the result and handoff.
