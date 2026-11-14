@@ -15,3 +15,9 @@ Interactive, one pass, with strict delivery. The first stop is the feature brief
 - Scanning the complete extracted Kaikki Russian dump found 2,729,136 records. All 1,002,924 records with a top-level redirect had keys `title`, `redirect`, and `pos`, a string target and `pos` of `hard-redirect`. None had `word`, `lang`, or `lang_code`. The downloaded gzip SHA-256 is `fdcb978c76b660e0e43977bbf7487c812e6d42e965b0a73e3f5b4ba6981174c4`.
 - The unfiltered CLI failed on a standalone redirect. Filtering those records out of a separate input allowed the existing importer to commit all 1,726,212 entries. The feature should handle those source lines in place so later entry keys retain their original chunk and line positions.
 - FDOCS-001 establishes the campaign context. FDOCS-002 owns the brief and its first acceptance.
+
+## Brief proposal
+
+- FDOCS-002 published [the feature brief](FEATURE.md) at Git blob `a918c00e1b220942e1dc96bc2b3ecc8a657662ac` for approval. The user confirmed source-position ID numbering, including skipped lines.
+- The proposal uses the classification already exercised on the full extract: a top-level string `redirect` and none of the three entry keys. Mixed or malformed records continue under normal validation. Redirects count toward source-line batching, the chunk line limit, and byte progress. Redirect-only batches keep the batch log.
+- Validate the feature on mixed records, redirect-only batches and files, valid and invalid edge cases, and the original unfiltered full extract. Architecture and implementation decisions follow brief acceptance.
